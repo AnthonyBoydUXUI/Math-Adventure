@@ -56,8 +56,8 @@ export function LabPage() {
                   questionIds: lab.map((q) => q.id),
                   label: 'Lab',
                   coachLine: report.weakestFormat
-                    ? `Lead with ${report.weakestFormat}.`
-                    : 'Same math. New look.',
+                    ? `Let’s start with the ${report.weakestFormat} look.`
+                    : 'Same math. Just a new look.',
                 },
                 {
                   phase: 'recap',

@@ -79,14 +79,14 @@ export function generateDailyMission(
       label: 'Warm-Up',
       coachLine: prevWorld
         ? `${world.beats.warmup} You rolled in from ${prevWorld.name} carrying ${world.carry}.`
-        : `${world.beats.warmup} Ground Lab packed the launch. Easy ignition.`,
+        : `${world.beats.warmup} Ground Lab packed the launch — easy start.`,
     },
     {
       phase: 'builder',
       minutes: PHASE_MINUTES.builder,
       questionIds: builder.map((q) => q.id),
       label: 'Skill Builder',
-      coachLine: `${world.beats.builder} ${world.bridgeLine} Next pit wants: ${world.handoff}`,
+      coachLine: `${world.beats.builder} ${world.bridgeLine} Next pit wants ${world.handoff}`,
     },
     {
       phase: 'lab',
@@ -94,7 +94,7 @@ export function generateDailyMission(
       questionIds: lab.map((q) => q.id),
       label: 'Test Lab',
       coachLine: report.weakestFormat
-        ? `${world.beats.lab} Lead with ${report.weakestFormat}.`
+        ? `${world.beats.lab} Let’s start with the ${report.weakestFormat} look.`
         : world.beats.lab,
     },
     {

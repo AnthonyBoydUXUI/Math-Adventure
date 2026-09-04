@@ -1,3 +1,5 @@
+import { pickDeviceVoice, speakable } from './talk.ts'
+
 export interface VoiceProvider {
   readonly id: string
   readonly label: string
@@ -34,13 +36,11 @@ export class BrowserVoiceProvider implements VoiceProvider {
   async speak(text: string, opts?: { rate?: number; interrupt?: boolean }) {
     if (!this.supported().speak) return
     if (opts?.interrupt !== false) window.speechSynthesis.cancel()
-    const utter = new SpeechSynthesisUtterance(text)
-    utter.rate = opts?.rate ?? 1.02
-    utter.pitch = 1.02
+    const utter = new SpeechSynthesisUtterance(speakable(text))
+    utter.rate = opts?.rate ?? 0.92
+    utter.pitch = 1
     const voices = window.speechSynthesis.getVoices()
-    const preferred =
-      voices.find((v) => /en-US/i.test(v.lang) && /google|natural|aria|samantha/i.test(v.name)) ??
-      voices.find((v) => /en/i.test(v.lang))
+    const preferred = pickDeviceVoice(voices)
     if (preferred) utter.voice = preferred
     await new Promise<void>((resolve) => {
       utter.onend = () => resolve()
