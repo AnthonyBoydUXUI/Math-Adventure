@@ -191,7 +191,7 @@ export const usePlayerStore = create<PlayerStore>()(
           sfx.start()
           startAmbient(worldForModule(s.parent.moduleId).id)
         }
-        const mission = generateDailyMission(s.stats, s.parent, new Date(), extra)
+        const mission = generateDailyMission(s.stats, s.parent, new Date(), extra, s.attempts)
         const qid = mission.phases[0]?.questionIds[0]
         const q = qid ? questionById(qid) : undefined
         set({
@@ -240,7 +240,7 @@ export const usePlayerStore = create<PlayerStore>()(
         const parent = { ...get().parent, ...patch }
         set({
           parent,
-          mission: generateDailyMission(get().stats, parent),
+          mission: generateDailyMission(get().stats, parent, new Date(), false, get().attempts),
           studentName: parent.studentName || get().studentName,
         })
         if (get().soundOn) startAmbient(worldForModule(parent.moduleId).id)
@@ -253,7 +253,7 @@ export const usePlayerStore = create<PlayerStore>()(
           const parent = { ...s.parent, moduleId, topicId }
           set({
             parent,
-            mission: generateDailyMission(s.stats, parent),
+            mission: generateDailyMission(s.stats, parent, new Date(), false, s.attempts),
             studentName: parent.studentName || s.studentName,
           })
           if (s.soundOn) startAmbient(dest.id)

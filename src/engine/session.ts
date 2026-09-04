@@ -2,8 +2,9 @@ import { SKILLS, skillsForTopic } from '../data/curriculum.ts'
 import { familiesForSkill, questionById, QUESTIONS, questionsForFamily } from '../data/questions.ts'
 import { linkedWorld, worldForModule } from '../data/worlds.ts'
 import { dayKey, hashString, mulberry32, pick, shuffle } from '../lib/hash.ts'
-import type { DailyMission, DimensionStats, MissionPhase, ParentSettings, Question } from '../types.ts'
+import type { AttemptRecord, DailyMission, DimensionStats, Format, MissionPhase, ParentSettings, Question } from '../types.ts'
 import { compositeMastery, emptyStats, weakestSkills } from './mastery.ts'
+import { buildTestReport, preferFormats } from './testReady.ts'
 
 const PHASE_MINUTES = { warmup: 3, builder: 4, lab: 4, boss: 3, recap: 1 } as const
 
@@ -12,6 +13,7 @@ export function generateDailyMission(
   parent: ParentSettings,
   date = new Date(),
   extra = false,
+  attempts: AttemptRecord[] = [],
 ): DailyMission {
   const key = extra ? `${dayKey(date)}-plus` : dayKey(date)
   const rng = mulberry32(hashString(`${key}:${parent.moduleId}:${parent.topicId}`))
@@ -58,7 +60,8 @@ export function generateDailyMission(
     2,
   )
 
-  const lab = labSequence(familyId, rng)
+  const report = buildTestReport(attempts)
+  const lab = labSequence(familyId, rng, report.weakestFormat)
 
   const bosses = QUESTIONS.filter(
     (q) =>
@@ -90,7 +93,9 @@ export function generateDailyMission(
       minutes: PHASE_MINUTES.lab,
       questionIds: lab.map((q) => q.id),
       label: 'Test Lab',
-      coachLine: 'Same math, different look. Don’t let the wrapper fool you.',
+      coachLine: report.weakestFormat
+        ? `Same math, different look. Lead with ${report.weakestFormat} — that’s the wrapper tests use.`
+        : 'Same math, different look. Don’t let the wrapper fool you.',
     },
     {
       phase: 'boss',
@@ -120,9 +125,9 @@ export function generateDailyMission(
   }
 }
 
-export function labSequence(familyId: string, rng: () => number): Question[] {
+export function labSequence(familyId: string, rng: () => number, prefer?: Format): Question[] {
   const fam = questionsForFamily(familyId).filter((q) => !q.id.startsWith('boss'))
-  const preferred = ['word', 'equation', 'graph', 'table', 'diagram', 'missing', 'mcq'] as const
+  const preferred = preferFormats(prefer)
   const picked: Question[] = []
   for (const format of preferred) {
     const hit = fam.find((q) => q.format === format && !picked.includes(q))

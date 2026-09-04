@@ -2,6 +2,7 @@ import { MODULES } from '../data/curriculum.ts'
 import { THEMES } from '../types.ts'
 import { usePlayerStore } from '../store.ts'
 import { cn } from '../lib/cn.ts'
+import { TestReadinessCard } from '../components/TestReadinessCard.tsx'
 
 export function ParentPage() {
   const { parent, setParent, setThemes } = usePlayerStore()
@@ -9,7 +10,7 @@ export function ParentPage() {
 
   return (
     <div className="px-4 pb-8">
-      <h1 className="font-display text-4xl font-extrabold">Parent desk</h1>
+      <h1 className="font-display text-4xl font-semibold tracking-tight">Parent desk</h1>
       <p className="mt-1 font-bold text-navy/65">
         Point Aero at this week’s Reveal Math topic. The 15-minute plan will overweight it — without copying the book.
       </p>
@@ -18,14 +19,14 @@ export function ParentPage() {
       <input
         value={parent.studentName}
         onChange={(e) => setParent({ studentName: e.target.value })}
-        className="mt-1 w-full rounded-2xl border-2 border-navy bg-white px-3 py-3 font-extrabold"
+        className="mt-1 w-full rounded-2xl border border-white/10 bg-white px-3 py-3 font-extrabold"
       />
 
       <label className="mt-4 block text-xs font-extrabold uppercase tracking-widest text-navy/45">
         Reveal Math · Course 2
       </label>
       <select
-        className="mt-1 w-full rounded-2xl border-2 border-navy bg-white px-3 py-3 font-extrabold"
+        className="mt-1 w-full rounded-2xl border border-white/10 bg-white px-3 py-3 font-extrabold"
         value={parent.moduleId}
         onChange={(e) => {
           const next = MODULES.find((m) => m.id === e.target.value)
@@ -39,7 +40,7 @@ export function ParentPage() {
         ))}
       </select>
       <select
-        className="mt-2 w-full rounded-2xl border-2 border-navy bg-white px-3 py-3 font-extrabold"
+        className="mt-2 w-full rounded-2xl border border-white/10 bg-white px-3 py-3 font-extrabold"
         value={parent.topicId}
         onChange={(e) => setParent({ topicId: e.target.value })}
       >
@@ -68,7 +69,7 @@ export function ParentPage() {
               key={th}
               type="button"
               className={cn(
-                'rounded-full border-2 border-navy px-3 py-1 text-sm font-extrabold capitalize',
+                'rounded-full border border-white/10 px-3 py-1 text-sm font-extrabold capitalize',
                 on ? 'bg-orange text-white' : 'bg-white',
               )}
               onClick={() =>
@@ -81,7 +82,13 @@ export function ParentPage() {
         })}
       </div>
 
-      <h2 className="mt-6 font-display text-2xl font-extrabold">How to read the diagnostic</h2>
+      <h2 className="mt-6 font-display text-2xl font-semibold">What the test actually is</h2>
+      <div className="mt-2">
+        <TestReadinessCard />
+      </div>
+      <p className="mt-3 text-sm font-medium text-ink">
+        Classwork and diagnostics are different wrappers. This readout uses Test Lab + boss plays — not a grade-level label.
+      </p>
       <ul className="mt-2 space-y-2 text-sm font-bold text-navy/70">
         <li className="rounded-2xl bg-white p-3">Overall 440 is a starting prior — not “fourth grade.”</li>
         <li className="rounded-2xl bg-white p-3">Geometry 480 is a relative strength. Use it as a bridge.</li>
@@ -91,7 +98,7 @@ export function ParentPage() {
         </li>
       </ul>
 
-      <label className="mt-5 inline-flex rounded-2xl border-2 border-navy bg-white px-3 py-2 text-sm font-extrabold">
+      <label className="mt-5 inline-flex rounded-2xl border border-white/10 bg-white px-3 py-2 text-sm font-extrabold">
         Upload a class page photo
         <input
           type="file"
@@ -107,7 +114,7 @@ export function ParentPage() {
         />
       </label>
       {parent.pagePhoto ? (
-        <img src={parent.pagePhoto} alt="Class page" className="mt-3 max-h-40 rounded-2xl border-2 border-navy object-cover" />
+        <img src={parent.pagePhoto} alt="Class page" className="mt-3 max-h-40 rounded-2xl border border-white/10 object-cover" />
       ) : null}
     </div>
   )
