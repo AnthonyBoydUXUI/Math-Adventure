@@ -1,13 +1,14 @@
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { LiveDay } from '../components/LiveWorld.tsx'
 import { ProblemStage } from '../components/ProblemStage.tsx'
-import { SheetArt, SignalBust } from '../components/SheetArt.tsx'
+import { SheetArt } from '../components/SheetArt.tsx'
 import { firstTopicId } from '../data/curriculum.ts'
 import { questionById } from '../data/questions.ts'
 import { compositeMastery, emptyStats } from '../engine/mastery.ts'
 import { nextCurriculumStep } from '../engine/progress.ts'
 import { buildTestReport } from '../engine/testReady.ts'
-import { SIGNAL_SHEETS, worldMap } from '../data/sheets.ts'
+import { SIGNAL_SHEETS } from '../data/sheets.ts'
 import { linkedWorld, worldForModule } from '../data/worlds.ts'
 import { usePlayerStore } from '../store.ts'
 
@@ -19,7 +20,7 @@ export function TrainPage() {
   if (!session.active && !session.completed) {
     return (
       <div className="px-5 py-8 text-center">
-        <SignalBust className="mx-auto h-48 max-w-xs" />
+        <LiveDay className="mx-auto max-w-sm" />
         <h1 className="type-pack mt-2 text-5xl">15</h1>
         <p className="mt-2 text-sm font-semibold text-ink">{world.adventure}</p>
         <button
@@ -50,7 +51,7 @@ export function TrainPage() {
   return (
     <div className="pb-6">
       <div className="mx-4 mb-3 overflow-hidden rounded-sm border border-white/10">
-        <SheetArt src={worldMap(world.id)} alt={`${world.district} map`} cover className="h-24" />
+        <LiveDay compact />
       </div>
       <div className="mx-4 mb-3 h-1.5 overflow-hidden bg-mist">
         <div className="h-full bg-gold" style={{ width: `${((doneQ + 1) / Math.max(1, totalQ)) * 100}%` }} />
@@ -83,6 +84,7 @@ function Recap({ onLeave, onKeep }: { onLeave: () => void; onKeep: () => void })
 
   return (
     <div className="px-4 pb-8 text-center">
+      <LiveDay className="mx-auto mb-3 max-w-sm" />
       <SheetArt src={SIGNAL_SHEETS.hero} alt="Signal and the Harbor RS" className="mx-auto max-w-sm" />
       <h1 className="type-pack text-5xl">Done</h1>
       <p className="mt-1 text-sm font-semibold text-ink">{world.adventure}</p>
