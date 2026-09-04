@@ -168,9 +168,18 @@ describe('connected adventures', () => {
       expect(world.adventure.length).toBeGreaterThan(8)
       expect(world.carry.length).toBeGreaterThan(4)
       expect(world.handoff.length).toBeGreaterThan(8)
+      expect(world.beats.warmup.length).toBeGreaterThan(8)
+      expect(world.beats.builder.length).toBeGreaterThan(8)
+      expect(world.beats.lab.length).toBeGreaterThan(8)
+      expect(world.beats.boss.length).toBeGreaterThan(8)
+      expect(world.beats.recap.length).toBeGreaterThan(8)
     }
     const names = WORLDS.filter((w) => w.track === 'classroom').map((w) => w.adventure)
     expect(new Set(names).size).toBe(names.length)
+    const warmups = WORLDS.map((w) => w.beats.warmup)
+    const bosses = WORLDS.map((w) => w.beats.boss)
+    expect(new Set(warmups).size).toBe(warmups.length)
+    expect(new Set(bosses).size).toBe(bosses.length)
   })
 
   it('lays pits in a connected circuit and names the carry in coach copy', () => {
@@ -178,8 +187,12 @@ describe('connected adventures', () => {
     expect(pits.length).toBe(classroomChain().length)
     expect(pits.every((p, i) => i === 0 || p.y > pits[i - 1]!.y)).toBe(true)
     const mission = generateDailyMission(seedSkillStats(), parent, new Date('2026-09-04'))
+    expect(mission.title).toMatch(/Balance Bridge · 15/)
     expect(mission.phases[0]?.coachLine).toMatch(/carrying|launch/i)
+    expect(mission.phases[0]?.coachLine).toMatch(/Both sides feel every move/)
     expect(mission.phases[1]?.coachLine).toMatch(/Next pit/)
+    expect(mission.phases[1]?.coachLine).toMatch(/Undo\. Keep the span honest/)
+    expect(mission.phases[3]?.coachLine).toMatch(/Balance the span/)
   })
 
   it('driveTo rolls into the next classroom and grants Open Road', () => {

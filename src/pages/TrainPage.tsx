@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Aero } from '../components/Aero.tsx'
+import { CastPortrait } from '../engine/render/cast/CastPortrait.tsx'
 import { ProblemStage } from '../components/ProblemStage.tsx'
 import { firstTopicId } from '../data/curriculum.ts'
 import { questionById } from '../data/questions.ts'
@@ -12,13 +12,15 @@ import { usePlayerStore } from '../store.ts'
 
 export function TrainPage() {
   const navigate = useNavigate()
-  const { mission, session, resumeOrStart } = usePlayerStore()
+  const { mission, session, resumeOrStart, parent } = usePlayerStore()
+  const world = worldForModule(parent.moduleId)
 
   if (!session.active && !session.completed) {
     return (
       <div className="px-5 py-8 text-center">
-        <Aero className="cast-bob mx-auto h-40" />
+        <CastPortrait className="mx-auto h-44 w-40" framing="waist" />
         <h1 className="type-pack mt-2 text-5xl">15</h1>
+        <p className="mt-2 text-sm font-semibold text-ink">{world.adventure}</p>
         <button
           type="button"
           className="press mt-6 min-h-11 w-full bg-[#0e1a3a] py-4 font-semibold uppercase tracking-[0.12em] text-bone"
@@ -49,6 +51,10 @@ export function TrainPage() {
       <div className="mx-4 mb-3 h-1.5 overflow-hidden bg-mist">
         <div className="h-full bg-gold" style={{ width: `${((doneQ + 1) / Math.max(1, totalQ)) * 100}%` }} />
       </div>
+      <p className="mx-4 mb-2 text-center text-xs font-semibold uppercase tracking-[0.14em] text-ink">
+        {world.name} · {phase.label}
+      </p>
+      <p className="mx-4 mb-3 text-center text-sm font-semibold">{world.beats[phase.phase]}</p>
       <ProblemStage question={q} phaseLabel={phase.label} />
     </div>
   )
@@ -73,14 +79,16 @@ function Recap({ onLeave, onKeep }: { onLeave: () => void; onKeep: () => void })
 
   return (
     <div className="px-4 pb-8 text-center">
-      <Aero
+      <CastPortrait
+        className="mx-auto h-44 w-40"
+        framing="waist"
         mood="cheer"
-        goggles={cosmetics.goggles}
-        hoodie={cosmetics.hoodie}
+        visor={cosmetics.goggles}
+        suit={cosmetics.hoodie}
         kicks={cosmetics.kicks}
-        className="cast-bob mx-auto h-36"
       />
       <h1 className="type-pack text-5xl">Done</h1>
+      <p className="mt-1 text-sm font-semibold text-ink">{world.adventure}</p>
       <p className="mt-2 font-display text-4xl font-semibold">
         {correct}
         <span className="text-lg text-ink"> / {today.length}</span>

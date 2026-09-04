@@ -1,4 +1,5 @@
 import { GameViewport } from '../engine/render/GameViewport.tsx'
+import type { CastMood } from '../engine/render/cast/canon.ts'
 import { worldForModule } from '../data/worlds.ts'
 import { cn } from '../lib/cn.ts'
 
@@ -8,6 +9,10 @@ export function WorldScene({
   paint,
   wheels,
   wing,
+  visor,
+  suit,
+  kicks,
+  mood,
   embed,
 }: {
   moduleId: string
@@ -15,6 +20,10 @@ export function WorldScene({
   paint?: string
   wheels?: string
   wing?: string
+  visor?: string
+  suit?: string
+  kicks?: string
+  mood?: CastMood
   embed?: boolean
 }) {
   const world = worldForModule(moduleId)
@@ -28,7 +37,17 @@ export function WorldScene({
       )}
       aria-hidden
     >
-      <GameViewport districtId={world.id} color={world.color} paint={paint} wheels={wheels} wing={wing} />
+      <GameViewport
+        districtId={world.id}
+        color={world.color}
+        paint={paint}
+        wheels={wheels}
+        wing={wing}
+        visor={visor}
+        suit={suit}
+        kicks={kicks}
+        mood={mood}
+      />
     </div>
   )
 }

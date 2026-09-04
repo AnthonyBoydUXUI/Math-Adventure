@@ -78,15 +78,15 @@ export function generateDailyMission(
       questionIds: warmup.map((q) => q.id),
       label: 'Warm-Up',
       coachLine: prevWorld
-        ? `${world.adventure} You rolled in from ${prevWorld.name} carrying ${world.carry}.`
-        : `${world.adventure} Ground Lab packed the launch. Easy ignition.`,
+        ? `${world.beats.warmup} You rolled in from ${prevWorld.name} carrying ${world.carry}.`
+        : `${world.beats.warmup} Ground Lab packed the launch. Easy ignition.`,
     },
     {
       phase: 'builder',
       minutes: PHASE_MINUTES.builder,
       questionIds: builder.map((q) => q.id),
       label: 'Skill Builder',
-      coachLine: `${world.bridgeLine} Next pit wants: ${world.handoff}`,
+      coachLine: `${world.beats.builder} ${world.bridgeLine} Next pit wants: ${world.handoff}`,
     },
     {
       phase: 'lab',
@@ -94,29 +94,29 @@ export function generateDailyMission(
       questionIds: lab.map((q) => q.id),
       label: 'Test Lab',
       coachLine: report.weakestFormat
-        ? `Same math, different look. Lead with ${report.weakestFormat} — that’s the wrapper tests use.`
-        : 'Same math, different look. Don’t let the wrapper fool you.',
+        ? `${world.beats.lab} Lead with ${report.weakestFormat}.`
+        : world.beats.lab,
     },
     {
       phase: 'boss',
       minutes: PHASE_MINUTES.boss,
       questionIds: boss.map((q) => q.id),
       label: 'Boss Problem',
-      coachLine: 'One meaty item. Write it. Lock it. Walk away proud.',
+      coachLine: world.beats.boss,
     },
     {
       phase: 'recap',
       minutes: PHASE_MINUTES.recap,
       questionIds: [],
       label: 'Recap',
-      coachLine: `Park it. ${world.handoff}`,
+      coachLine: `${world.beats.recap} ${world.handoff}`,
     },
   ]
 
   const classroomName = SKILLS.find((s) => s.id === classroomSkill)?.name ?? 'today’s skill'
   return {
     dateKey: key,
-    title: extra ? `Keep Flying · ${classroomName}` : `Today’s Flight · ${classroomName}`,
+    title: extra ? `Keep going · ${world.name}` : `${world.name} · 15`,
     focusSkillId: classroomSkill,
     foundationSkillId: foundationSkill,
     nextSkillId: nextSkill,

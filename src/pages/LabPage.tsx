@@ -5,7 +5,9 @@ import { SKILLS } from '../data/curriculum.ts'
 import { familiesForSkill, questionById } from '../data/questions.ts'
 import { generateDailyMission, labSequence } from '../engine/session.ts'
 import { buildTestReport } from '../engine/testReady.ts'
+import { worldForModule } from '../data/worlds.ts'
 import { hashString, mulberry32 } from '../lib/hash.ts'
+import { resumeAudio, startAmbient } from '../lib/sfx.ts'
 import { usePlayerStore } from '../store.ts'
 
 export function LabPage() {
@@ -88,6 +90,9 @@ export function LabPage() {
               readinessAtStart: report.readiness,
             },
           })
+          const st = usePlayerStore.getState()
+          void resumeAudio()
+          if (st.soundOn) startAmbient(worldForModule(st.parent.moduleId).id, 'lab')
           navigate('/train')
         }}
       >

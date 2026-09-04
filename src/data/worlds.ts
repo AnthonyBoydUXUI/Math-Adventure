@@ -15,6 +15,14 @@ export interface AdventureWorld {
   adventure: string
   carry: string
   handoff: string
+  /** Short lines for the 15-minute day in this district. */
+  beats: {
+    warmup: string
+    builder: string
+    lab: string
+    boss: string
+    recap: string
+  }
 }
 
 export const WORLDS: AdventureWorld[] = [
@@ -35,6 +43,13 @@ export const WORLDS: AdventureWorld[] = [
     adventure: 'Qualify on the runway. Pace is a rate.',
     carry: 'per-one thinking (unit rate / k)',
     handoff: 'Percent is the same k, wearing /100.',
+    beats: {
+      warmup: 'Taxi. Find the per-one.',
+      builder: 'Hold k. Graphs take off from the origin.',
+      lab: 'Same rate, new wrapper.',
+      boss: 'Qualify the lap. Write the rate.',
+      recap: 'Ticket punched. Percent wears this k.',
+    },
   },
   {
     id: 'market',
@@ -53,6 +68,13 @@ export const WORLDS: AdventureWorld[] = [
     adventure: 'Neon bazaar. Tips, tax, and lap shares.',
     carry: 'part = percent × whole',
     handoff: 'A discount is an integer drop. Drive downstairs.',
+    beats: {
+      warmup: 'Neon is on. Percent is still a rate.',
+      builder: 'Tip, tax, markdown — part of a whole.',
+      lab: 'Same percent, different stall.',
+      boss: 'Close the stall. Write the percent.',
+      recap: 'Discount is an integer drop next.',
+    },
   },
   {
     id: 'belowzero',
@@ -71,6 +93,13 @@ export const WORLDS: AdventureWorld[] = [
     adventure: 'Ice number-line. Position can go below zero.',
     carry: 'integer direction on a line',
     handoff: 'Fractions are the same line with finer ticks.',
+    beats: {
+      warmup: 'Basement line. Direction matters.',
+      builder: 'Add, subtract, stay on the ice.',
+      lab: 'Same integers, new look.',
+      boss: 'Walk the line below zero.',
+      recap: 'Finer ticks wait in Paint Row.',
+    },
   },
   {
     id: 'gallery',
@@ -89,6 +118,13 @@ export const WORLDS: AdventureWorld[] = [
     adventure: 'Paint row. Mix parts of a whole.',
     carry: 'common denominators / rational ops',
     handoff: 'Like terms are the same “units” idea in symbols.',
+    beats: {
+      warmup: 'Mix the canvases. Same whole.',
+      builder: 'Common parts, then operate.',
+      lab: 'Bars, mixed numbers, same paint.',
+      boss: 'Finish the canvas on paper.',
+      recap: 'Like units mesh in Gearworks.',
+    },
   },
   {
     id: 'gearworks',
@@ -107,6 +143,13 @@ export const WORLDS: AdventureWorld[] = [
     adventure: 'Factory gears. Expressions that click.',
     carry: 'simplify before you solve',
     handoff: 'The Balance Bridge only works if both sides are simplified.',
+    beats: {
+      warmup: 'Gears only mesh when units match.',
+      builder: 'Combine like terms. Leave the rest.',
+      lab: 'Same expression, new casing.',
+      boss: 'Simplify before you cross.',
+      recap: 'The bridge needs both sides clean.',
+    },
   },
   {
     id: 'bridge',
@@ -125,6 +168,13 @@ export const WORLDS: AdventureWorld[] = [
     adventure: 'Equation span. Keep both sides honest.',
     carry: 'undo operations / balance',
     handoff: 'Inequalities use the same undos — with a shoreline, not a point.',
+    beats: {
+      warmup: 'Both sides feel every move.',
+      builder: 'Undo. Keep the span honest.',
+      lab: 'Same equation, new wrapper.',
+      boss: 'Write it. Balance the span.',
+      recap: 'Shoreline next — same undos, open circle.',
+    },
   },
   {
     id: 'boundary',
@@ -143,6 +193,13 @@ export const WORLDS: AdventureWorld[] = [
     adventure: 'Coastal inequalities. More-than, less-than.',
     carry: 'inequality direction',
     handoff: 'Scale factor is a ratio from Harbor. Geometry needs it.',
+    beats: {
+      warmup: 'The shore is a cut, not a point.',
+      builder: 'Flip the sign only when you flip sides.',
+      lab: 'Same inequality, new look.',
+      boss: 'Mark the beach. Shade the side.',
+      recap: 'Scale from Harbor waits at the plaza.',
+    },
   },
   {
     id: 'plaza',
@@ -161,6 +218,13 @@ export const WORLDS: AdventureWorld[] = [
     adventure: 'Angle plaza. Scale drawings and pairs.',
     carry: 'scale factor / angle pairs',
     handoff: 'Area scales by the factor squared. Court needs that.',
+    beats: {
+      warmup: 'Harbor’s k is a scale factor here.',
+      builder: 'Pairs and drawings. Keep the ratio.',
+      lab: 'Same figure, new frame.',
+      boss: 'Scale the plaza on paper.',
+      recap: 'Area squares that factor on the court.',
+    },
   },
   {
     id: 'courtcrate',
@@ -179,6 +243,13 @@ export const WORLDS: AdventureWorld[] = [
     adventure: 'Measure yards. Circles, crates, volume.',
     carry: 'area and volume formulas',
     handoff: 'Probability is a fraction of a whole — Gallery again, in a game skin.',
+    beats: {
+      warmup: 'Circle on the court. Crate in the bay.',
+      builder: 'Area, then volume. Don’t mix them.',
+      lab: 'Same measure, new skin.',
+      boss: 'One crate. Write the space.',
+      recap: 'Chance alley uses part over whole.',
+    },
   },
   {
     id: 'arcade',
@@ -197,6 +268,13 @@ export const WORLDS: AdventureWorld[] = [
     adventure: 'Chance alley. Spinners and compound “and”.',
     carry: 'favorable over total',
     handoff: 'A sample is a spinner of people. Station reads the plot.',
+    beats: {
+      warmup: 'Favorable over total. That’s the spin.',
+      builder: 'And means both. Watch the second spin.',
+      lab: 'Same chance, new cabinet.',
+      boss: 'Call the spin. Write the fraction.',
+      recap: 'People are a spinner at the dock.',
+    },
   },
   {
     id: 'station',
@@ -215,6 +293,13 @@ export const WORLDS: AdventureWorld[] = [
     adventure: 'Data dock. Samples that actually represent.',
     carry: 'center, variability, honest samples',
     handoff: 'Linear rate from Harbor + balance from the Bridge = y = mx + b at Peak.',
+    beats: {
+      warmup: 'Does this sample speak for the dock?',
+      builder: 'Center, spread, honest plot.',
+      lab: 'Same data, new chart.',
+      boss: 'Read the sample. Don’t lie.',
+      recap: 'Harbor’s rate plus the bridge is Peak.',
+    },
   },
   {
     id: 'groundlab',
@@ -241,6 +326,13 @@ export const WORLDS: AdventureWorld[] = [
     adventure: 'Precision bay. The RS does not roll without this.',
     carry: 'facts, fractions, multi-step paper',
     handoff: 'Every classroom district uses this as launch fuel.',
+    beats: {
+      warmup: 'Calibrate. No baby math — honest habits.',
+      builder: 'Facts and fractions that keep tests clean.',
+      lab: 'Same habit, new wrapper.',
+      boss: 'Paper first. Then the RS rolls.',
+      recap: 'Every district takes off from here.',
+    },
   },
   {
     id: 'peak',
@@ -257,6 +349,13 @@ export const WORLDS: AdventureWorld[] = [
     adventure: 'Algebra approach. Slope, systems, f(x).',
     carry: 'linear rate + balanced undos',
     handoff: 'This is eighth grade and Algebra I air — same car, higher gear.',
+    beats: {
+      warmup: 'Same RS. Higher air.',
+      builder: 'Slope, systems, f(x).',
+      lab: 'Same linear idea, new look.',
+      boss: 'Write the climb.',
+      recap: 'Eighth and Algebra I. Same car.',
+    },
   },
 ]
 
