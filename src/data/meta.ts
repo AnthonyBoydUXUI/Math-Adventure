@@ -4,7 +4,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
   { id: 'trust-yourself', name: 'Trust Yourself', description: 'Kept a correct answer instead of changing it.', icon: 'lock' },
   { id: 'different-look', name: 'Different Look, Same Math', description: 'Recognized one concept in multiple formats.', icon: 'layers' },
   { id: 'comeback', name: 'Comeback', description: 'Correctly solved a problem after an initial mistake.', icon: 'rotate' },
-  { id: 'locked-in', name: 'Locked In', description: 'Completed five diagnostic-style questions accurately.', icon: 'target' },
+  { id: 'locked-in', name: 'Locked In', description: 'Completed five test-style questions accurately.', icon: 'target' },
   { id: 'paper-work', name: 'Paper Work', description: 'Completed a full problem using written steps.', icon: 'pen' },
   { id: 'flight-complete', name: 'Clean Flight', description: 'Finished a full 15-minute mission.', icon: 'plane' },
   { id: 'open-road', name: 'Open Road', description: 'Drove the RS into the next subject’s adventure.', icon: 'car' },

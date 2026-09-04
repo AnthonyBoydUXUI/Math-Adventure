@@ -1,0 +1,9 @@
+{
+  "appId": "app.aero.math",
+  "appName": "Aero",
+  "webDir": "dist",
+  "ios": {
+    "contentInset": "automatic",
+    "scheme": "Aero"
+  }
+}

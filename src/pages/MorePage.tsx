@@ -23,7 +23,16 @@ export function MorePage() {
           <p className="text-xs font-medium uppercase tracking-widest text-ink">Adults</p>
           <p className="font-display text-2xl font-semibold">Parent desk</p>
         </Link>
+        <Link to="/privacy-center" className="panel press rounded-2xl p-5">
+          <p className="text-xs font-medium uppercase tracking-widest text-ink">Data rights</p>
+          <p className="font-display text-2xl font-semibold">Privacy Center</p>
+        </Link>
       </div>
+      <nav className="mt-5 flex flex-wrap gap-x-4 gap-y-2 text-sm font-semibold text-sky" aria-label="Legal">
+        <Link to="/privacy">Privacy Policy</Link>
+        <Link to="/terms">Terms of Use</Link>
+        <Link to="/support">Support</Link>
+      </nav>
     </div>
   )
 }
@@ -31,7 +40,7 @@ export function MorePage() {
 export function MapPage() {
   const stats = usePlayerStore((s) => s.stats)
   const tracks = [
-    { id: 'classroom', title: 'Classroom', sub: 'Reveal Course 2' },
+    { id: 'classroom', title: 'Classroom', sub: 'Grade 7 course topics' },
     { id: 'foundation', title: 'Foundation', sub: 'Precision, not remediation theater' },
     { id: 'next', title: 'Next Level', sub: '8th + Algebra I peek' },
   ] as const
@@ -87,7 +96,7 @@ export function MapPage() {
         </section>
       ))}
       <p className="mt-6 text-xs font-medium text-ink">
-        Reveal alignment uses original items on Course 2 concepts — never copied pages or publisher banks.
+        Classroom items are original practice on typical Grade 7 topics — not copied pages or publisher banks, and not an official course partnership.
       </p>
       <p className="text-xs font-medium text-ink">{MODULES.length} modules on the classroom spine.</p>
     </div>

@@ -1,8 +1,8 @@
 # Aero · Math Adventure
 
-Fifteen focused minutes a day for a seventh-grader who already thinks mathematically in class and needs that same mind on diagnostics, transfer, and paper.
+Fifteen focused minutes a day for a seventh-grader who already thinks mathematically in class and needs that same mind on timed tests, transfer, and paper.
 
-Aero is a personal coach, a game, a visual lab, and a paper companion — not a remediation worksheet and not an answer key.
+Aero is a personal coach, a game, a visual lab, and a paper companion — not a remediation worksheet, not an answer key, and not a medical or official school diagnosis.
 
 ## Daily flight
 
@@ -15,8 +15,8 @@ Aero is a personal coach, a game, a visual lab, and a paper companion — not a 
 
 ## Three tracks
 
-1. **Classroom** — original items aligned to McGraw Hill Reveal Math Course 2 concepts (never copied pages or publisher banks)
-2. **Foundation** — precision work on recommended gaps, without treating a diagnostic as a grade-level identity
+1. **Classroom** — original items on typical Grade 7 course topics (never copied pages or publisher banks; not an official partnership)
+2. **Foundation** — precision work on recommended gaps, without treating a practice score as a grade-level identity
 3. **Next Level** — 8th grade and Algebra I ideas when mastery says go
 
 ## Run
@@ -31,7 +31,11 @@ Then open the printed local URL. On a phone-sized viewport the library covers, H
 
 ## Adventures that connect
 
-Each Reveal module is a district (Ratio Runway, Tip Market, Balance Bridge…). Warm-ups pull a bridge skill from the previous district so the next subject is not a reset.
+Each classroom module is a district (Ratio Runway, Tip Market, Balance Bridge…). Warm-ups pull a bridge skill from the previous district so the next subject is not a reset.
+
+## App Store readiness
+
+Aero is written to ship as an iOS Education app for students 12+ (not Kids Category). First launch is a parent / student-12+ gate. Privacy, Terms, and Support exist in-app and as static pages (`/privacy.html`, `/terms.html`, `/support.html`) so App Store Connect URLs work without JavaScript. Privacy Center exports or deletes the on-device save. See `APP_STORE.md` and `native/ios/README.md`.
 
 ## Vercel
 
@@ -54,7 +58,7 @@ Aero is a **static Vite app**. There is no server, no API, and no Supabase (or a
 | What | Where it lives |
 | --- | --- |
 | Questions, curriculum, worlds | Bundled TypeScript (`src/data/`) |
-| Adaptive session, diagnosis, scoring | Client engine (`src/engine/`) |
+| Adaptive session, practice feedback, scoring | Client engine (`src/engine/`) |
 | XP, streak, mastery, cosmetics, parent settings | Browser `localStorage` via Zustand persist (`aero-math-adventure`) |
 | Voice | Browser Speech Synthesis / Speech Recognition |
 | Homework photos | Data URLs stored locally in that same persist blob |
@@ -70,11 +74,11 @@ That is enough for one student on one device (phone or laptop). Clearing site da
 
 When that day comes, Supabase (Auth + one `profiles` / `attempts` table) is the right add. The store is already a single `PlayerStore` blob, so a later sync layer can upsert that JSON per user without rewriting the math engine. Until then, extra backend would not change how the 15-minute session works.
 
-Test Lab writes the same attempt log. The **test-readiness** readout (transfer, lock-in, paper habit, weakest wrapper) is computed from those plays so diagnostics get a plan, not just XP. If Supabase is added later, sync that attempt log — the report is derived, not a second source of truth.
+Test Lab writes the same attempt log. The **test-readiness** readout (transfer, lock-in, paper habit, weakest wrapper) is computed from those plays so timed-test wrappers get a plan, not just XP. If Supabase is added later, sync that attempt log — the report is derived, not a second source of truth.
 
 ## Parent desk
 
-Choose Reveal Math → Module → Topic. That week’s flight overweight that concept. Upload a class page photo to keep the coach pointed at the right room.
+Choose this week’s Grade 7 module and topic. That week’s flight overweight that concept. Upload a class page photo (it stays on this device) to keep the coach pointed at the right room.
 
 ## Voice
 

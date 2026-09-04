@@ -20,7 +20,7 @@ export function LabPage() {
     <div className="px-4 pb-8">
       <h1 className="font-display text-4xl font-semibold tracking-tight">Test Lab</h1>
       <p className="mt-1 font-medium text-ink">
-        Same math, different look — the move diagnostics actually make. We save every lab play so the next test wrapper is the one you still miss.
+        Same math, different look — the move timed tests actually make. We save every lab play so the next test wrapper is the one you still miss.
       </p>
       <div className="mt-4">
         <TestReadinessCard />

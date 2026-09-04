@@ -8,14 +8,18 @@ import { evaluateAchievements, xpForAttempt } from './engine/scoring.ts'
 import { generateDailyMission } from './engine/session.ts'
 import { resumeAudio, setMuted, sfx, startAmbient, stopAmbient } from './lib/sfx.ts'
 import { worldForModule } from './data/worlds.ts'
+import { clearLocalArchive } from './lib/archive.ts'
 import { checkAnswer } from './lib/answers.ts'
+import { haptic } from './lib/haptics.ts'
 import { dayKey } from './lib/hash.ts'
 import type {
   AttemptRecord,
+  ComplianceState,
   DailyMission,
   Diagnosis,
   DimensionStats,
   ParentSettings,
+  PermissionState,
   PlayerCosmetics,
   Theme,
 } from './types.ts'
@@ -65,6 +69,11 @@ interface PlayerStore {
   session: SessionSlice
   toast?: string
   soundOn: boolean
+  compliance: ComplianceState
+  permissions: PermissionState
+  acknowledgeCompliance: (role: NonNullable<ComplianceState['role']>) => void
+  markPermissionExplained: (kind: 'camera' | 'mic') => void
+  wipeLocalData: () => void
   startFlight: (extra?: boolean) => void
   setDraft: (value: string) => void
   useHint: () => void
@@ -91,7 +100,18 @@ const defaultParent: ParentSettings = {
   topicId: 'm6-t1',
   themes: ['basketball', 'art', 'sky', 'gaming'],
   pressureLab: false,
-  studentName: 'Copilot',
+  studentName: '',
+}
+
+const defaultCompliance: ComplianceState = {
+  acknowledgedAt: null,
+  ageBand: null,
+  role: null,
+}
+
+const defaultPermissions: PermissionState = {
+  cameraExplained: false,
+  micExplained: false,
 }
 
 function freshSession(): SessionSlice {
@@ -161,7 +181,7 @@ function grantOpenRoad(get: () => PlayerStore, set: PlayerStoreSetter) {
 export const usePlayerStore = create<PlayerStore>()(
   persist(
     (set, get) => ({
-      studentName: 'Copilot',
+      studentName: '',
       xp: 0,
       sparks: 40,
       streak: 0,
@@ -183,6 +203,28 @@ export const usePlayerStore = create<PlayerStore>()(
       session: freshSession(),
       toast: undefined,
       soundOn: true,
+      compliance: defaultCompliance,
+      permissions: defaultPermissions,
+      acknowledgeCompliance: (role) =>
+        set({
+          compliance: {
+            acknowledgedAt: Date.now(),
+            ageBand: '12plus',
+            role,
+          },
+        }),
+      markPermissionExplained: (kind) =>
+        set((s) => ({
+          permissions: {
+            ...s.permissions,
+            ...(kind === 'camera' ? { cameraExplained: true } : { micExplained: true }),
+          },
+        })),
+      wipeLocalData: () => {
+        clearLocalArchive()
+        usePlayerStore.persist.clearStorage()
+        window.location.assign('/')
+      },
       startFlight: (extra = false) => {
         const s = get()
         void resumeAudio()
@@ -374,8 +416,13 @@ export const usePlayerStore = create<PlayerStore>()(
           },
           toast: newAch[0] ? `Achievement unlocked` : undefined,
         })
-        if (finalCorrect) sfx.correct()
-        else sfx.miss()
+        if (finalCorrect) {
+          sfx.correct()
+          haptic('success')
+        } else {
+          sfx.miss()
+          haptic('warn')
+        }
         if (newAch[0]) sfx.xp()
       },
       nextItem: () => {
@@ -456,15 +503,31 @@ export const usePlayerStore = create<PlayerStore>()(
     }),
     {
       name: 'aero-math-adventure',
-      version: 3,
-      migrate: (persisted) => persisted as PlayerStore,
+      version: 4,
+      migrate: (persisted, version) => {
+        const s = { ...((persisted ?? {}) as Record<string, unknown>) }
+        if (version < 4) {
+          const parent = { ...((s.parent as ParentSettings | undefined) ?? defaultParent) }
+          if (parent.studentName === 'Copilot') parent.studentName = ''
+          s.parent = parent
+          if (s.studentName === 'Copilot') s.studentName = ''
+          s.compliance = { ...defaultCompliance }
+          s.permissions = { ...defaultPermissions }
+        }
+        return s as unknown as PlayerStore
+      },
       merge: (persisted, current) => {
         const p = (persisted ?? {}) as Partial<PlayerStore>
+        const parent = { ...current.parent, ...(p.parent ?? {}) }
+        if (parent.studentName === 'Copilot') parent.studentName = ''
         return {
           ...current,
           ...p,
+          studentName: p.studentName === 'Copilot' ? '' : (p.studentName ?? current.studentName),
           cosmetics: normalizeCosmetics({ ...current.cosmetics, ...(p.cosmetics ?? {}) }),
-          parent: { ...current.parent, ...(p.parent ?? {}) },
+          parent,
+          compliance: { ...current.compliance, ...(p.compliance ?? {}) },
+          permissions: { ...current.permissions, ...(p.permissions ?? {}) },
         }
       },
     },

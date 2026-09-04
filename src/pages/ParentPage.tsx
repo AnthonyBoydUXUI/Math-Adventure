@@ -1,3 +1,4 @@
+import { MediaCapture } from '../components/MediaCapture.tsx'
 import { MODULES } from '../data/curriculum.ts'
 import { THEMES } from '../types.ts'
 import { usePlayerStore } from '../store.ts'
@@ -12,7 +13,7 @@ export function ParentPage() {
     <div className="px-4 pb-8">
       <h1 className="font-display text-4xl font-semibold tracking-tight">Parent desk</h1>
       <p className="mt-1 font-bold text-navy/65">
-        Point Aero at this week’s Reveal Math topic. The 15-minute plan will overweight it — without copying the book.
+        Point Aero at this week’s Grade 7 classroom topic. The 15-minute plan will overweight it — original items, not a copied book.
       </p>
 
       <label className="mt-4 block text-xs font-extrabold uppercase tracking-widest text-navy/45">Student name</label>
@@ -20,10 +21,12 @@ export function ParentPage() {
         value={parent.studentName}
         onChange={(e) => setParent({ studentName: e.target.value })}
         className="mt-1 w-full rounded-2xl border border-white/10 bg-white px-3 py-3 font-extrabold"
+        placeholder="Optional — stays on this device"
+        autoComplete="nickname"
       />
 
       <label className="mt-4 block text-xs font-extrabold uppercase tracking-widest text-navy/45">
-        Reveal Math · Course 2
+        Grade 7 course topics
       </label>
       <select
         className="mt-1 w-full rounded-2xl border border-white/10 bg-white px-3 py-3 font-extrabold"
@@ -87,7 +90,7 @@ export function ParentPage() {
         <TestReadinessCard />
       </div>
       <p className="mt-3 text-sm font-medium text-ink">
-        Classwork and diagnostics are different wrappers. This readout uses Test Lab + boss plays — not a grade-level label.
+        Classwork and timed tests are different wrappers. This lab snapshot uses Test Lab + boss plays — not a grade-level label or medical diagnosis.
       </p>
       <ul className="mt-2 space-y-2 text-sm font-bold text-navy/70">
         <li className="rounded-2xl bg-white p-3">Overall 440 is a starting prior — not “fourth grade.”</li>
@@ -98,21 +101,11 @@ export function ParentPage() {
         </li>
       </ul>
 
-      <label className="mt-5 inline-flex rounded-2xl border border-white/10 bg-white px-3 py-2 text-sm font-extrabold">
-        Upload a class page photo
-        <input
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={(e) => {
-            const file = e.target.files?.[0]
-            if (!file) return
-            const reader = new FileReader()
-            reader.onload = () => setParent({ pagePhoto: String(reader.result) })
-            reader.readAsDataURL(file)
-          }}
-        />
-      </label>
+      <MediaCapture
+        className="press mt-5 inline-flex min-h-11 items-center rounded-2xl border border-white/10 bg-white px-3 text-sm font-extrabold"
+        label="Upload a class page photo"
+        onPhoto={(url) => setParent({ pagePhoto: url })}
+      />
       {parent.pagePhoto ? (
         <img src={parent.pagePhoto} alt="Class page" className="mt-3 max-h-40 rounded-2xl border border-white/10 object-cover" />
       ) : null}

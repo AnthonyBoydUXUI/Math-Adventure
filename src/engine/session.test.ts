@@ -220,6 +220,29 @@ describe('test readiness', () => {
     const seq = labSequence('hoodie-equation', () => 0.2, 'mcq')
     expect(seq[0]?.format).toBe('mcq')
   })
+
+  it('keeps empty-state copy from sounding like a medical or official diagnosis', () => {
+    expect(buildTestReport([]).testDayLine).not.toMatch(/diagnostic/i)
+  })
+})
+
+describe('App Store compliance store', () => {
+  it('does not ship a Copilot placeholder name', () => {
+    expect(usePlayerStore.getState().studentName).not.toBe('Copilot')
+    expect(usePlayerStore.getState().parent.studentName).not.toBe('Copilot')
+    expect(usePlayerStore.getState().compliance.acknowledgedAt).toBeNull()
+  })
+
+  it('records a 12+ acknowledgement', () => {
+    usePlayerStore.getState().acknowledgeCompliance('parent')
+    const c = usePlayerStore.getState().compliance
+    expect(c.role).toBe('parent')
+    expect(c.ageBand).toBe('12plus')
+    expect(c.acknowledgedAt).toBeGreaterThan(0)
+    usePlayerStore.setState({
+      compliance: { acknowledgedAt: null, ageBand: null, role: null },
+    })
+  })
 })
 
 function attempt(

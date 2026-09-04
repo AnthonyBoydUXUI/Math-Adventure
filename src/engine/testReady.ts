@@ -36,7 +36,7 @@ export function buildTestReport(attempts: AttemptRecord[]): TestReport {
       paperHabit: 0,
       formats: [],
       drillLine: 'Run Test Lab once. We split slips vs gaps vs format vs nerves — that is what the real test hits.',
-      testDayLine: 'Class strength does not automatically show up on a diagnostic. Same math, different look.',
+      testDayLine: 'Class strength does not automatically show up on a timed test. Same math, different look.',
     }
   }
 

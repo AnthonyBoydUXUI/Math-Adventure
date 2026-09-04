@@ -275,6 +275,17 @@ export interface ParentSettings {
   pageNote?: string
 }
 
+export interface ComplianceState {
+  acknowledgedAt: number | null
+  ageBand: '12plus' | null
+  role: 'parent' | 'student12' | null
+}
+
+export interface PermissionState {
+  cameraExplained: boolean
+  micExplained: boolean
+}
+
 export type VoiceIntent =
   | 'confused'
   | 'another_way'

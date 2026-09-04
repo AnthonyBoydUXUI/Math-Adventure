@@ -1,4 +1,5 @@
 import { Camera, PenLine } from 'lucide-react'
+import { MediaCapture } from './MediaCapture.tsx'
 import { DIAGNOSIS_COPY } from '../engine/diagnosis.ts'
 import { compositeMastery, emptyStats } from '../engine/mastery.ts'
 import { formatAnswer } from '../lib/answers.ts'
@@ -199,23 +200,17 @@ export function ProblemStage({ question, phaseLabel }: { question: Question; pha
           >
             I wrote it
           </button>
-          <label className="flex cursor-pointer items-center gap-1 rounded-full border border-white/15 px-3 py-1 text-xs font-medium">
-            <Camera className="h-3.5 w-3.5" />
-            Photo
-            <input
-              type="file"
-              accept="image/*"
-              capture="environment"
-              className="hidden"
-              onChange={(e) => {
-                const file = e.target.files?.[0]
-                if (!file) return
-                const reader = new FileReader()
-                reader.onload = () => setPhoto(String(reader.result))
-                reader.readAsDataURL(file)
-              }}
-            />
-          </label>
+          <MediaCapture
+            capture
+            onPhoto={setPhoto}
+            className="flex min-h-11 items-center gap-1 rounded-full border border-white/15 px-3 text-xs font-medium"
+            label={
+              <>
+                <Camera className="h-3.5 w-3.5" />
+                Photo
+              </>
+            }
+          />
         </div>
         {session.hints > 0 ? (
           <p className="mt-2 rounded-xl bg-mist px-3 py-2 text-sm font-bold">{question.hints[Math.min(session.hints, question.hints.length) - 1]}</p>

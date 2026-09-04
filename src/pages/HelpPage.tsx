@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { MediaCapture } from '../components/MediaCapture.tsx'
 import { Scoreboard } from '../components/Scoreboard.tsx'
 import { questionById } from '../data/questions.ts'
 import { buildHomeworkPlan, homeworkFeedback } from '../engine/homework.ts'
@@ -26,29 +27,18 @@ export function HelpPage() {
         value={raw}
         onChange={(e) => setRaw(e.target.value)}
         rows={4}
-        placeholder="Paste the problem, or describe the Reveal Math page…"
+        placeholder="Paste the problem, or describe this week’s class page…"
         className="mt-4 w-full rounded-2xl border border-white/10 bg-white px-3 py-3 font-bold outline-none"
       />
-      <label className="mt-2 inline-flex cursor-pointer rounded-2xl border border-white/10 bg-white px-3 py-2 text-sm font-extrabold">
-        Photograph the page
-        <input
-          type="file"
-          accept="image/*"
-          capture="environment"
-          className="hidden"
-          onChange={(e) => {
-            const file = e.target.files?.[0]
-            if (!file) return
-            const reader = new FileReader()
-            reader.onload = () => {
-              const url = String(reader.result)
-              setPhoto(url)
-              setParent({ pagePhoto: url, pageNote: raw })
-            }
-            reader.readAsDataURL(file)
-          }}
-        />
-      </label>
+      <MediaCapture
+        capture
+        className="press mt-2 inline-flex min-h-11 items-center rounded-2xl border border-white/10 bg-white px-3 text-sm font-extrabold"
+        label="Photograph the page"
+        onPhoto={(url) => {
+          setPhoto(url)
+          setParent({ pagePhoto: url, pageNote: raw })
+        }}
+      />
       {photo ? <img src={photo} alt="Uploaded work" className="mt-3 max-h-48 rounded-2xl border border-white/10 object-cover" /> : null}
       <button
         type="button"

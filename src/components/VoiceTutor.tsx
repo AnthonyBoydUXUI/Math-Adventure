@@ -1,8 +1,10 @@
 import { useMemo, useState } from 'react'
+import { MIC_PREAMBLE } from '../content/legal.ts'
 import { createVoiceProvider, parseVoice } from '../engine/voice/index.ts'
 import { cn } from '../lib/cn.ts'
 import { usePlayerStore } from '../store.ts'
 import type { Question } from '../types.ts'
+import { PermissionSheet } from './PermissionSheet.tsx'
 
 const provider = createVoiceProvider('browser')
 
@@ -14,8 +16,10 @@ export function VoiceTutor({
   onAnswer?: (value: string) => void
 }) {
   const markVoice = usePlayerStore((s) => s.markVoice)
+  const markPermissionExplained = usePlayerStore((s) => s.markPermissionExplained)
   const [open, setOpen] = useState(false)
   const [hearing, setHearing] = useState(false)
+  const [askMic, setAskMic] = useState(false)
   const [line, setLine] = useState('Say “I don’t get this” or “I got 24.”')
   const support = useMemo(() => provider.supported(), [])
 
@@ -56,6 +60,10 @@ export function VoiceTutor({
       setLine('Voice in is off on this browser. Type instead.')
       return
     }
+    if (!usePlayerStore.getState().permissions.micExplained) {
+      setAskMic(true)
+      return
+    }
     setHearing(true)
     provider.listen((text, isFinal) => {
       if (!isFinal) setLine(text)
@@ -83,7 +91,7 @@ export function VoiceTutor({
             <button
               type="button"
               className={cn(
-                'press flex-1 rounded-xl py-2 text-sm font-semibold text-white',
+                'press min-h-11 flex-1 rounded-xl py-2 text-sm font-semibold text-white',
                 hearing ? 'bg-goggle' : 'bg-chrome',
               )}
               onClick={listen}
@@ -104,6 +112,19 @@ export function VoiceTutor({
             <p className="text-xs font-bold text-navy/50">Mic needs Chrome/Safari HTTPS. Speech still plays.</p>
           ) : null}
         </div>
+      ) : null}
+      {askMic ? (
+        <PermissionSheet
+          title="Microphone stays on this device"
+          body={MIC_PREAMBLE}
+          confirmLabel="Start listening"
+          onConfirm={() => {
+            markPermissionExplained('mic')
+            setAskMic(false)
+            requestAnimationFrame(listen)
+          }}
+          onCancel={() => setAskMic(false)}
+        />
       ) : null}
     </div>
   )
