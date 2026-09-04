@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Aero } from '../components/Aero.tsx'
+import { CastPortrait } from '../engine/render/cast/CastPortrait.tsx'
 import { ProblemStage } from '../components/ProblemStage.tsx'
 import { firstTopicId } from '../data/curriculum.ts'
 import { questionById } from '../data/questions.ts'
@@ -17,7 +17,7 @@ export function TrainPage() {
   if (!session.active && !session.completed) {
     return (
       <div className="px-5 py-8 text-center">
-        <Aero className="cast-bob mx-auto h-40" />
+        <CastPortrait className="mx-auto h-44 w-40" framing="waist" />
         <h1 className="type-pack mt-2 text-5xl">15</h1>
         <button
           type="button"
@@ -73,12 +73,13 @@ function Recap({ onLeave, onKeep }: { onLeave: () => void; onKeep: () => void })
 
   return (
     <div className="px-4 pb-8 text-center">
-      <Aero
+      <CastPortrait
+        className="mx-auto h-44 w-40"
+        framing="waist"
         mood="cheer"
-        goggles={cosmetics.goggles}
-        hoodie={cosmetics.hoodie}
+        visor={cosmetics.goggles}
+        suit={cosmetics.hoodie}
         kicks={cosmetics.kicks}
-        className="cast-bob mx-auto h-36"
       />
       <h1 className="type-pack text-5xl">Done</h1>
       <p className="mt-2 font-display text-4xl font-semibold">

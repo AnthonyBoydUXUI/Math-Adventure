@@ -1,6 +1,5 @@
 import { Play } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { Aero, FieldCast } from '../components/Aero.tsx'
 import { WeekStrip } from '../components/WeekStrip.tsx'
 import { WindowBox } from '../components/WindowBox.tsx'
 import { WorldScene } from '../components/WorldScene.tsx'
@@ -35,16 +34,12 @@ export function HomePage() {
             paint={cosmetics.paint}
             wheels={cosmetics.wheels}
             wing={cosmetics.wing}
-          />
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#070910] via-[#070910]/15 to-transparent" />
-          <FieldCast className="cast-bob pointer-events-none absolute bottom-16 left-2 h-36 w-24 opacity-90" />
-          <Aero
-            mood={mood}
-            goggles={cosmetics.goggles}
-            hoodie={cosmetics.hoodie}
+            visor={cosmetics.goggles}
+            suit={cosmetics.hoodie}
             kicks={cosmetics.kicks}
-            className="cast-bob pointer-events-none absolute bottom-8 right-2 h-44 w-36"
+            mood={mood}
           />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#070910] via-transparent to-transparent" />
           <div className="relative flex min-h-[320px] flex-col justify-end px-4 pb-5 pt-10">
             <h1 className="type-pack text-[44px]">{world.name}</h1>
             <p className="mt-1 text-sm font-semibold text-white/80">{focus?.name}</p>

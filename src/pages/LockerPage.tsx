@@ -1,4 +1,3 @@
-import { Aero } from '../components/Aero.tsx'
 import { WindowBox } from '../components/WindowBox.tsx'
 import { WorldScene } from '../components/WorldScene.tsx'
 import { ACHIEVEMENTS, COSMETICS } from '../data/meta.ts'
@@ -20,13 +19,10 @@ export function LockerPage() {
             paint={cosmetics.paint}
             wheels={cosmetics.wheels}
             wing={cosmetics.wing}
-            className="h-64"
-          />
-          <Aero
-            goggles={cosmetics.goggles}
-            hoodie={cosmetics.hoodie}
+            visor={cosmetics.goggles}
+            suit={cosmetics.hoodie}
             kicks={cosmetics.kicks}
-            className="pointer-events-none absolute bottom-0 right-2 h-48 w-40"
+            className="h-64"
           />
         </div>
       </WindowBox>
