@@ -86,7 +86,7 @@ export function GameViewport({
           infiniteGrid
         />
         <DistrictKit id={districtId} color={night} />
-        <group position={[-0.7, 0, 0.32]}>
+        <group position={[-0.58, 0, 0.38]} rotation={[0, 0.55, 0]}>
           <CastHero mood={mood} visor={visor} suit={suit} kicks={kicks} quality="play" />
         </group>
         <Chassis paint={paint} wheels={wheels} wing={wing} />

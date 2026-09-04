@@ -1,4 +1,5 @@
 import { useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { Decal } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { SRGBColorSpace, TextureLoader, type Group, type Texture } from 'three'
 import { CAST_HEAD, CAST_Y, kickHex, suitHex, visorHex, type CastLook, type CastMood, type CastRole } from './canon.ts'
@@ -31,46 +32,44 @@ function useFaceMap() {
   return map
 }
 
-function Face({ mood, quality }: { mood: CastMood; quality: CastLook['quality'] }) {
+function Face({
+  mood,
+  quality,
+  map,
+}: {
+  mood: CastMood
+  quality: CastLook['quality']
+  map: Texture | null
+}) {
   const expr = faceFor(mood)
-  const map = useFaceMap()
-  const n = segs(quality)
   return (
-    <group position={[0, H * 0.02, H * 0.34]}>
+    <group>
       {map ? (
-        <mesh>
-          <planeGeometry args={[H * 0.72, H * 0.78]} />
+        <Decal position={[0, H * 0.02, H * 0.22]} rotation={[0, 0, 0]} scale={[H * 0.62, H * 0.68, H * 0.28]}>
           <meshPhysicalMaterial
             map={map}
-            roughness={0.48}
+            roughness={0.46}
             metalness={0.02}
-            sheen={0.28}
-            sheenColor="#e8b892"
-            clearcoat={0.06}
-            clearcoatRoughness={0.8}
+            polygonOffset
+            polygonOffsetFactor={-4}
           />
-        </mesh>
-      ) : (
-        <mesh scale={[1.05, 1.15, 0.55]}>
-          <sphereGeometry args={[H * 0.28, n, n]} />
-          <Skin />
-        </mesh>
-      )}
+        </Decal>
+      ) : null}
       <mesh
-        position={[0, H * 0.12 + expr.browY * H * 0.15, 0.012]}
-        scale={[1, Math.max(0.15, 1.15 - expr.lid + expr.squint), 1]}
+        position={[0, H * 0.16 + expr.browY * H * 0.1, H * 0.3]}
+        scale={[1, Math.max(0.12, 1.05 - expr.lid + expr.squint * 0.6), 1]}
       >
-        <boxGeometry args={[H * 0.7, H * 0.16, H * 0.04]} />
+        <boxGeometry args={[H * 0.55, H * 0.1, H * 0.06]} />
         <Skin />
       </mesh>
       {quality !== 'far' && (
         <>
-          <mesh position={[-H * 0.14, H * 0.2 + expr.browY * H, 0.02]} rotation={[0, 0, 0.18 + expr.browIn * 0.25]}>
-            <boxGeometry args={[H * 0.2, H * 0.03, H * 0.03]} />
+          <mesh position={[-H * 0.13, H * 0.2 + expr.browY * H, H * 0.32]} rotation={[0, 0, 0.16 + expr.browIn * 0.25]}>
+            <boxGeometry args={[H * 0.18, H * 0.028, H * 0.03]} />
             <meshStandardMaterial color="#1a1210" roughness={0.55} />
           </mesh>
-          <mesh position={[H * 0.14, H * 0.2 + expr.browY * H, 0.02]} rotation={[0, 0, -0.18 - expr.browIn * 0.25]}>
-            <boxGeometry args={[H * 0.2, H * 0.03, H * 0.03]} />
+          <mesh position={[H * 0.13, H * 0.2 + expr.browY * H, H * 0.32]} rotation={[0, 0, -0.16 - expr.browIn * 0.25]}>
+            <boxGeometry args={[H * 0.18, H * 0.028, H * 0.03]} />
             <meshStandardMaterial color="#1a1210" roughness={0.55} />
           </mesh>
         </>
@@ -129,17 +128,23 @@ function Head({
   quality: CastLook['quality']
 }) {
   const n = segs(quality)
+  const map = useFaceMap()
   return (
     <group position={[0, CAST_Y.head, 0]}>
-      <mesh castShadow scale={[0.92, 1.08, 0.78]}>
+      <mesh castShadow scale={[0.92, 1.08, 0.8]}>
         <sphereGeometry args={[H * 0.42, n + 4, n]} />
         <Skin />
+        {map ? (
+          <Decal position={[0, H * 0.02, H * 0.28]} rotation={[0, 0, 0]} scale={[H * 0.78, H * 0.86, H * 0.36]}>
+            <meshPhysicalMaterial map={map} roughness={0.46} metalness={0.02} polygonOffset polygonOffsetFactor={-4} />
+          </Decal>
+        ) : null}
       </mesh>
-      <mesh position={[0, -H * 0.18, H * 0.12]} scale={[0.72, 0.45, 0.55]}>
+      <Face mood={mood} quality={quality} map={null} />
+      <mesh position={[0, -H * 0.18, H * 0.1]} scale={[0.72, 0.45, 0.55]}>
         <sphereGeometry args={[H * 0.28, n, 10]} />
         <Skin />
       </mesh>
-      <Face mood={mood} quality={quality} />
       <mesh position={[-H * 0.2, H * 0.08, H * 0.3]} rotation={[0.1, 0.35, 0.1]}>
         <boxGeometry args={[H * 0.07, H * 0.035, H * 0.025]} />
         <meshPhysicalMaterial
@@ -292,7 +297,7 @@ export function CastFigure({
   const left = armPose(mood, -1)
   const right = armPose(mood, 1)
   const lean = mood === 'lockin' || mood === 'focus' ? 0.12 : mood === 'think' ? 0.04 : mood === 'cheer' ? -0.03 : 0
-  const turn = useMemo(() => (quality === 'close' ? -0.22 : -0.48), [quality])
+  const turn = useMemo(() => (quality === 'close' ? -0.18 : -0.85), [quality])
 
   useFrame((state) => {
     const g = root.current
