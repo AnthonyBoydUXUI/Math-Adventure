@@ -18,7 +18,7 @@ export function HelpPage() {
 
   return (
     <div className="px-4 pb-8">
-      <h1 className="font-display text-4xl font-extrabold">Help me with this</h1>
+      <h1 className="font-display text-4xl font-semibold tracking-tight">Assist</h1>
       <p className="mt-1 font-bold text-navy/65">
         Type, paste, or photograph a worksheet. We name the concept and coach — we don’t dump the answer.
       </p>
@@ -27,9 +27,9 @@ export function HelpPage() {
         onChange={(e) => setRaw(e.target.value)}
         rows={4}
         placeholder="Paste the problem, or describe the Reveal Math page…"
-        className="mt-4 w-full rounded-2xl border-2 border-navy bg-white px-3 py-3 font-bold outline-none"
+        className="mt-4 w-full rounded-2xl border border-white/10 bg-white px-3 py-3 font-bold outline-none"
       />
-      <label className="mt-2 inline-flex cursor-pointer rounded-2xl border-2 border-navy bg-white px-3 py-2 text-sm font-extrabold">
+      <label className="mt-2 inline-flex cursor-pointer rounded-2xl border border-white/10 bg-white px-3 py-2 text-sm font-extrabold">
         Photograph the page
         <input
           type="file"
@@ -49,10 +49,10 @@ export function HelpPage() {
           }}
         />
       </label>
-      {photo ? <img src={photo} alt="Uploaded work" className="mt-3 max-h-48 rounded-2xl border-2 border-navy object-cover" /> : null}
+      {photo ? <img src={photo} alt="Uploaded work" className="mt-3 max-h-48 rounded-2xl border border-white/10 object-cover" /> : null}
       <button
         type="button"
-        className="press mt-4 w-full rounded-2xl border-2 border-navy bg-sky py-3 font-extrabold text-white"
+        className="press mt-4 w-full rounded-xl bg-sky py-3 font-semibold text-chrome"
         onClick={() => {
           const next = buildHomeworkPlan(raw || 'multi-step word problem from a photo')
           setPlan(next)
@@ -66,7 +66,7 @@ export function HelpPage() {
       </button>
 
       {plan ? (
-        <div className="mt-5 space-y-3 rounded-[28px] border-2 border-navy bg-white p-4">
+        <div className="mt-5 space-y-3 panel rounded-2xl p-4">
           <p className="text-xs font-extrabold uppercase tracking-widest text-sky">Identified</p>
           <h2 className="font-display text-2xl font-extrabold">{plan.concept}</h2>
           <Scoreboard kind={plan.scoreboard} mastery={40} />
@@ -80,7 +80,7 @@ export function HelpPage() {
           {step < 3 ? (
             <button
               type="button"
-              className="press w-full rounded-2xl border-2 border-navy bg-navy py-3 font-extrabold text-white"
+              className="press w-full rounded-xl bg-sky py-3 font-semibold text-chrome"
               onClick={() => setStep((s) => s + 1)}
             >
               Next prompt
@@ -91,11 +91,11 @@ export function HelpPage() {
                 value={attempt}
                 onChange={(e) => setAttempt(e.target.value)}
                 placeholder="Enter your attempt (not a guess-only)"
-                className="w-full rounded-2xl border-2 border-navy bg-cream px-3 py-3 font-extrabold"
+                className="w-full rounded-2xl border border-white/10 bg-cream px-3 py-3 font-extrabold"
               />
               <button
                 type="button"
-                className="press w-full rounded-2xl border-2 border-navy bg-leaf py-3 font-extrabold text-white"
+                className="press w-full rounded-xl bg-leaf py-3 font-semibold text-chrome"
                 onClick={() => {
                   const fb = homeworkFeedback(plan, attempt)
                   setFeedback(fb.line)

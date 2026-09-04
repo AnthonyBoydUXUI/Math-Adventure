@@ -1,7 +1,6 @@
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ProblemStage } from '../components/ProblemStage.tsx'
-import { Aero } from '../components/Aero.tsx'
 import { RaceCar } from '../components/RaceCar.tsx'
 import { firstTopicId, skillById } from '../data/curriculum.ts'
 import { DIAGNOSIS_COPY } from '../engine/diagnosis.ts'
@@ -13,21 +12,21 @@ import { DIMENSIONS } from '../types.ts'
 
 export function TrainPage() {
   const navigate = useNavigate()
-  const { mission, session, startFlight, completeRecap, cosmetics } = usePlayerStore()
+  const { mission, session, startFlight, completeRecap } = usePlayerStore()
 
   if (!session.active && !session.completed) {
     return (
-      <div className="px-5 py-8 text-center">
-        <Aero className="mx-auto h-40" mood="lockin" goggles={cosmetics.goggles} hoodie={cosmetics.hoodie} kicks={cosmetics.kicks} />
-        <h1 className="font-display text-4xl font-extrabold">15-minute flight</h1>
-        <p className="mt-2 font-bold text-navy/65">{mission.title}</p>
-        <p className="mt-1 text-sm font-bold text-navy/50">Warm-up 3 · Builder 4 · Lab 4 · Boss 3 · Recap 1</p>
+      <div className="px-5 py-8">
+        <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-ink">Session</p>
+        <h1 className="mt-2 font-display text-4xl font-semibold tracking-tight">15-minute run</h1>
+        <p className="mt-2 font-medium text-ink">{mission.title}</p>
+        <p className="mt-1 text-sm font-medium text-ink">Ignition 3 · Build 4 · Lab 4 · Boss 3 · Debrief 1</p>
         <button
           type="button"
-          className="press mt-6 w-full rounded-2xl border-2 border-navy bg-pink py-4 font-extrabold text-white"
+          className="press mt-6 w-full rounded-xl bg-sky py-4 font-semibold text-chrome"
           onClick={() => startFlight(false)}
         >
-          Start today’s mission
+          Start session
         </button>
       </div>
     )
@@ -49,13 +48,13 @@ export function TrainPage() {
 
   return (
     <div className="pb-6">
-      <div className="mx-4 mb-3 flex items-center justify-between rounded-2xl border-2 border-navy bg-white px-3 py-2 text-xs font-extrabold">
+      <div className="mx-4 mb-3 flex items-center justify-between rounded-xl border border-white/10 bg-paper px-3 py-2 text-xs font-semibold">
         <span>{phase.label}</span>
-        <span className="text-navy/45">
-          {doneQ + 1}/{totalQ} · ~{minutesLeft} min in this flight
+        <span className="text-ink">
+          {doneQ + 1}/{totalQ} · ~{minutesLeft} min remaining
         </span>
       </div>
-      <p className="mx-4 mb-3 font-bold text-navy/60">{phase.coachLine}</p>
+      <p className="mx-4 mb-3 font-medium text-ink">{phase.coachLine}</p>
       <ProblemStage question={q} phaseLabel={`${phase.label} · ${skillById(q.skillId)?.name}`} />
     </div>
   )
@@ -78,50 +77,50 @@ function Recap({ onDone, onKeep }: { onDone: () => void; onKeep: () => void }) {
 
   return (
     <div className="px-4 pb-8">
-      <Aero className="mx-auto h-36" mood="cheer" goggles={cosmetics.goggles} hoodie={cosmetics.hoodie} kicks={cosmetics.kicks} />
-      <h1 className="text-center font-display text-4xl font-extrabold">Flight complete.</h1>
-      <p className="mt-1 text-center font-bold text-navy/60">
-        {correct} locked in · {today.length} plays · leave on a win
+      <p className="text-center text-[11px] font-medium uppercase tracking-[0.22em] text-ink">Debrief</p>
+      <h1 className="text-center font-display text-4xl font-semibold tracking-tight">Session complete</h1>
+      <p className="mt-1 text-center font-medium text-ink">
+        {correct} locked in · {today.length} plays
       </p>
       <div className="mt-4 grid grid-cols-2 gap-2">
         {DIMENSIONS.map((d) => (
-          <div key={d} className="rounded-2xl border-2 border-navy bg-white p-3">
-            <p className="text-[10px] font-extrabold uppercase tracking-widest text-navy/40">{d}</p>
-            <p className="font-display text-2xl font-extrabold">{Math.round(focus[d])}</p>
-            <div className="mt-1 h-2 overflow-hidden rounded-full bg-mist">
-              <div className="h-full bg-orange" style={{ width: `${focus[d]}%` }} />
+          <div key={d} className="panel rounded-xl p-3">
+            <p className="text-[10px] font-medium uppercase tracking-widest text-ink">{d}</p>
+            <p className="font-display text-2xl font-semibold">{Math.round(focus[d])}</p>
+            <div className="mt-1 h-1 overflow-hidden rounded-full bg-mist">
+              <div className="h-full bg-sky" style={{ width: `${focus[d]}%` }} />
             </div>
           </div>
         ))}
       </div>
       <div className="mt-4 space-y-2">
         {Object.entries(diagnoses).map(([k, n]) => (
-          <p key={k} className="rounded-2xl bg-white px-3 py-2 text-sm font-bold">
-            <span className="font-extrabold">{DIAGNOSIS_COPY[k as keyof typeof DIAGNOSIS_COPY]?.title}</span>
-            <span className="text-navy/50"> · {n}</span>
+          <p key={k} className="rounded-xl bg-paper px-3 py-2 text-sm font-medium">
+            <span className="font-semibold">{DIAGNOSIS_COPY[k as keyof typeof DIAGNOSIS_COPY]?.title}</span>
+            <span className="text-ink"> · {n}</span>
           </p>
         ))}
       </div>
-      <p className="mt-4 text-center text-sm font-bold text-navy/55">
-        Tomorrow: {skillById(mission.foundationSkillId)?.name} under the hood, {skillById(mission.nextSkillId)?.name} on the peak.
+      <p className="mt-4 text-center text-sm font-medium text-ink">
+        Next: {skillById(mission.foundationSkillId)?.name} under the hood, {skillById(mission.nextSkillId)?.name} on the peak.
       </p>
-      <p className="mt-1 text-center text-xs font-bold text-navy/40">
-        Classroom mastery {Math.round(compositeMastery(focus))} — not a grade-level label.
+      <p className="mt-1 text-center text-xs font-medium text-ink">
+        Classroom mastery {Math.round(compositeMastery(focus))}
       </p>
       {next ? (
-        <div className="mt-4 rounded-[24px] border-2 border-navy bg-navy p-4 text-white">
+        <div className="panel mt-4 rounded-2xl p-4">
           <div className="flex items-center gap-3">
             <RaceCar className="h-16 w-9" paint={cosmetics.paint} wheels={cosmetics.wheels} wing={cosmetics.wing} />
             <div>
-              <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-white/50">Next pit</p>
-              <p className="font-display text-xl font-extrabold">{next.name}</p>
-              <p className="text-sm font-bold text-white/75">{world.handoff}</p>
+              <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-ink">Next sector</p>
+              <p className="font-display text-xl font-semibold">{next.name}</p>
+              <p className="text-sm font-medium text-ink">{world.handoff}</p>
             </div>
           </div>
           {next.moduleId ? (
             <button
               type="button"
-              className="press mt-3 w-full rounded-2xl border-2 border-navy bg-gold py-3 font-extrabold text-navy"
+              className="press mt-3 w-full rounded-xl bg-sky py-3 font-semibold text-chrome"
               onClick={() => {
                 driveTo(next.moduleId!, firstTopicId(next.moduleId!) ?? parent.topicId)
                 onDone()
@@ -130,19 +129,19 @@ function Recap({ onDone, onKeep }: { onDone: () => void; onKeep: () => void }) {
               Drive to {next.name}
             </button>
           ) : (
-            <p className="mt-3 text-center text-sm font-bold text-[#f5d000]">{next.adventure}</p>
+            <p className="mt-3 text-center text-sm font-medium text-gold">{next.adventure}</p>
           )}
         </div>
       ) : null}
       <button
         type="button"
-        className="press mt-5 w-full rounded-2xl border-2 border-navy bg-leaf py-4 font-extrabold text-white"
+        className="press mt-5 w-full rounded-xl border border-white/15 py-4 font-semibold"
         onClick={onDone}
       >
-        Done for today
+        End session
       </button>
-      <button type="button" className="mt-2 w-full py-3 text-sm font-extrabold text-navy/55" onClick={onKeep}>
-        Keep playing (optional)
+      <button type="button" className="mt-2 w-full py-3 text-sm font-medium text-ink" onClick={onKeep}>
+        Continue (optional)
       </button>
     </div>
   )

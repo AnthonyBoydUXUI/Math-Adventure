@@ -28,12 +28,12 @@ export function CircuitTrack({ compact }: { compact?: boolean }) {
   }
 
   return (
-    <div className="overflow-hidden rounded-[28px] border-2 border-navy bg-[#2a2d33] shadow-[0_8px_0_#141628]">
+    <div className="panel overflow-hidden rounded-2xl bg-[#0c1018]">
       <div className="flex items-center justify-between px-4 py-2">
-        <p className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-white/70">
-          {compact ? 'Nearby pits' : 'Subject circuit'}
+        <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-ink">
+          {compact ? 'Nearby sectors' : 'Subject circuit'}
         </p>
-        <p className="text-[11px] font-extrabold text-[#f5d000]">Tap a pit · RS rolls there</p>
+        <p className="text-[11px] font-medium text-sky">Select a sector</p>
       </div>
       <div className="relative">
         <svg
@@ -43,7 +43,7 @@ export function CircuitTrack({ compact }: { compact?: boolean }) {
         >
           <path d={d} fill="none" stroke="#141414" strokeWidth="38" strokeLinecap="round" strokeLinejoin="round" />
           <path d={d} fill="none" stroke="#3f4450" strokeWidth="28" strokeLinecap="round" strokeLinejoin="round" />
-          <path d={d} fill="none" stroke="#f5d000" strokeWidth="3" strokeDasharray="10 12" opacity="0.85" />
+          <path d={d} fill="none" stroke="#4cc9ff" strokeWidth="2" strokeDasharray="8 10" opacity="0.7" />
           {layout.pits.map((pit) => {
             const active = pit.world.id === current.id
             const mastery =
@@ -56,7 +56,7 @@ export function CircuitTrack({ compact }: { compact?: boolean }) {
                   cy={pit.y}
                   r={active ? 28 : 22}
                   fill={pit.world.color}
-                  stroke="#f5d000"
+                  stroke="#4cc9ff"
                   strokeWidth={active ? 4 : 2}
                 />
                 <text x={pit.x} y={pit.y + 5} textAnchor="middle" fontSize="16">
@@ -65,7 +65,7 @@ export function CircuitTrack({ compact }: { compact?: boolean }) {
                 <text x={pit.x} y={pit.y + 42} textAnchor="middle" fontSize="9" fontWeight="800" fill="#fff">
                   {pit.world.name}
                 </text>
-                <text x={pit.x} y={pit.y + 54} textAnchor="middle" fontSize="8" fill="#f5d000">
+                <text x={pit.x} y={pit.y + 54} textAnchor="middle" fontSize="8" fill="#4cc9ff">
                   {Math.round(mastery)} tank
                 </text>
                 <circle
@@ -99,8 +99,8 @@ export function CircuitTrack({ compact }: { compact?: boolean }) {
           </motion.div>
         ) : null}
       </div>
-      <p className="px-4 pb-3 text-center text-xs font-bold text-white/70">
-        Tank: {current.carry} → {current.handoff}
+      <p className="px-4 pb-3 text-center text-xs font-medium text-ink">
+        Carry: {current.carry} → {current.handoff}
       </p>
     </div>
   )
@@ -148,25 +148,25 @@ export function HandoffCard() {
   const next = linkedWorld(current, 'next')
 
   return (
-    <div className="rounded-[24px] border-2 border-navy bg-white p-4">
-      <p className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-navy/40">How the adventures connect</p>
-      <p className="mt-1 font-display text-xl font-extrabold">{current.adventure}</p>
-      <div className="mt-3 grid grid-cols-3 gap-2 text-center text-[11px] font-extrabold">
-        <div className={cn('rounded-2xl border-2 border-navy p-2', prev ? 'bg-mist' : 'opacity-40')}>
-          <p className="text-navy/40">Last pit</p>
+    <div className="panel rounded-2xl p-4">
+      <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-ink">Sector link</p>
+      <p className="mt-1 font-display text-xl font-semibold">{current.adventure}</p>
+      <div className="mt-3 grid grid-cols-3 gap-2 text-center text-[11px] font-semibold">
+        <div className={cn('rounded-xl border border-white/10 bg-mist/60 p-2', !prev && 'opacity-40')}>
+          <p className="text-ink">Previous</p>
           <p>{prev?.name ?? 'Grid'}</p>
         </div>
-        <div className="rounded-2xl border-2 border-navy bg-gold p-2">
-          <p className="text-navy/50">Now</p>
+        <div className="rounded-xl border border-sky/40 bg-sky/10 p-2 text-sky">
+          <p className="text-sky/70">Now</p>
           <p>{current.name}</p>
         </div>
-        <div className={cn('rounded-2xl border-2 border-navy p-2', next ? 'bg-mist' : 'opacity-40')}>
-          <p className="text-navy/40">Next pit</p>
+        <div className={cn('rounded-xl border border-white/10 bg-mist/60 p-2', !next && 'opacity-40')}>
+          <p className="text-ink">Next</p>
           <p>{next?.name ?? 'Peak'}</p>
         </div>
       </div>
-      <p className="mt-3 text-sm font-bold text-navy/70">
-        In the tank: {current.carry}. {current.handoff}
+      <p className="mt-3 text-sm font-medium text-ink">
+        Carry: {current.carry}. {current.handoff}
       </p>
     </div>
   )

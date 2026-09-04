@@ -27,23 +27,23 @@ npm test
 npm run dev
 ```
 
-Then open the printed local URL. On a phone-sized viewport the path, HUD, and 15-minute flight are the core loop.
+Then open the printed local URL. On a phone-sized viewport the library covers, HUD, and 15-minute session are the core loop.
 
 ## Adventures that connect
 
 Each Reveal module is a district (Ratio Runway, Tip Market, Balance Bridge…). Warm-ups pull a bridge skill from the previous district so the next subject is not a reset.
 
-## Vercel Hobby
+## Vercel
 
-Tap once to connect this GitHub repo to a free Vercel Hobby account and deploy:
+This repo is **not live on Vercel yet**. The project includes `vercel.json` and a deploy workflow, but no Hobby account has been connected from this environment (Vercel CLI is logged out; GitHub has no Vercel deployments).
+
+Tap once to connect the GitHub repo to a free Vercel Hobby account and deploy:
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/import?s=https://github.com/AnthonyBoydUXUI/Math-Adventure)
 
 In the import screen, set the production branch to `cursor/adaptive-math-trainer-64b2` until that PR is merged into `main`. Framework: Vite. Hobby is enough (static app, no server).
 
-Or in the Vercel dashboard: **Add New → Project → Import Git Repository → Math-Adventure → Deploy**. Framework: Vite. Hobby plan is enough (static app, no server).
-
-After the first import, later pushes to `main` can auto-deploy. Optional GitHub secrets for the included workflow: `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`.
+After the first import, later pushes can auto-deploy. Optional GitHub secrets for the included workflow: `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`.
 
 Tap the speaker in the app HUD to start moving world sound. Browsers block audio until a tap.
 

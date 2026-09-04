@@ -16,13 +16,13 @@ export function LabPage() {
 
   return (
     <div className="px-4 pb-8">
-      <h1 className="font-display text-4xl font-extrabold">Test Lab</h1>
+      <h1 className="font-display text-4xl font-semibold tracking-tight">Test Lab</h1>
       <p className="mt-1 font-bold text-navy/65">
         Same math, different look. Word, equation, graph, table, diagram — one skill.
       </p>
       <label className="mt-4 block text-xs font-extrabold uppercase tracking-widest text-navy/45">Skill</label>
       <select
-        className="mt-1 w-full rounded-2xl border-2 border-navy bg-white px-3 py-3 font-extrabold"
+        className="mt-1 w-full rounded-2xl border border-white/10 bg-white px-3 py-3 font-extrabold"
         value={skillId}
         onChange={(e) => setSkillId(e.target.value)}
       >
@@ -34,14 +34,14 @@ export function LabPage() {
       </select>
       <div className="mt-3 flex flex-wrap gap-1">
         {sample.map((q) => (
-          <span key={q.id} className="rounded-full border-2 border-navy bg-white px-2 py-0.5 text-[11px] font-extrabold uppercase">
+          <span key={q.id} className="rounded-full border border-white/10 bg-white px-2 py-0.5 text-[11px] font-extrabold uppercase">
             {q.format}
           </span>
         ))}
       </div>
       <ul className="mt-4 space-y-2">
         {sample.slice(0, 4).map((q) => (
-          <li key={q.id} className="rounded-2xl border-2 border-navy bg-white px-3 py-2 text-sm font-bold">
+          <li key={q.id} className="rounded-2xl border border-white/10 bg-white px-3 py-2 text-sm font-bold">
             <span className="mr-2 font-extrabold uppercase text-violet">{q.format}</span>
             {q.prompt}
           </li>
@@ -49,7 +49,7 @@ export function LabPage() {
       </ul>
       <button
         type="button"
-        className="press mt-6 w-full rounded-2xl border-2 border-navy bg-violet py-4 font-extrabold text-white"
+        className="press mt-6 w-full rounded-xl bg-sky py-4 font-semibold text-chrome"
         onClick={() => {
           const rng = mulberry32(hashString(`lab:${skillId}`))
           const lab = labSequence(familyId, rng)
