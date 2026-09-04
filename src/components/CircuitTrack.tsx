@@ -1,23 +1,19 @@
-import { useMemo } from 'react'
 import { firstTopicId } from '../data/curriculum.ts'
-import { circuitPits, linkedWorld, worldForModule, type AdventureWorld } from '../data/worlds.ts'
+import { worldThumb } from '../data/sheets.ts'
+import { circuitPits, linkedWorld, worldForModule, WORLDS, type AdventureWorld } from '../data/worlds.ts'
 import { compositeMastery, emptyStats } from '../engine/mastery.ts'
-import { nightHex, sectorCode } from '../engine/render/palette.ts'
 import { cn } from '../lib/cn.ts'
 import { resumeAudio } from '../lib/sfx.ts'
 import { usePlayerStore } from '../store.ts'
-
-const FULL_W = 330
-const COMPACT_W = 330
-const COMPACT_H = 168
+import { SheetArt } from './SheetArt.tsx'
 
 export function CircuitTrack({ compact }: { compact?: boolean }) {
   const parent = usePlayerStore((s) => s.parent)
   const stats = usePlayerStore((s) => s.stats)
   const current = worldForModule(parent.moduleId)
-  const layout = useMemo(() => layoutPits(compact, current.id), [compact, current.id])
-  const here = layout.pits.find((p) => p.world.id === current.id) ?? layout.pits[0]
-  const d = pathFor(layout.pits, compact)
+  const worlds = compact
+    ? nearbyWorlds(current.id)
+    : WORLDS
 
   function driveTo(world: AdventureWorld) {
     if (!world.moduleId) return
@@ -27,110 +23,43 @@ export function CircuitTrack({ compact }: { compact?: boolean }) {
   }
 
   return (
-    <div className="panel overflow-hidden rounded-sm bg-[#05070b]">
-      <div className="flex items-center justify-between px-4 py-2">
-        <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-ink">
-          {compact ? 'Near' : 'Map'}
-        </p>
-      </div>
-      <div className="relative">
-        <svg
-          viewBox={`0 0 ${layout.w} ${layout.h}`}
-          className="block w-full"
-          style={{ minHeight: compact ? 168 : 520 }}
-        >
-          <path d={d} fill="none" stroke="#10141c" strokeWidth="36" strokeLinecap="square" strokeLinejoin="miter" />
-          <path d={d} fill="none" stroke="#2a3140" strokeWidth="24" strokeLinecap="square" strokeLinejoin="miter" />
-          <path d={d} fill="none" stroke="#7eb6d6" strokeWidth="1.25" strokeDasharray="5 9" opacity="0.55" />
-          {layout.pits.map((pit) => {
-            const active = pit.world.id === current.id
-            const mastery =
-              pit.world.skillIds.reduce((n, id) => n + compositeMastery(stats[id] ?? emptyStats()), 0) /
-              Math.max(1, pit.world.skillIds.length)
-            const r = active ? 18 : 14
-            return (
-              <g key={pit.world.id}>
-                <rect
-                  x={pit.x - r}
-                  y={pit.y - r}
-                  width={r * 2}
-                  height={r * 2}
-                  fill={nightHex(pit.world.color)}
-                  stroke={active ? '#7eb6d6' : '#8aa0b4'}
-                  strokeWidth={active ? 1.6 : 1}
-                />
-                <text
-                  x={pit.x}
-                  y={pit.y + 4}
-                  textAnchor="middle"
-                  fontSize="10"
-                  fontWeight="600"
-                  fill="#e8eef8"
-                  letterSpacing="1.4"
-                >
-                  {sectorCode(pit.world.name)}
-                </text>
-                <text x={pit.x} y={pit.y + 36} textAnchor="middle" fontSize="9" fontWeight="600" fill="#c5d0de">
-                  {pit.world.name}
-                </text>
-                <text x={pit.x} y={pit.y + 48} textAnchor="middle" fontSize="8" fill="#7eb6d6">
-                  {Math.round(mastery)} mastery
-                </text>
-                <rect
-                  x={pit.x - 28}
-                  y={pit.y - 28}
-                  width="56"
-                  height="56"
-                  fill="transparent"
-                  className="cursor-pointer"
-                  onClick={() => driveTo(pit.world)}
-                />
-              </g>
-            )
-          })}
-          {here ? (
-            <polygon
-              points={`${here.x},${here.y - 30} ${here.x + 7},${here.y - 18} ${here.x - 7},${here.y - 18}`}
-              fill="#7eb6d6"
-            />
-          ) : null}
-        </svg>
-      </div>
-      <p className="px-4 pb-3 text-center text-xs font-medium text-ink">{current.carry}</p>
+    <div className="grid gap-3">
+      {worlds.map((world) => {
+        const active = world.id === current.id
+        const mastery =
+          world.skillIds.reduce((n, id) => n + compositeMastery(stats[id] ?? emptyStats()), 0) /
+          Math.max(1, world.skillIds.length)
+        const canDrive = Boolean(world.moduleId)
+        return (
+          <button
+            key={world.id}
+            type="button"
+            disabled={!canDrive}
+            onClick={() => driveTo(world)}
+            className={cn(
+              'overflow-hidden rounded-sm border-2 bg-[#05070b] text-left',
+              active ? 'border-gold' : 'border-white/10',
+              !canDrive && 'opacity-80',
+            )}
+          >
+            <SheetArt src={worldThumb(world.id)} alt={`${world.district} map`} cover className="aspect-square" />
+            <div className="px-3 py-2">
+              <p className="font-semibold text-white">{world.name}</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-white/55">{world.district}</p>
+              <p className="mt-1 text-xs font-medium text-ink">{Math.round(mastery)} mastery</p>
+            </div>
+          </button>
+        )
+      })}
     </div>
   )
 }
 
-function layoutPits(compact: boolean | undefined, currentId: string) {
-  const all = circuitPits()
-  if (!compact) {
-    const lastY = all[all.length - 1]?.y ?? 56
-    return { pits: all, w: FULL_W, h: Math.max(520, lastY + 90) }
-  }
-  const idx = Math.max(0, all.findIndex((p) => p.world.id === currentId))
+function nearbyWorlds(currentId: string) {
+  const all = circuitPits().map((p) => p.world)
+  const idx = Math.max(0, all.findIndex((w) => w.id === currentId))
   const start = Math.max(0, Math.min(idx - 1, all.length - 4))
-  const slice = all.slice(start, start + 4)
-  return {
-    pits: slice.map((p, i) => ({ world: p.world, x: 42 + i * 82, y: 78 })),
-    w: COMPACT_W,
-    h: COMPACT_H,
-  }
-}
-
-function pathFor(pits: { x: number; y: number }[], compact?: boolean) {
-  if (!pits.length) return ''
-  if (compact && pits.length >= 2) {
-    const first = pits[0]!
-    const last = pits[pits.length - 1]!
-    return `M ${first.x} ${first.y} L ${last.x} ${last.y}`
-  }
-  const first = pits[0]!
-  let d = `M ${first.x} ${first.y}`
-  for (let i = 1; i < pits.length; i += 1) {
-    const pit = pits[i]!
-    d += ` L ${pit.x} ${pit.y}`
-  }
-  return d
+  return all.slice(start, start + 4)
 }
 
 export function HandoffCard() {
