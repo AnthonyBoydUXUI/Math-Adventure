@@ -19,7 +19,7 @@ export function HelpPage() {
 
   return (
     <div className="px-4 pb-8">
-      <h1 className="font-display text-4xl font-semibold tracking-tight">Assist</h1>
+      <h1 className="type-pack text-5xl">Assist</h1>
       <p className="mt-1 font-bold text-navy/65">
         Type, paste, or photograph a worksheet. We name the concept and coach — we don’t dump the answer.
       </p>

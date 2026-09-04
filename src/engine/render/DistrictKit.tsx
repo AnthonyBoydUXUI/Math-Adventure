@@ -8,13 +8,14 @@ export function DistrictKit({ id, color }: { id: string; color: string }) {
 }
 
 function Kit({ id, color }: { id: string; color: string }) {
-  const wall = '#141820'
+  const wall = '#0e1a3a'
+  const bone = '#f3efe6'
   if (id === 'market') {
     return (
       <group>
         <Box pos={[-1.8, 0.7, -1.4]} size={[0.8, 1.4, 0.8]} color={color} />
         <Box pos={[0.15, 0.4, -1.8]} size={[1.6, 0.8, 0.45]} color={wall} />
-        <Box pos={[2, 0.95, -0.7]} size={[0.32, 1.9, 0.32]} color={color} />
+        <Box pos={[2, 0.95, -0.7]} size={[0.32, 1.9, 0.32]} color={bone} />
         <Lamp pos={[-0.6, 0, 0.9]} />
       </group>
     )
@@ -33,7 +34,7 @@ function Kit({ id, color }: { id: string; color: string }) {
     return (
       <group>
         <Box pos={[-1.9, 1, -1.6]} size={[0.08, 2, 1.4]} color={color} />
-        <Box pos={[0.05, 1, -1.9]} size={[0.08, 2, 1.4]} color="#b9a57c" />
+        <Box pos={[0.05, 1, -1.9]} size={[0.08, 2, 1.4]} color={bone} />
         <Box pos={[1.7, 0.55, -0.85]} size={[1.2, 1.1, 0.18]} color={wall} />
       </group>
     )

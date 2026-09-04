@@ -150,8 +150,8 @@ export function HandoffCard() {
           <p className="text-ink">Previous</p>
           <p>{prev?.name ?? 'Grid'}</p>
         </div>
-        <div className="rounded-sm border border-sky/40 bg-sky/10 p-2 text-sky">
-          <p className="text-sky/70">Now</p>
+        <div className="border border-gold/50 bg-[#0e1a3a] p-2 text-gold">
+          <p className="text-gold/70">Now</p>
           <p>{current.name}</p>
         </div>
         <div className={cn('rounded-sm border border-white/10 bg-mist/60 p-2', !next && 'opacity-40')}>

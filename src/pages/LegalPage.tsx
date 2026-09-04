@@ -25,7 +25,7 @@ export function LegalPage({ kind }: { kind: LegalKind }) {
   return (
     <article className="px-4 pb-8">
       <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-ink">{APP_NAME}</p>
-      <h1 className="mt-1 font-display text-4xl font-semibold tracking-tight">{doc.title}</h1>
+      <h1 className="type-pack mt-1 text-5xl">{doc.title}</h1>
       <p className="mt-1 text-xs font-medium text-ink">Updated {LAST_UPDATED}</p>
       <p className="mt-4 text-sm font-medium text-navy">{doc.intro}</p>
       {doc.sections.map((section) => (

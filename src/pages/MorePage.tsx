@@ -10,7 +10,7 @@ import { usePlayerStore } from '../store.ts'
 export function MorePage() {
   return (
     <div className="px-4 pb-8">
-      <h1 className="font-display text-4xl font-semibold tracking-tight">System</h1>
+      <h1 className="type-pack text-5xl">System</h1>
       <div className="mt-4 grid gap-3">
         <Link to="/coach" className="panel press rounded-sm p-5">
           <p className="text-xs font-medium uppercase tracking-widest text-ink">Telemetry</p>
@@ -56,7 +56,7 @@ export function MapPage() {
 
   return (
     <div className="px-4 pb-8">
-      <h1 className="font-display text-4xl font-semibold tracking-tight">Subject circuit</h1>
+      <h1 className="type-pack text-5xl">Subject circuit</h1>
       <p className="mt-1 font-medium text-ink">
         Each subject is its own world. The Harbor RS carries one idea into the next so the math actually connects.
       </p>
@@ -122,7 +122,7 @@ export function CoachPage() {
 
   return (
     <div className="px-4 pb-8">
-      <h1 className="font-display text-4xl font-semibold tracking-tight">Telemetry</h1>
+      <h1 className="type-pack text-5xl">Telemetry</h1>
       <p className="mt-1 font-medium text-ink">
         A 440 overall is a prior, not a personality. Geometry can be strong while stats is noisy. Test Lab is where that split becomes a plan.
       </p>

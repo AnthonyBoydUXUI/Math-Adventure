@@ -12,7 +12,7 @@ export function PrivacyCenter() {
 
   return (
     <div className="px-4 pb-8">
-      <h1 className="font-display text-4xl font-semibold tracking-tight">Privacy Center</h1>
+      <h1 className="type-pack text-5xl">Privacy Center</h1>
       <p className="mt-2 text-sm font-medium text-ink">
         Progress starts on this device. Sign in under Account to copy it to one cloud profile so phone, tablet, laptop,
         and the watch glance stay in sync — and so a site-data clear is not the end of the streak.

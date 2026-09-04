@@ -20,7 +20,7 @@ export function AccountPage() {
 
   return (
     <div className="px-4 pb-8">
-      <h1 className="font-display text-4xl font-semibold tracking-tight">Account</h1>
+      <h1 className="type-pack text-5xl">Account</h1>
       <p className="mt-2 text-sm font-medium text-ink">
         One email, one profile. Phone, tablet, laptop, and the watch glance all read the same row. Clearing Safari on
         one device does not wipe the cloud copy.

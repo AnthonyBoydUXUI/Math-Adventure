@@ -1,16 +1,17 @@
 import { useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import type { Group } from 'three'
+import { VINYL } from './materials.ts'
 
 const PAINT: Record<string, string> = {
-  'paint-volt': '#c4a800',
-  'paint-night': '#1a2f4a',
-  'paint-leaf': '#1b7a52',
+  'paint-volt': VINYL.volt,
+  'paint-night': VINYL.night,
+  'paint-leaf': VINYL.leaf,
 }
 
 const RIM: Record<string, string> = {
-  'wheels-bronze': '#8a4b16',
-  'wheels-gold': '#b8922a',
+  'wheels-bronze': VINYL.rimBronze,
+  'wheels-gold': VINYL.rimGold,
 }
 
 export function Chassis({
@@ -40,7 +41,13 @@ export function Chassis({
       </mesh>
       <mesh castShadow position={[0.02, 0.18, 0]}>
         <boxGeometry args={[1.98, 0.2, 0.84]} />
-        <meshStandardMaterial color={body} metalness={0.82} roughness={0.2} />
+        <meshPhysicalMaterial
+          color={body}
+          metalness={0.15}
+          roughness={0.16}
+          clearcoat={1}
+          clearcoatRoughness={0.12}
+        />
       </mesh>
       <mesh castShadow position={[-0.18, 0.36, 0]}>
         <boxGeometry args={[0.78, 0.2, 0.76]} />
@@ -52,7 +59,13 @@ export function Chassis({
       </mesh>
       <mesh castShadow position={[0.74, 0.2, 0]}>
         <boxGeometry args={[0.48, 0.1, 0.8]} />
-        <meshStandardMaterial color={body} metalness={0.84} roughness={0.18} />
+        <meshPhysicalMaterial
+          color={body}
+          metalness={0.15}
+          roughness={0.16}
+          clearcoat={1}
+          clearcoatRoughness={0.12}
+        />
       </mesh>
       <mesh position={[1.02, 0.08, 0]}>
         <boxGeometry args={[0.2, 0.03, 0.92]} />

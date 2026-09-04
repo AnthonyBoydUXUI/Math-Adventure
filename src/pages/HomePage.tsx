@@ -5,6 +5,7 @@ import { CircuitTrack, HandoffCard } from '../components/CircuitTrack.tsx'
 import { DayClock } from '../components/DayClock.tsx'
 import { TestReadinessCard } from '../components/TestReadinessCard.tsx'
 import { WeekStrip } from '../components/WeekStrip.tsx'
+import { WindowBox } from '../components/WindowBox.tsx'
 import { WorldScene } from '../components/WorldScene.tsx'
 import { firstTopicId, moduleById, skillById } from '../data/curriculum.ts'
 import { classroomChain, linkedWorld, worldForModule } from '../data/worlds.ts'
@@ -50,36 +51,36 @@ export function HomePage() {
 
   return (
     <div className="px-4 pb-8">
-      <section className="relative min-h-[280px] overflow-hidden rounded-sm border border-white/10 text-white">
-        <WorldScene
-          moduleId={parent.moduleId}
-          paint={cosmetics.paint}
-          wheels={cosmetics.wheels}
-          wing={cosmetics.wing}
-        />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#05070b] via-[#05070b]/25 to-transparent" />
-        <div className="relative flex min-h-[280px] flex-col justify-end px-5 pb-5 pt-8">
-          <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-white/55">
-            Live sector · M{mod?.number} · {new Date().getFullYear()}
-          </p>
-          <h1 className="mt-1 font-display text-[32px] font-semibold leading-none tracking-tight">{world.name}</h1>
-          <p className="mt-2 max-w-[16rem] text-sm font-medium text-white/80">{focus?.name}</p>
-          <div className="mt-3 h-1 w-36 overflow-hidden bg-black/30">
-            <div className="h-full bg-sky" style={{ width: `${mastery}%` }} />
+      <WindowBox stamp="Aero · 12+" series={`M${mod?.number} · ${new Date().getFullYear()}`}>
+        <div className="relative min-h-[300px] text-white">
+          <WorldScene
+            moduleId={parent.moduleId}
+            paint={cosmetics.paint}
+            wheels={cosmetics.wheels}
+            wing={cosmetics.wing}
+          />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#070910] via-[#070910]/20 to-transparent" />
+          <div className="relative flex min-h-[300px] flex-col justify-end px-4 pb-5 pt-10">
+            <p className="stamp">Live sector · {world.district}</p>
+            <h1 className="type-pack mt-1 text-[40px]">{world.name}</h1>
+            <p className="mt-2 max-w-[16rem] text-sm font-medium text-white/80">{focus?.name}</p>
+            <div className="mt-3 h-1 w-36 overflow-hidden bg-black/40">
+              <div className="h-full bg-gold" style={{ width: `${mastery}%` }} />
+            </div>
+            <p className="mt-1 text-[11px] font-medium uppercase tracking-[0.16em] text-white/55">
+              Mastery {Math.round(mastery)}
+            </p>
+            <button
+              type="button"
+              className="press mt-4 inline-flex w-fit items-center gap-2 bg-[#0e1a3a] px-5 py-2.5 text-sm font-semibold uppercase tracking-[0.12em] text-bone"
+              onClick={startSession}
+            >
+              <Play className="h-4 w-4 fill-gold text-gold" />
+              {cta}
+            </button>
           </div>
-          <p className="mt-1 text-[11px] font-medium uppercase tracking-[0.16em] text-white/55">
-            Mastery {Math.round(mastery)}
-          </p>
-          <button
-            type="button"
-            className="press mt-4 inline-flex w-fit items-center gap-2 rounded-sm bg-sky px-5 py-2.5 text-sm font-semibold text-chrome"
-            onClick={startSession}
-          >
-            <Play className="h-4 w-4 fill-chrome" />
-            {cta}
-          </button>
         </div>
-      </section>
+      </WindowBox>
 
       <div className="mt-5 md:grid md:grid-cols-2 md:gap-4">
         <WeekStrip practiced={practiceDays} inProgressKey={session.active ? dayKey() : undefined} />
@@ -100,8 +101,8 @@ export function HomePage() {
             key={w.id}
             type="button"
             className={cn(
-              'relative h-[132px] w-[108px] shrink-0 overflow-hidden rounded-sm text-left',
-              w.id === world.id && 'ring-1 ring-sky',
+              'gallery-mat relative h-[132px] w-[108px] shrink-0 overflow-hidden text-left',
+              w.id === world.id && 'ring-2 ring-gold',
             )}
             style={{ background: nightHex(w.color, 0.55, 0.22) }}
             onClick={() => {
@@ -171,7 +172,7 @@ export function HomePage() {
 
       <button
         type="button"
-        className="press mt-4 w-full rounded-sm bg-sky py-3.5 font-display text-lg font-semibold text-chrome"
+        className="press mt-4 w-full bg-[#0e1a3a] py-3.5 font-display text-lg font-semibold uppercase tracking-[0.1em] text-bone"
         onClick={startSession}
       >
         {cta}

@@ -11,7 +11,7 @@ export function ParentPage() {
 
   return (
     <div className="px-4 pb-8">
-      <h1 className="font-display text-4xl font-semibold tracking-tight">Parent desk</h1>
+      <h1 className="type-pack text-5xl">Parent desk</h1>
       <p className="mt-1 font-bold text-navy/65">
         Point Aero at this week’s Grade 7 classroom topic. The 15-minute plan will overweight it — original items, not a copied book.
       </p>

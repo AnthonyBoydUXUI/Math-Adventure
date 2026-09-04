@@ -23,7 +23,7 @@ export const COSMETICS: CosmeticDef[] = [
   { id: 'hoodie-signal', name: 'Signal Hoodie', slot: 'hoodie', subtitle: 'Neon grid', unlock: 'different-look' },
   { id: 'kicks-base', name: 'Runway High-Tops', slot: 'kicks', subtitle: 'White/orange', unlock: 'start' },
   { id: 'kicks-volt', name: 'Volt High-Tops', slot: 'kicks', subtitle: 'Boss-clear energy', unlock: 'boss-down' },
-  { id: 'figure-base', name: 'Aero — Harbor Form', slot: 'figure', subtitle: 'INFINITE LATENT MATH POWER', unlock: 'start' },
+  { id: 'figure-base', name: 'Aero — Harbor Form', slot: 'figure', subtitle: 'Flight series · form 01', unlock: 'start' },
   { id: 'figure-lockin', name: 'Aero — Locked In', slot: 'figure', subtitle: 'KEEP THE FIRST ANSWER', unlock: 'trust-yourself' },
   { id: 'figure-gallery', name: 'Aero — Gallery Mode', slot: 'figure', subtitle: 'SAME MATH, NEW FRAME', unlock: 'comeback' },
   { id: 'figure-peak', name: 'Aero — Peak Form', slot: 'figure', subtitle: 'ALGEBRA I APPROACHING', unlock: 'streak-7' },

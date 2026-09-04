@@ -20,7 +20,7 @@ export function TrainPage() {
     return (
       <div className="px-5 py-8">
         <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-ink">Session</p>
-        <h1 className="mt-2 font-display text-4xl font-semibold tracking-tight">15-minute run</h1>
+        <h1 className="type-pack mt-2 text-5xl">15-minute run</h1>
         <p className="mt-2 font-medium text-ink">{mission.title}</p>
         <p className="mt-1 text-sm font-medium text-ink">Ignition 3 · Build 4 · Lab 4 · Boss 3 · Debrief 1</p>
         <p className="mt-3 text-sm font-medium text-navy">{bookmark.label}</p>
@@ -29,7 +29,7 @@ export function TrainPage() {
         </p>
         <button
           type="button"
-          className="press mt-6 min-h-11 w-full rounded-sm bg-sky py-4 font-semibold text-chrome"
+          className="press mt-6 min-h-11 w-full bg-[#0e1a3a] py-4 font-semibold uppercase tracking-[0.12em] text-bone"
           onClick={() => resumeOrStart(false)}
         >
           Start today’s 15
@@ -87,7 +87,7 @@ function Recap({ onDone, onKeep }: { onDone: () => void; onKeep: () => void }) {
   return (
     <div className="px-4 pb-8">
       <p className="text-center text-[11px] font-medium uppercase tracking-[0.22em] text-ink">Debrief</p>
-      <h1 className="text-center font-display text-4xl font-semibold tracking-tight">Session complete</h1>
+      <h1 className="type-pack text-center text-5xl">Session complete</h1>
       <p className="mt-2 text-center">
         <DayClock compact />
       </p>

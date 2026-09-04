@@ -81,8 +81,8 @@ export function Shell() {
         Skip to content
       </a>
       <header className="sticky top-0 z-30 flex items-center gap-1.5 px-4 py-3 pt-[max(0.75rem,env(safe-area-inset-top))] backdrop-blur-xl">
-        <div className="flex h-11 w-11 items-center justify-center rounded-sm border border-white/10 bg-paper" aria-hidden>
-          <Crosshair className="h-4 w-4 text-sky" />
+        <div className="flex h-11 w-11 items-center justify-center border-2 border-[#f3efe6] bg-[#0e1a3a]" aria-hidden>
+          <Crosshair className="h-4 w-4 text-gold" />
         </div>
         <div className="hud-chip flex min-h-11 items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold tracking-[0.12em]">
           <Zap className="h-3.5 w-3.5 text-gold" aria-hidden />
@@ -129,7 +129,7 @@ export function Shell() {
       </header>
 
       <div className="flex items-center justify-between gap-3 px-5 pb-2">
-        <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-ink">
+        <p className="stamp text-ink">
           {displayName} · {world.district}
         </p>
         <DayClock compact />
