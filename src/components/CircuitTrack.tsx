@@ -1,11 +1,11 @@
 import { useMemo } from 'react'
-import { motion } from 'framer-motion'
 import { firstTopicId } from '../data/curriculum.ts'
 import { circuitPits, linkedWorld, worldForModule, type AdventureWorld } from '../data/worlds.ts'
+import { compositeMastery, emptyStats } from '../engine/mastery.ts'
+import { nightHex, sectorCode } from '../engine/render/palette.ts'
 import { cn } from '../lib/cn.ts'
 import { resumeAudio } from '../lib/sfx.ts'
 import { usePlayerStore } from '../store.ts'
-import { RaceCar } from './RaceCar.tsx'
 
 const FULL_W = 330
 const COMPACT_W = 330
@@ -13,7 +13,6 @@ const COMPACT_H = 168
 
 export function CircuitTrack({ compact }: { compact?: boolean }) {
   const parent = usePlayerStore((s) => s.parent)
-  const cosmetics = usePlayerStore((s) => s.cosmetics)
   const stats = usePlayerStore((s) => s.stats)
   const current = worldForModule(parent.moduleId)
   const layout = useMemo(() => layoutPits(compact, current.id), [compact, current.id])
@@ -28,7 +27,7 @@ export function CircuitTrack({ compact }: { compact?: boolean }) {
   }
 
   return (
-    <div className="panel overflow-hidden rounded-2xl bg-[#0c1018]">
+    <div className="panel overflow-hidden rounded-sm bg-[#05070b]">
       <div className="flex items-center justify-between px-4 py-2">
         <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-ink">
           {compact ? 'Nearby sectors' : 'Subject circuit'}
@@ -41,37 +40,48 @@ export function CircuitTrack({ compact }: { compact?: boolean }) {
           className="block w-full"
           style={{ minHeight: compact ? 168 : 520 }}
         >
-          <path d={d} fill="none" stroke="#141414" strokeWidth="38" strokeLinecap="round" strokeLinejoin="round" />
-          <path d={d} fill="none" stroke="#3f4450" strokeWidth="28" strokeLinecap="round" strokeLinejoin="round" />
-          <path d={d} fill="none" stroke="#4cc9ff" strokeWidth="2" strokeDasharray="8 10" opacity="0.7" />
+          <path d={d} fill="none" stroke="#10141c" strokeWidth="36" strokeLinecap="square" strokeLinejoin="miter" />
+          <path d={d} fill="none" stroke="#2a3140" strokeWidth="24" strokeLinecap="square" strokeLinejoin="miter" />
+          <path d={d} fill="none" stroke="#7eb6d6" strokeWidth="1.25" strokeDasharray="5 9" opacity="0.55" />
           {layout.pits.map((pit) => {
             const active = pit.world.id === current.id
             const mastery =
-              pit.world.skillIds.reduce((n, id) => n + (stats[id]?.accuracy ?? 50), 0) /
+              pit.world.skillIds.reduce((n, id) => n + compositeMastery(stats[id] ?? emptyStats()), 0) /
               Math.max(1, pit.world.skillIds.length)
+            const r = active ? 18 : 14
             return (
               <g key={pit.world.id}>
-                <circle
-                  cx={pit.x}
-                  cy={pit.y}
-                  r={active ? 28 : 22}
-                  fill={pit.world.color}
-                  stroke="#4cc9ff"
-                  strokeWidth={active ? 4 : 2}
+                <rect
+                  x={pit.x - r}
+                  y={pit.y - r}
+                  width={r * 2}
+                  height={r * 2}
+                  fill={nightHex(pit.world.color)}
+                  stroke={active ? '#7eb6d6' : '#8aa0b4'}
+                  strokeWidth={active ? 1.6 : 1}
                 />
-                <text x={pit.x} y={pit.y + 5} textAnchor="middle" fontSize="16">
-                  {pit.world.icon}
+                <text
+                  x={pit.x}
+                  y={pit.y + 4}
+                  textAnchor="middle"
+                  fontSize="10"
+                  fontWeight="600"
+                  fill="#e8eef8"
+                  letterSpacing="1.4"
+                >
+                  {sectorCode(pit.world.name)}
                 </text>
-                <text x={pit.x} y={pit.y + 42} textAnchor="middle" fontSize="9" fontWeight="800" fill="#fff">
+                <text x={pit.x} y={pit.y + 36} textAnchor="middle" fontSize="9" fontWeight="600" fill="#c5d0de">
                   {pit.world.name}
                 </text>
-                <text x={pit.x} y={pit.y + 54} textAnchor="middle" fontSize="8" fill="#4cc9ff">
-                  {Math.round(mastery)} tank
+                <text x={pit.x} y={pit.y + 48} textAnchor="middle" fontSize="8" fill="#7eb6d6">
+                  {Math.round(mastery)} mastery
                 </text>
-                <circle
-                  cx={pit.x}
-                  cy={pit.y}
-                  r="34"
+                <rect
+                  x={pit.x - 28}
+                  y={pit.y - 28}
+                  width="56"
+                  height="56"
                   fill="transparent"
                   className="cursor-pointer"
                   onClick={() => driveTo(pit.world)}
@@ -79,25 +89,13 @@ export function CircuitTrack({ compact }: { compact?: boolean }) {
               </g>
             )
           })}
-        </svg>
-        {here ? (
-          <motion.div
-            className="pointer-events-none absolute"
-            animate={{
-              left: `${(here.x / layout.w) * 100}%`,
-              top: `${(here.y / layout.h) * 100}%`,
-            }}
-            transition={{ type: 'spring', stiffness: 80, damping: 18 }}
-            style={{ translate: '-50% -72%' }}
-          >
-            <RaceCar
-              className={compact ? 'h-[58px] w-[32px]' : 'h-[72px] w-[40px]'}
-              paint={cosmetics.paint}
-              wheels={cosmetics.wheels}
-              wing={cosmetics.wing}
+          {here ? (
+            <polygon
+              points={`${here.x},${here.y - 30} ${here.x + 7},${here.y - 18} ${here.x - 7},${here.y - 18}`}
+              fill="#7eb6d6"
             />
-          </motion.div>
-        ) : null}
+          ) : null}
+        </svg>
       </div>
       <p className="px-4 pb-3 text-center text-xs font-medium text-ink">
         Carry: {current.carry} → {current.handoff}
@@ -127,16 +125,13 @@ function pathFor(pits: { x: number; y: number }[], compact?: boolean) {
   if (compact && pits.length >= 2) {
     const first = pits[0]!
     const last = pits[pits.length - 1]!
-    const mid = (first.x + last.x) / 2
-    return `M ${first.x} ${first.y} Q ${mid} 36 ${last.x} ${last.y}`
+    return `M ${first.x} ${first.y} L ${last.x} ${last.y}`
   }
   const first = pits[0]!
   let d = `M ${first.x} ${first.y}`
   for (let i = 1; i < pits.length; i += 1) {
-    const prev = pits[i - 1]!
     const pit = pits[i]!
-    const cx = (prev.x + pit.x) / 2
-    d += ` Q ${cx} ${(prev.y + pit.y) / 2} ${pit.x} ${pit.y}`
+    d += ` L ${pit.x} ${pit.y}`
   }
   return d
 }
@@ -148,19 +143,19 @@ export function HandoffCard() {
   const next = linkedWorld(current, 'next')
 
   return (
-    <div className="panel rounded-2xl p-4">
+    <div className="panel rounded-sm p-4">
       <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-ink">Sector link</p>
       <p className="mt-1 font-display text-xl font-semibold">{current.adventure}</p>
       <div className="mt-3 grid grid-cols-3 gap-2 text-center text-[11px] font-semibold">
-        <div className={cn('rounded-xl border border-white/10 bg-mist/60 p-2', !prev && 'opacity-40')}>
+        <div className={cn('rounded-sm border border-white/10 bg-mist/60 p-2', !prev && 'opacity-40')}>
           <p className="text-ink">Previous</p>
           <p>{prev?.name ?? 'Grid'}</p>
         </div>
-        <div className="rounded-xl border border-sky/40 bg-sky/10 p-2 text-sky">
-          <p className="text-sky/70">Now</p>
+        <div className="border border-gold/50 bg-[#0e1a3a] p-2 text-gold">
+          <p className="text-gold/70">Now</p>
           <p>{current.name}</p>
         </div>
-        <div className={cn('rounded-xl border border-white/10 bg-mist/60 p-2', !next && 'opacity-40')}>
+        <div className={cn('rounded-sm border border-white/10 bg-mist/60 p-2', !next && 'opacity-40')}>
           <p className="text-ink">Next</p>
           <p>{next?.name ?? 'Peak'}</p>
         </div>

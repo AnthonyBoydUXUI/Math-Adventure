@@ -1,11 +1,15 @@
 import type { AttemptRecord } from '../types.ts'
 import { ACHIEVEMENTS } from '../data/meta.ts'
 
+/** First hint is coaching. Extra looks cost sparks so the currency buys process, not an answer. */
+export const HINT_SPARK_COST = 8
+
 export function xpForAttempt(correct: boolean, phase: string, usedPaper: boolean) {
-  let xp = correct ? 20 : 6
-  if (phase === 'lab' && correct) xp += 8
-  if (phase === 'boss' && correct) xp += 16
-  if (usedPaper && correct) xp += 6
+  if (!correct) return 0
+  let xp = 20
+  if (phase === 'lab') xp += 8
+  if (phase === 'boss') xp += 16
+  if (usedPaper) xp += 6
   return xp
 }
 
@@ -21,7 +25,8 @@ export function evaluateAchievements(args: {
   unlocked: string[]
   attempts: AttemptRecord[]
   streak: number
-  labStreakCorrect: number
+  labStreakCorrect?: number
+  labCorrectCount?: number
   usedVoiceAnotherWay: boolean
   completedFlight: boolean
 }) {
@@ -43,7 +48,7 @@ export function evaluateAchievements(args: {
   }
   if ([...families.values()].some((s) => s.size >= 2)) grant('different-look')
   if (args.attempts.some((a) => a.correct && !a.firstDraftCorrect)) grant('comeback')
-  if (args.labStreakCorrect >= 5) grant('locked-in')
+  if ((args.labCorrectCount ?? args.labStreakCorrect ?? 0) >= 5) grant('locked-in')
   if (args.attempts.some((a) => a.usedPaper && a.correct && a.phase !== 'warmup')) grant('paper-work')
   if (args.completedFlight) grant('flight-complete')
   if (args.streak >= 3) grant('streak-3')

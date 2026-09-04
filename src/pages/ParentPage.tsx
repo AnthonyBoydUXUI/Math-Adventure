@@ -1,3 +1,4 @@
+import { MediaCapture } from '../components/MediaCapture.tsx'
 import { MODULES } from '../data/curriculum.ts'
 import { THEMES } from '../types.ts'
 import { usePlayerStore } from '../store.ts'
@@ -10,23 +11,25 @@ export function ParentPage() {
 
   return (
     <div className="px-4 pb-8">
-      <h1 className="font-display text-4xl font-semibold tracking-tight">Parent desk</h1>
+      <h1 className="type-pack text-5xl">Parent desk</h1>
       <p className="mt-1 font-bold text-navy/65">
-        Point Aero at this week’s Reveal Math topic. The 15-minute plan will overweight it — without copying the book.
+        Point Aero at this week’s Grade 7 classroom topic. The 15-minute plan will overweight it — original items, not a copied book.
       </p>
 
-      <label className="mt-4 block text-xs font-extrabold uppercase tracking-widest text-navy/45">Student name</label>
+      <label className="mt-4 block text-xs font-semibold uppercase tracking-widest text-navy/45">Student name</label>
       <input
         value={parent.studentName}
         onChange={(e) => setParent({ studentName: e.target.value })}
-        className="mt-1 w-full rounded-2xl border border-white/10 bg-white px-3 py-3 font-extrabold"
+        className="mt-1 w-full rounded-sm border border-white/10 bg-paper px-3 py-3 font-semibold"
+        placeholder="Optional — stays on this device"
+        autoComplete="nickname"
       />
 
-      <label className="mt-4 block text-xs font-extrabold uppercase tracking-widest text-navy/45">
-        Reveal Math · Course 2
+      <label className="mt-4 block text-xs font-semibold uppercase tracking-widest text-navy/45">
+        Grade 7 course topics
       </label>
       <select
-        className="mt-1 w-full rounded-2xl border border-white/10 bg-white px-3 py-3 font-extrabold"
+        className="mt-1 w-full rounded-sm border border-white/10 bg-paper px-3 py-3 font-semibold"
         value={parent.moduleId}
         onChange={(e) => {
           const next = MODULES.find((m) => m.id === e.target.value)
@@ -40,7 +43,7 @@ export function ParentPage() {
         ))}
       </select>
       <select
-        className="mt-2 w-full rounded-2xl border border-white/10 bg-white px-3 py-3 font-extrabold"
+        className="mt-2 w-full rounded-sm border border-white/10 bg-paper px-3 py-3 font-semibold"
         value={parent.topicId}
         onChange={(e) => setParent({ topicId: e.target.value })}
       >
@@ -51,7 +54,7 @@ export function ParentPage() {
         ))}
       </select>
 
-      <label className="mt-4 inline-flex items-center gap-2 font-extrabold">
+      <label className="mt-4 inline-flex items-center gap-2 font-semibold">
         <input
           type="checkbox"
           checked={parent.pressureLab}
@@ -60,7 +63,7 @@ export function ParentPage() {
         Gentle lock-in clock in Test Lab
       </label>
 
-      <h2 className="mt-5 text-xs font-extrabold uppercase tracking-widest text-navy/45">Interest worlds</h2>
+      <h2 className="mt-5 text-xs font-semibold uppercase tracking-widest text-navy/45">Interest worlds</h2>
       <div className="mt-2 flex flex-wrap gap-2">
         {THEMES.map((th) => {
           const on = parent.themes.includes(th)
@@ -69,8 +72,8 @@ export function ParentPage() {
               key={th}
               type="button"
               className={cn(
-                'rounded-full border border-white/10 px-3 py-1 text-sm font-extrabold capitalize',
-                on ? 'bg-orange text-white' : 'bg-white',
+                'rounded-sm border border-white/10 px-3 py-1 text-sm font-semibold capitalize',
+                on ? 'bg-sky text-chrome' : 'bg-paper',
               )}
               onClick={() =>
                 setThemes(on ? parent.themes.filter((x) => x !== th) : [...parent.themes, th])
@@ -87,34 +90,24 @@ export function ParentPage() {
         <TestReadinessCard />
       </div>
       <p className="mt-3 text-sm font-medium text-ink">
-        Classwork and diagnostics are different wrappers. This readout uses Test Lab + boss plays — not a grade-level label.
+        Classwork and timed tests are different wrappers. This lab snapshot uses Test Lab + boss plays — not a grade-level label or medical diagnosis.
       </p>
       <ul className="mt-2 space-y-2 text-sm font-bold text-navy/70">
-        <li className="rounded-2xl bg-white p-3">Overall 440 is a starting prior — not “fourth grade.”</li>
-        <li className="rounded-2xl bg-white p-3">Geometry 480 is a relative strength. Use it as a bridge.</li>
-        <li className="rounded-2xl bg-white p-3">Stats 380 is the loudest gap cluster, not a global identity.</li>
-        <li className="rounded-2xl bg-white p-3">
+        <li className="rounded-sm bg-paper p-3">Overall 440 is a starting prior — not “fourth grade.”</li>
+        <li className="rounded-sm bg-paper p-3">Geometry 480 is a relative strength. Use it as a bridge.</li>
+        <li className="rounded-sm bg-paper p-3">Stats 380 is the loudest gap cluster, not a global identity.</li>
+        <li className="rounded-sm bg-paper p-3">
           Expressions 430 often mixes format transfer + written process, not missing algebra talent.
         </li>
       </ul>
 
-      <label className="mt-5 inline-flex rounded-2xl border border-white/10 bg-white px-3 py-2 text-sm font-extrabold">
-        Upload a class page photo
-        <input
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={(e) => {
-            const file = e.target.files?.[0]
-            if (!file) return
-            const reader = new FileReader()
-            reader.onload = () => setParent({ pagePhoto: String(reader.result) })
-            reader.readAsDataURL(file)
-          }}
-        />
-      </label>
+      <MediaCapture
+        className="press mt-5 inline-flex min-h-11 items-center rounded-sm border border-white/10 bg-paper px-3 text-sm font-semibold"
+        label="Upload a class page photo"
+        onPhoto={(url) => setParent({ pagePhoto: url })}
+      />
       {parent.pagePhoto ? (
-        <img src={parent.pagePhoto} alt="Class page" className="mt-3 max-h-40 rounded-2xl border border-white/10 object-cover" />
+        <img src={parent.pagePhoto} alt="Class page" className="mt-3 max-h-40 rounded-sm border border-white/10 object-cover" />
       ) : null}
     </div>
   )

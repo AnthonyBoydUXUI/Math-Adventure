@@ -1,0 +1,17 @@
+{
+  "name": "Aero",
+  "short_name": "Aero",
+  "description": "15-minute adaptive math practice for seventh- and eighth-grade students.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#080a0e",
+  "theme_color": "#080a0e",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

@@ -18,16 +18,16 @@ export function LabPage() {
 
   return (
     <div className="px-4 pb-8">
-      <h1 className="font-display text-4xl font-semibold tracking-tight">Test Lab</h1>
+      <h1 className="type-pack text-5xl">Test Lab</h1>
       <p className="mt-1 font-medium text-ink">
-        Same math, different look — the move diagnostics actually make. We save every lab play so the next test wrapper is the one you still miss.
+        Same math, different look — the move timed tests actually make. We save every lab play so the next test wrapper is the one you still miss.
       </p>
       <div className="mt-4">
         <TestReadinessCard />
       </div>
-      <label className="mt-4 block text-xs font-extrabold uppercase tracking-widest text-navy/45">Skill</label>
+      <label className="mt-4 block text-xs font-semibold uppercase tracking-widest text-navy/45">Skill</label>
       <select
-        className="mt-1 w-full rounded-2xl border border-white/10 bg-white px-3 py-3 font-extrabold"
+        className="mt-1 w-full rounded-sm border border-white/10 bg-paper px-3 py-3 font-semibold"
         value={skillId}
         onChange={(e) => setSkillId(e.target.value)}
       >
@@ -39,22 +39,22 @@ export function LabPage() {
       </select>
       <div className="mt-3 flex flex-wrap gap-1">
         {sample.map((q) => (
-          <span key={q.id} className="rounded-full border border-white/10 bg-white px-2 py-0.5 text-[11px] font-extrabold uppercase">
+          <span key={q.id} className="rounded-sm border border-white/10 bg-paper px-2 py-0.5 text-[11px] font-semibold uppercase">
             {q.format}
           </span>
         ))}
       </div>
       <ul className="mt-4 space-y-2">
         {sample.slice(0, 4).map((q) => (
-          <li key={q.id} className="rounded-2xl border border-white/10 bg-white px-3 py-2 text-sm font-bold">
-            <span className="mr-2 font-extrabold uppercase text-violet">{q.format}</span>
+          <li key={q.id} className="rounded-sm border border-white/10 bg-paper px-3 py-2 text-sm font-medium">
+            <span className="mr-2 font-semibold uppercase text-violet">{q.format}</span>
             {q.prompt}
           </li>
         ))}
       </ul>
       <button
         type="button"
-        className="press mt-6 w-full rounded-xl bg-sky py-4 font-semibold text-chrome"
+        className="press mt-6 w-full bg-[#0e1a3a] py-4 font-semibold uppercase tracking-[0.12em] text-bone"
         onClick={() => {
           const report = buildTestReport(usePlayerStore.getState().attempts)
           const rng = mulberry32(hashString(`lab:${skillId}:${report.weakestFormat ?? 'any'}`))
@@ -101,6 +101,7 @@ export function LabPage() {
               awaitingLock: false,
               paperGate: Boolean(questionById(lab[0]?.id ?? '')?.paperFirst),
               labCorrectRun: 0,
+              labCorrectCount: 0,
               usedVoiceAnotherWay: false,
               completed: false,
             },

@@ -237,6 +237,13 @@ export interface CosmeticDef {
   unlock: string
 }
 
+export interface SessionLike {
+  active: boolean
+  completed: boolean
+  phaseIndex: number
+  itemIndex: number
+}
+
 export interface DailyMission {
   dateKey: string
   title: string
@@ -273,6 +280,17 @@ export interface ParentSettings {
   studentName: string
   pagePhoto?: string
   pageNote?: string
+}
+
+export interface ComplianceState {
+  acknowledgedAt: number | null
+  ageBand: '12plus' | null
+  role: 'parent' | 'student12' | null
+}
+
+export interface PermissionState {
+  cameraExplained: boolean
+  micExplained: boolean
 }
 
 export type VoiceIntent =

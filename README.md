@@ -1,8 +1,8 @@
 # Aero · Math Adventure
 
-Fifteen focused minutes a day for a seventh-grader who already thinks mathematically in class and needs that same mind on diagnostics, transfer, and paper.
+Fifteen focused minutes a day for a seventh-grader who already thinks mathematically in class and needs that same mind on timed tests, transfer, and paper.
 
-Aero is a personal coach, a game, a visual lab, and a paper companion — not a remediation worksheet and not an answer key.
+Aero is a personal coach, a game, a visual lab, and a paper companion — not a remediation worksheet, not an answer key, and not a medical or official school diagnosis.
 
 ## Daily flight
 
@@ -15,8 +15,8 @@ Aero is a personal coach, a game, a visual lab, and a paper companion — not a 
 
 ## Three tracks
 
-1. **Classroom** — original items aligned to McGraw Hill Reveal Math Course 2 concepts (never copied pages or publisher banks)
-2. **Foundation** — precision work on recommended gaps, without treating a diagnostic as a grade-level identity
+1. **Classroom** — original items on typical Grade 7 course topics (never copied pages or publisher banks; not an official partnership)
+2. **Foundation** — precision work on recommended gaps, without treating a practice score as a grade-level identity
 3. **Next Level** — 8th grade and Algebra I ideas when mastery says go
 
 ## Run
@@ -29,48 +29,49 @@ npm run dev
 
 Then open the printed local URL. On a phone-sized viewport the library covers, HUD, and 15-minute session are the core loop.
 
+The HUD clock always shows the local weekday, calendar date, current year, and time. The week strip marks practiced days. If you quit mid-session, Home says **Continue where you left off** and does not regenerate the flight. A new calendar day keeps the same topic (or advances it after a strong finish) so learning moves forward, not sideways.
+
 ## Adventures that connect
 
-Each Reveal module is a district (Ratio Runway, Tip Market, Balance Bridge…). Warm-ups pull a bridge skill from the previous district so the next subject is not a reset.
+Each classroom module is a district (Ratio Runway, Tip Market, Balance Bridge…). Warm-ups pull a bridge skill from the previous district so the next subject is not a reset.
+
+## App Store readiness
+
+Aero is written to ship as an iOS Education app for students 12+ (not Kids Category). First launch is a parent / student-12+ gate. Privacy, Terms, and Support exist in-app and as static pages (`/privacy.html`, `/terms.html`, `/support.html`) so App Store Connect URLs work without JavaScript. Privacy Center exports or deletes the on-device save. See `APP_STORE.md` and `native/ios/README.md`.
 
 ## Vercel
 
-The red production deploy on `main` @ `6dd8ee2` failed because `vite.config.ts` imported `vitest/config` and `tsc -b` hit a Vite 8 Rollup/Rolldown type clash. Vercel now runs `npx vite build` only. Local `npm run build` still typechecks the app, then Vite.
-
-Redeploy **latest** `main` after this lands — do not retry the stale `6dd8ee2` job.
+Vercel runs `npx vite build` only (see `vercel.json`). Local `npm run build` still typechecks `tsconfig.app.json`, then Vite. The old red job on `main` @ `6dd8ee2` imported `vitest/config` and must not be retried — Redeploy **latest** `main`.
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/import?s=https://github.com/AnthonyBoydUXUI/Math-Adventure)
 
+Hobby is enough (static app). Optional GitHub secrets for `.github/workflows/vercel.yml`: `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`.
+
 Tap the speaker in the app HUD to start moving world sound. Browsers block audio until a tap.
 
-## Architecture — no backend (on purpose)
+## Architecture — local first, optional cloud
 
-Aero is a **static Vite app**. There is no server, no API, and no Supabase (or any other database) in this repo.
+Aero is a **static Vite app**. Math still runs in the browser. Optional **Supabase Auth + one `profiles` table** backs up the same JSON blob so phone, tablet, laptop, and the `/watch` glance share a save.
 
 | What | Where it lives |
 | --- | --- |
 | Questions, curriculum, worlds | Bundled TypeScript (`src/data/`) |
-| Adaptive session, diagnosis, scoring | Client engine (`src/engine/`) |
-| XP, streak, mastery, cosmetics, parent settings | Browser `localStorage` via Zustand persist (`aero-math-adventure`) |
+| Adaptive session, practice feedback, scoring | Client engine (`src/engine/`) |
+| XP, streak, mastery, cosmetics, parent settings | Device `localStorage` (`aero-math-adventure`) and, if signed in, `profiles.payload` |
 | Voice | Browser Speech Synthesis / Speech Recognition |
-| Homework photos | Data URLs stored locally in that same persist blob |
+| Homework photos | Stay on the device that captured them (stripped from cloud) |
 
-That is enough for one student on one device (phone or laptop). Clearing site data wipes progress. Two browsers do not sync.
+**One-time setup:** run `supabase/schema.sql` in the Supabase SQL editor. Env: `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` (see `.env.example`).
 
-**Do not add Supabase until you need one of these:**
+Sign in under System → Account + sync. After clearing site data, sign in again to restore.
 
-- The same progress on phone *and* laptop
-- A parent login that is not the student’s browser
-- Backup if Safari/Chrome data is cleared
-- More than one student profile in the cloud
+The 15-minute session is built for phone, tablet, and web. `/watch` is a glance (streak, clock, left-off, resume) for a watch-sized browser — not a full lesson on the wrist.
 
-When that day comes, Supabase (Auth + one `profiles` / `attempts` table) is the right add. The store is already a single `PlayerStore` blob, so a later sync layer can upsert that JSON per user without rewriting the math engine. Until then, extra backend would not change how the 15-minute session works.
-
-Test Lab writes the same attempt log. The **test-readiness** readout (transfer, lock-in, paper habit, weakest wrapper) is computed from those plays so diagnostics get a plan, not just XP. If Supabase is added later, sync that attempt log — the report is derived, not a second source of truth.
+Test Lab writes the same attempt log. The **test-readiness** readout is derived from those plays. The cloud profile stores that log; it is not a second scoring engine.
 
 ## Parent desk
 
-Choose Reveal Math → Module → Topic. That week’s flight overweight that concept. Upload a class page photo to keep the coach pointed at the right room.
+Choose this week’s Grade 7 module and topic. That week’s flight overweight that concept. Upload a class page photo (it stays on this device) to keep the coach pointed at the right room.
 
 ## Voice
 

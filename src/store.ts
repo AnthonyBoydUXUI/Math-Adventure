@@ -3,19 +3,25 @@ import { persist } from 'zustand/middleware'
 import { ACHIEVEMENTS, COSMETICS } from './data/meta.ts'
 import { questionById } from './data/questions.ts'
 import { diagnose, familyAccuracy, seenFormats } from './engine/diagnosis.ts'
-import { applyAttempt, seedSkillStats } from './engine/mastery.ts'
-import { evaluateAchievements, xpForAttempt } from './engine/scoring.ts'
+import { applyAttempt, emptyStats, seedSkillStats, compositeMastery } from './engine/mastery.ts'
+import { buildBookmark, defaultBookmark, markPracticeDay, type ProgressBookmark } from './engine/progress.ts'
+import { evaluateAchievements, HINT_SPARK_COST, xpForAttempt } from './engine/scoring.ts'
+import { buildTestReport } from './engine/testReady.ts'
 import { generateDailyMission } from './engine/session.ts'
 import { resumeAudio, setMuted, sfx, startAmbient, stopAmbient } from './lib/sfx.ts'
 import { worldForModule } from './data/worlds.ts'
+import { clearLocalArchive } from './lib/archive.ts'
 import { checkAnswer } from './lib/answers.ts'
-import { dayKey } from './lib/hash.ts'
+import { haptic } from './lib/haptics.ts'
+import { dayKey, isSameCalendarDay } from './lib/clock.ts'
 import type {
   AttemptRecord,
+  ComplianceState,
   DailyMission,
   Diagnosis,
   DimensionStats,
   ParentSettings,
+  PermissionState,
   PlayerCosmetics,
   Theme,
 } from './types.ts'
@@ -42,6 +48,8 @@ export interface SessionSlice {
     firstDraftCorrect: boolean
   }
   labCorrectRun: number
+  labCorrectCount: number
+  readinessAtStart?: number
   usedVoiceAnotherWay: boolean
   completed: boolean
 }
@@ -63,8 +71,18 @@ interface PlayerStore {
   parent: ParentSettings
   mission: DailyMission
   session: SessionSlice
+  bookmark: ProgressBookmark
+  practiceDays: string[]
+  lastActiveAt: number
   toast?: string
   soundOn: boolean
+  compliance: ComplianceState
+  permissions: PermissionState
+  acknowledgeCompliance: (role: NonNullable<ComplianceState['role']>) => void
+  markPermissionExplained: (kind: 'camera' | 'mic') => void
+  wipeLocalData: () => void
+  ensureToday: (now?: Date) => void
+  resumeOrStart: (extra?: boolean) => 'resume' | 'start' | 'extra'
   startFlight: (extra?: boolean) => void
   setDraft: (value: string) => void
   useHint: () => void
@@ -76,7 +94,7 @@ interface PlayerStore {
   nextItem: () => void
   skipPaperGate: () => void
   acceptPaperGate: () => void
-  completeRecap: () => void
+  completeRecap: (choice?: 'advance' | 'deepen') => void
   markVoice: () => void
   setParent: (patch: Partial<ParentSettings>) => void
   driveTo: (moduleId: string, topicId: string) => void
@@ -91,7 +109,18 @@ const defaultParent: ParentSettings = {
   topicId: 'm6-t1',
   themes: ['basketball', 'art', 'sky', 'gaming'],
   pressureLab: false,
-  studentName: 'Copilot',
+  studentName: '',
+}
+
+const defaultCompliance: ComplianceState = {
+  acknowledgedAt: null,
+  ageBand: null,
+  role: null,
+}
+
+const defaultPermissions: PermissionState = {
+  cameraExplained: false,
+  micExplained: false,
 }
 
 function freshSession(): SessionSlice {
@@ -111,6 +140,7 @@ function freshSession(): SessionSlice {
     awaitingLock: false,
     paperGate: false,
     labCorrectRun: 0,
+    labCorrectCount: 0,
     usedVoiceAnotherWay: false,
     completed: false,
   }
@@ -145,6 +175,20 @@ function normalizeCosmetics(cosmetics: Partial<PlayerCosmetics> & { unlocked?: s
   }
 }
 
+function refreshBookmark(set: PlayerStoreSetter, get: () => PlayerStore) {
+  const s = get()
+  const mastery = compositeMastery(s.stats[s.mission.focusSkillId] ?? emptyStats())
+  set({
+    bookmark: buildBookmark({
+      parent: s.parent,
+      mission: s.mission,
+      session: s.session,
+      mastery,
+    }),
+    lastActiveAt: Date.now(),
+  })
+}
+
 function grantOpenRoad(get: () => PlayerStore, set: PlayerStoreSetter) {
   const s = get()
   if (s.achievements.includes('open-road')) return
@@ -161,7 +205,7 @@ function grantOpenRoad(get: () => PlayerStore, set: PlayerStoreSetter) {
 export const usePlayerStore = create<PlayerStore>()(
   persist(
     (set, get) => ({
-      studentName: 'Copilot',
+      studentName: '',
       xp: 0,
       sparks: 40,
       streak: 0,
@@ -181,8 +225,77 @@ export const usePlayerStore = create<PlayerStore>()(
       parent: defaultParent,
       mission: generateDailyMission(seedSkillStats(), defaultParent),
       session: freshSession(),
+      bookmark: defaultBookmark(),
+      practiceDays: [],
+      lastActiveAt: 0,
       toast: undefined,
       soundOn: true,
+      compliance: defaultCompliance,
+      permissions: defaultPermissions,
+      acknowledgeCompliance: (role) =>
+        set({
+          compliance: {
+            acknowledgedAt: Date.now(),
+            ageBand: '12plus',
+            role,
+          },
+        }),
+      markPermissionExplained: (kind) =>
+        set((s) => ({
+          permissions: {
+            ...s.permissions,
+            ...(kind === 'camera' ? { cameraExplained: true } : { micExplained: true }),
+          },
+        })),
+      wipeLocalData: () => {
+        clearLocalArchive()
+        usePlayerStore.persist.clearStorage()
+        window.location.assign('/')
+      },
+      ensureToday: (now = new Date()) => {
+        const s = get()
+        if (s.session.active && isSameCalendarDay(s.mission.dateKey, now)) {
+          refreshBookmark(set, get)
+          return
+        }
+        if (s.session.active && !isSameCalendarDay(s.mission.dateKey, now)) {
+          const mastery = compositeMastery(s.stats[s.mission.focusSkillId] ?? emptyStats())
+          const parked = buildBookmark({
+            parent: s.parent,
+            mission: s.mission,
+            session: s.session,
+            mastery,
+            now,
+          })
+          const mission = generateDailyMission(s.stats, s.parent, now, false, s.attempts)
+          set({
+            mission,
+            session: freshSession(),
+            bookmark: { ...parked, kind: 'paused-yesterday' },
+            lastActiveAt: now.getTime(),
+          })
+          return
+        }
+        if (isSameCalendarDay(s.mission.dateKey, now)) {
+          refreshBookmark(set, get)
+          return
+        }
+        const mission = generateDailyMission(s.stats, s.parent, now, false, s.attempts)
+        set({
+          mission,
+          session: freshSession(),
+        })
+        refreshBookmark(set, get)
+      },
+      resumeOrStart: (extra = false) => {
+        const s = get()
+        if (s.session.active && !extra) {
+          refreshBookmark(set, get)
+          return 'resume'
+        }
+        get().startFlight(extra)
+        return extra ? 'extra' : 'start'
+      },
       startFlight: (extra = false) => {
         const s = get()
         void resumeAudio()
@@ -191,7 +304,8 @@ export const usePlayerStore = create<PlayerStore>()(
           sfx.start()
           startAmbient(worldForModule(s.parent.moduleId).id)
         }
-        const mission = generateDailyMission(s.stats, s.parent, new Date(), extra, s.attempts)
+        const now = new Date()
+        const mission = generateDailyMission(s.stats, s.parent, now, extra, s.attempts)
         const qid = mission.phases[0]?.questionIds[0]
         const q = qid ? questionById(qid) : undefined
         set({
@@ -203,8 +317,11 @@ export const usePlayerStore = create<PlayerStore>()(
             startedAt: Date.now(),
             questionStartedAt: Date.now(),
             paperGate: Boolean(q?.paperFirst),
+            readinessAtStart: buildTestReport(s.attempts).readiness,
           },
+          practiceDays: markPracticeDay(s.practiceDays, dayKey(now)),
         })
+        refreshBookmark(set, get)
       },
       setDraft: (value) =>
         set((s) => ({
@@ -214,7 +331,17 @@ export const usePlayerStore = create<PlayerStore>()(
             changed: s.session.firstDraft ? value !== s.session.firstDraft : s.session.changed,
           },
         })),
-      useHint: () => set((s) => ({ session: { ...s.session, hints: s.session.hints + 1 } })),
+      useHint: () => {
+        const s = get()
+        if (s.session.hints >= 1 && s.sparks < HINT_SPARK_COST) {
+          set({ toast: `Need ${HINT_SPARK_COST} sparks for another look` })
+          return
+        }
+        set({
+          sparks: s.session.hints >= 1 ? s.sparks - HINT_SPARK_COST : s.sparks,
+          session: { ...s.session, hints: s.session.hints + 1 },
+        })
+      },
       markPaper: () => set((s) => ({ session: { ...s.session, paper: true } })),
       setPhoto: (dataUrl) => set((s) => ({ session: { ...s.session, photo: dataUrl, paper: true } })),
       setConfidence: (n) => set((s) => ({ session: { ...s.session, confidence: n } })),
@@ -244,6 +371,7 @@ export const usePlayerStore = create<PlayerStore>()(
           studentName: parent.studentName || get().studentName,
         })
         if (get().soundOn) startAmbient(worldForModule(parent.moduleId).id)
+        refreshBookmark(set, get)
       },
       driveTo: (moduleId, topicId) => {
         const s = get()
@@ -262,6 +390,7 @@ export const usePlayerStore = create<PlayerStore>()(
         if (from.nextId && dest.id === from.nextId) {
           grantOpenRoad(get, set)
         }
+        refreshBookmark(set, get)
       },
       equip: (slot, id) => {
         if (!get().cosmetics.unlocked.includes(id)) return
@@ -347,23 +476,23 @@ export const usePlayerStore = create<PlayerStore>()(
 
         const labCorrectRun =
           phase.phase === 'lab' ? (finalCorrect ? s.session.labCorrectRun + 1 : 0) : s.session.labCorrectRun
-        const streakState = ensureStreak({ streak: s.streak, lastDay: s.lastDay })
+        const labCorrectCount =
+          phase.phase === 'lab' && finalCorrect ? (s.session.labCorrectCount ?? 0) + 1 : (s.session.labCorrectCount ?? 0)
         const newAch = evaluateAchievements({
           unlocked: s.achievements,
           attempts: [...s.attempts, attempt],
-          streak: streakState.streak,
-          labStreakCorrect: labCorrectRun,
+          streak: s.streak,
+          labCorrectCount,
           usedVoiceAnotherWay: s.session.usedVoiceAnotherWay,
           completedFlight: false,
         }).filter((id) => !s.achievements.includes(id))
+        const unlockedName = ACHIEVEMENTS.find((a) => a.id === newAch[0])?.name
 
         set({
           stats,
           attempts: [...s.attempts, attempt],
           xp: s.xp + xpForAttempt(finalCorrect, phase.phase, s.session.paper),
-          sparks: s.sparks + (finalCorrect ? 4 : 1),
-          streak: streakState.streak,
-          lastDay: streakState.lastDay,
+          sparks: s.sparks + (finalCorrect ? 4 : 0),
           achievements: [...s.achievements, ...newAch],
           cosmetics: unlockCosmetics(s.cosmetics, [...s.achievements, ...newAch]),
           session: {
@@ -371,12 +500,19 @@ export const usePlayerStore = create<PlayerStore>()(
             awaitingLock: false,
             lastResult: { correct: finalCorrect, diagnosis, firstDraftCorrect: firstCorrect },
             labCorrectRun,
+            labCorrectCount,
           },
-          toast: newAch[0] ? `Achievement unlocked` : undefined,
+          toast: unlockedName ? `Unlocked · ${unlockedName}` : undefined,
         })
-        if (finalCorrect) sfx.correct()
-        else sfx.miss()
+        if (finalCorrect) {
+          sfx.correct()
+          haptic('success')
+        } else {
+          sfx.miss()
+          haptic('warn')
+        }
         if (newAch[0]) sfx.xp()
+        refreshBookmark(set, get)
       },
       nextItem: () => {
         const s = get()
@@ -407,6 +543,7 @@ export const usePlayerStore = create<PlayerStore>()(
               paperGate: false,
             },
           })
+          refreshBookmark(set, get)
           return
         }
         if (s.soundOn) sfx.whoosh()
@@ -430,41 +567,85 @@ export const usePlayerStore = create<PlayerStore>()(
             questionStartedAt: Date.now(),
           },
         })
+        refreshBookmark(set, get)
       },
-      completeRecap: () => {
+      completeRecap: (choice) => {
         const s = get()
         const streakState = ensureStreak({ streak: s.streak, lastDay: s.lastDay })
         const newAch = evaluateAchievements({
           unlocked: s.achievements,
           attempts: s.attempts,
           streak: streakState.streak,
-          labStreakCorrect: s.session.labCorrectRun,
+          labCorrectCount: s.session.labCorrectCount ?? s.session.labCorrectRun,
           usedVoiceAnotherWay: s.session.usedVoiceAnotherWay,
           completedFlight: true,
         }).filter((id) => !s.achievements.includes(id))
+        const session = { ...s.session, active: false, completed: true }
+        const mastery = compositeMastery(s.stats[s.mission.focusSkillId] ?? emptyStats())
+        const path = choice === 'advance' || choice === 'deepen' ? choice : undefined
+        const bookmark = buildBookmark({
+          parent: s.parent,
+          mission: s.mission,
+          session,
+          mastery,
+          path,
+        })
+        const parent =
+          choice === 'advance' && bookmark.kind === 'next-topic' && bookmark.nextModuleId && bookmark.nextTopicId
+            ? { ...s.parent, moduleId: bookmark.nextModuleId, topicId: bookmark.nextTopicId }
+            : s.parent
+        const unlockedName = ACHIEVEMENTS.find((a) => a.id === newAch[0])?.name
         set({
           streak: streakState.streak,
           lastDay: streakState.lastDay,
           achievements: [...s.achievements, ...newAch],
           cosmetics: unlockCosmetics(s.cosmetics, [...s.achievements, ...newAch]),
-          session: { ...s.session, active: false, completed: true },
+          session,
+          parent,
+          bookmark,
+          practiceDays: markPracticeDay(s.practiceDays, dayKey()),
+          lastActiveAt: Date.now(),
           xp: s.xp + 30,
           sparks: s.sparks + 12,
+          toast: unlockedName ? `Unlocked · ${unlockedName}` : s.toast,
         })
         if (s.soundOn) sfx.xp()
       },
     }),
     {
       name: 'aero-math-adventure',
-      version: 3,
-      migrate: (persisted) => persisted as PlayerStore,
+      version: 5,
+      migrate: (persisted, version) => {
+        const s = { ...((persisted ?? {}) as Record<string, unknown>) }
+        if (version < 4) {
+          const parent = { ...((s.parent as ParentSettings | undefined) ?? defaultParent) }
+          if (parent.studentName === 'Copilot') parent.studentName = ''
+          s.parent = parent
+          if (s.studentName === 'Copilot') s.studentName = ''
+          s.compliance = { ...defaultCompliance }
+          s.permissions = { ...defaultPermissions }
+        }
+        if (version < 5) {
+          s.bookmark = defaultBookmark()
+          s.practiceDays = Array.isArray(s.practiceDays) ? s.practiceDays : []
+          s.lastActiveAt = typeof s.lastActiveAt === 'number' ? s.lastActiveAt : 0
+        }
+        return s as unknown as PlayerStore
+      },
       merge: (persisted, current) => {
         const p = (persisted ?? {}) as Partial<PlayerStore>
+        const parent = { ...current.parent, ...(p.parent ?? {}) }
+        if (parent.studentName === 'Copilot') parent.studentName = ''
         return {
           ...current,
           ...p,
+          studentName: p.studentName === 'Copilot' ? '' : (p.studentName ?? current.studentName),
           cosmetics: normalizeCosmetics({ ...current.cosmetics, ...(p.cosmetics ?? {}) }),
-          parent: { ...current.parent, ...(p.parent ?? {}) },
+          parent,
+          compliance: { ...current.compliance, ...(p.compliance ?? {}) },
+          permissions: { ...current.permissions, ...(p.permissions ?? {}) },
+          bookmark: { ...current.bookmark, ...(p.bookmark ?? {}) },
+          practiceDays: p.practiceDays ?? current.practiceDays,
         }
       },
     },

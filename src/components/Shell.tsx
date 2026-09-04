@@ -1,5 +1,7 @@
 import { useEffect } from 'react'
+import { DayClock } from './DayClock.tsx'
 import {
+  Cloud,
   Crosshair,
   FlaskConical,
   Gauge,
@@ -11,12 +13,16 @@ import {
   VolumeX,
   Zap,
 } from 'lucide-react'
-import { NavLink, Outlet, useLocation } from 'react-router-dom'
+import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
+import { useCloud } from '../cloud/CloudProvider.tsx'
 import { worldForModule } from '../data/worlds.ts'
-import { levelFromXp, xpIntoLevel } from '../engine/scoring.ts'
+import { compositeMastery, emptyStats } from '../engine/mastery.ts'
+import { buildTestReport } from '../engine/testReady.ts'
+import { useDeviceSurface } from '../hooks/useDeviceSurface.ts'
 import { cn } from '../lib/cn.ts'
 import { resumeAudio, setMuted, startAmbient } from '../lib/sfx.ts'
 import { usePlayerStore } from '../store.ts'
+import { ComplianceGate } from './ComplianceGate.tsx'
 
 const NAV = [
   { to: '/', label: 'Home', icon: Home },
@@ -27,16 +33,25 @@ const NAV = [
   { to: '/more', label: 'System', icon: MoreHorizontal },
 ]
 
+const UNGATED = new Set(['/privacy', '/terms', '/support', '/privacy-center'])
+
 export function Shell() {
-  const { xp, sparks, streak, toast, setToast, studentName, soundOn, toggleSound, parent } =
+  const { sparks, streak, toast, setToast, studentName, soundOn, toggleSound, parent, compliance, attempts, stats, mission } =
     usePlayerStore()
-  const level = levelFromXp(xp)
-  const into = xpIntoLevel(xp)
+  const cloud = useCloud()
+  const surface = useDeviceSurface()
+  const readiness = buildTestReport(attempts).readiness
+  const mastery = Math.round(compositeMastery(stats[mission.focusSkillId] ?? emptyStats()))
   const audioEnabled = soundOn !== false
   const loc = useLocation()
   const world = worldForModule(parent.moduleId)
+  const gated = !compliance.acknowledgedAt && !UNGATED.has(loc.pathname)
+  const displayName = studentName.trim() || 'Student'
+  const compact = loc.pathname === '/watch' || surface === 'watch'
 
   useEffect(() => {
+    usePlayerStore.getState().ensureToday()
+    const rollover = window.setInterval(() => usePlayerStore.getState().ensureToday(), 60_000)
     const unlock = () => {
       void resumeAudio()
       setMuted(!usePlayerStore.getState().soundOn)
@@ -45,26 +60,53 @@ export function Shell() {
       }
     }
     window.addEventListener('pointerdown', unlock, { once: true })
-    return () => window.removeEventListener('pointerdown', unlock)
+    return () => {
+      window.clearInterval(rollover)
+      window.removeEventListener('pointerdown', unlock)
+    }
   }, [])
 
+  if (gated) return <ComplianceGate />
+
   return (
-    <div className="mx-auto min-h-dvh max-w-xl pb-28">
-      <header className="sticky top-0 z-30 flex items-center gap-2 px-4 py-3 backdrop-blur-xl">
-        <div className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-paper">
-          <Crosshair className="h-4 w-4 text-sky" />
+    <div
+      className={cn(
+        'shell-frame mx-auto min-h-dvh',
+        compact
+          ? 'max-w-[280px] pb-6'
+          : 'max-w-xl pb-[calc(7.5rem+env(safe-area-inset-bottom))] md:max-w-2xl lg:max-w-3xl',
+      )}
+      data-surface={surface}
+    >
+      <a href="#main" className="skip-link">
+        Skip to content
+      </a>
+      <header className="sticky top-0 z-30 flex items-center gap-1.5 px-4 py-3 pt-[max(0.75rem,env(safe-area-inset-top))] backdrop-blur-xl">
+        <div className="flex h-11 w-11 items-center justify-center border-2 border-[#f3efe6] bg-[#0e1a3a]" aria-hidden>
+          <Crosshair className="h-4 w-4 text-gold" />
         </div>
-        <div className="hud-pill flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold">
-          <Zap className="h-3.5 w-3.5 text-gold" />
+        <div className="hud-chip flex min-h-11 items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold tracking-[0.12em]">
+          <span className="sr-only">Test readiness</span>
+          <span className="text-ink">RDY</span>
+          {readiness || '—'}
+        </div>
+        <div className="hud-chip flex min-h-11 items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold tracking-[0.12em]">
+          <span className="sr-only">Focus mastery</span>
+          <span className="text-ink">MST</span>
+          {mastery}
+        </div>
+        <div className="hud-chip flex min-h-11 items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold tracking-[0.12em]">
+          <Zap className="h-3.5 w-3.5 text-gold" aria-hidden />
+          <span className="sr-only">Finished-day streak</span>
+          <span className="text-ink">STR</span>
           {streak}
-        </div>
-        <div className="hud-pill flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold">
-          <span className="h-2 w-2 rounded-full bg-sky" />
-          {sparks}
         </div>
         <button
           type="button"
-          className={cn('hud-pill flex items-center rounded-full px-2 py-1', !audioEnabled && 'opacity-40')}
+          className={cn(
+            'hud-chip flex h-11 w-11 items-center justify-center',
+            !audioEnabled && 'opacity-40',
+          )}
           aria-label={audioEnabled ? 'Mute sound' : 'Turn sound on'}
           onClick={() => {
             void resumeAudio()
@@ -73,46 +115,69 @@ export function Shell() {
         >
           {audioEnabled ? <Volume2 className="h-4 w-4 text-sky" /> : <VolumeX className="h-4 w-4 text-ink" />}
         </button>
-        <div className="hud-pill ml-auto flex items-center gap-2 rounded-full px-2.5 py-1 text-xs font-semibold">
-          <span className="text-ink">LV</span>
-          {level}
-          <span className="h-1 w-16 overflow-hidden rounded-full bg-mist">
-            <span className="block h-full bg-sky" style={{ width: `${(into / 120) * 100}%` }} />
-          </span>
+        {cloud.user ? (
+          <Link
+            to="/account"
+            className="hud-chip flex h-11 w-11 items-center justify-center"
+            aria-label={cloud.status === 'synced' ? 'Cloud backup on' : 'Account'}
+          >
+            <Cloud className={cn('h-4 w-4', cloud.status === 'synced' ? 'text-leaf' : 'text-gold')} />
+          </Link>
+        ) : null}
+        <div className="hud-chip ml-auto flex min-h-11 items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold tracking-[0.12em]">
+          <span className="sr-only">Sparks for extra hints</span>
+          <span className="text-ink">SPK</span>
+          {sparks}
         </div>
       </header>
 
-      {loc.pathname === '/' ? (
-        <p className="px-5 pb-1 text-[11px] font-medium uppercase tracking-[0.22em] text-ink">
-          {studentName} · {world.district}
+      <div className="flex items-center justify-between gap-3 px-5 pb-2">
+        <p className="stamp text-ink">
+          {displayName} · {world.district}
         </p>
-      ) : null}
+        <DayClock compact />
+      </div>
 
-      <Outlet />
+      <main id="main">
+        <Outlet />
+        <footer className={cn('px-4 pb-2 pt-8 text-center text-[11px] font-medium text-ink', compact && 'hidden')}>
+          <Link to="/privacy" className="inline-flex min-h-11 items-center text-sky">
+            Privacy
+          </Link>
+          {' · '}
+          <Link to="/terms" className="inline-flex min-h-11 items-center text-sky">
+            Terms
+          </Link>
+          {' · '}
+          <Link to="/support" className="inline-flex min-h-11 items-center text-sky">
+            Support
+          </Link>
+        </footer>
+      </main>
 
       {toast ? (
         <button
           type="button"
-          className="fixed bottom-28 left-1/2 z-40 -translate-x-1/2 rounded-full border border-sky/40 bg-chrome px-4 py-2 text-sm font-semibold text-sky"
+          className="fixed bottom-28 left-1/2 z-40 min-h-11 -translate-x-1/2 rounded-sm border border-sky/40 bg-chrome px-4 py-2 text-sm font-semibold text-sky"
           onClick={() => setToast(undefined)}
         >
           {toast}
         </button>
       ) : null}
 
-      <nav className="dock fixed bottom-0 left-0 right-0 z-30 px-2 py-2">
-        <div className="mx-auto flex max-w-xl items-end justify-around">
+      <nav className={cn('dock fixed bottom-0 left-0 right-0 z-30 px-2 pt-2', compact && 'hidden')} aria-label="Primary">
+        <div className="mx-auto flex max-w-xl items-end justify-around pb-[max(0.5rem,env(safe-area-inset-bottom))] md:max-w-2xl lg:max-w-3xl">
           {NAV.map((item) => (
-            <NavLink key={item.to} to={item.to} className="flex flex-col items-center gap-1">
+            <NavLink key={item.to} to={item.to} aria-label={item.label} className="flex min-h-11 flex-col items-center gap-1 px-1">
               {({ isActive }) => (
                 <>
                   <span
                     className={cn(
-                      'flex h-10 w-10 items-center justify-center rounded-xl border border-transparent text-ink',
+                      'flex h-11 w-11 items-center justify-center rounded-sm border border-transparent text-ink',
                       isActive && 'border-sky/40 bg-white/5 text-sky',
                     )}
                   >
-                    <item.icon className="h-5 w-5" />
+                    <item.icon className="h-5 w-5" aria-hidden />
                   </span>
                   <span className={cn('text-[10px] font-medium uppercase tracking-[0.14em]', isActive ? 'text-sky' : 'text-ink')}>
                     {item.label}
@@ -123,6 +188,7 @@ export function Shell() {
           ))}
         </div>
       </nav>
+
     </div>
   )
 }

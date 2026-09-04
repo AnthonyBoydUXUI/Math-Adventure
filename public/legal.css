@@ -1,0 +1,44 @@
+:root {
+  color-scheme: dark;
+  --navy: #e8eef8;
+  --ink: #9aa4b8;
+  --sky: #4cc9ff;
+  --bg: #080a0e;
+}
+html {
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--navy);
+}
+body {
+  margin: 0 auto;
+  max-width: 40rem;
+  padding: 1.5rem 1.25rem 3rem;
+  line-height: 1.55;
+}
+h1 {
+  font-size: 2rem;
+  letter-spacing: -0.03em;
+}
+h2 {
+  margin-top: 1.75rem;
+  font-size: 1.15rem;
+}
+p {
+  color: var(--ink);
+}
+a {
+  color: var(--sky);
+}
+nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  margin: 1.25rem 0;
+}
+.meta {
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+}

@@ -173,12 +173,12 @@ describe('connected adventures', () => {
     expect(new Set(names).size).toBe(names.length)
   })
 
-  it('lays pits in a connected circuit and names the tank in coach copy', () => {
+  it('lays pits in a connected circuit and names the carry in coach copy', () => {
     const pits = circuitPits()
     expect(pits.length).toBe(classroomChain().length)
     expect(pits.every((p, i) => i === 0 || p.y > pits[i - 1]!.y)).toBe(true)
     const mission = generateDailyMission(seedSkillStats(), parent, new Date('2026-09-04'))
-    expect(mission.phases[0]?.coachLine).toMatch(/tank/i)
+    expect(mission.phases[0]?.coachLine).toMatch(/carrying|launch/i)
     expect(mission.phases[1]?.coachLine).toMatch(/Next pit/)
   })
 
@@ -219,6 +219,71 @@ describe('test readiness', () => {
   it('puts the weak test wrapper first in Test Lab', () => {
     const seq = labSequence('hoodie-equation', () => 0.2, 'mcq')
     expect(seq[0]?.format).toBe('mcq')
+  })
+
+  it('keeps empty-state copy from sounding like a medical or official diagnosis', () => {
+    expect(buildTestReport([]).testDayLine).not.toMatch(/diagnostic/i)
+  })
+})
+
+describe('daily resume and rollover', () => {
+  it('resumeOrStart does not wipe an active session', () => {
+    usePlayerStore.setState({
+      session: {
+        ...usePlayerStore.getState().session,
+        active: true,
+        completed: false,
+        phaseIndex: 2,
+        itemIndex: 1,
+      },
+    })
+    const mode = usePlayerStore.getState().resumeOrStart()
+    expect(mode).toBe('resume')
+    expect(usePlayerStore.getState().session.phaseIndex).toBe(2)
+    expect(usePlayerStore.getState().session.itemIndex).toBe(1)
+    expect(usePlayerStore.getState().bookmark.kind).toBe('mid-session')
+    usePlayerStore.setState({
+      session: { ...usePlayerStore.getState().session, active: false, phaseIndex: 0, itemIndex: 0 },
+    })
+  })
+
+  it('rolls an unfinished yesterday session into today’s mission on the same topic', () => {
+    usePlayerStore.setState({
+      parent: { ...usePlayerStore.getState().parent, moduleId: 'm6', topicId: 'm6-t1' },
+      mission: { ...usePlayerStore.getState().mission, dateKey: '2026-09-03' },
+      session: {
+        ...usePlayerStore.getState().session,
+        active: true,
+        completed: false,
+        phaseIndex: 1,
+        itemIndex: 0,
+      },
+    })
+    usePlayerStore.getState().ensureToday(new Date(2026, 8, 4, 7, 30))
+    const s = usePlayerStore.getState()
+    expect(s.session.active).toBe(false)
+    expect(s.mission.dateKey).toBe('2026-09-04')
+    expect(s.parent.topicId).toBe('m6-t1')
+    expect(s.bookmark.kind).toBe('paused-yesterday')
+  })
+})
+
+describe('App Store compliance store', () => {
+  it('does not ship a Copilot placeholder name', () => {
+    expect(usePlayerStore.getState().studentName).not.toBe('Copilot')
+    expect(usePlayerStore.getState().parent.studentName).not.toBe('Copilot')
+    expect(usePlayerStore.getState().compliance.acknowledgedAt).toBeNull()
+  })
+
+  it('records a 12+ acknowledgement', () => {
+    usePlayerStore.getState().acknowledgeCompliance('parent')
+    const c = usePlayerStore.getState().compliance
+    expect(c.role).toBe('parent')
+    expect(c.ageBand).toBe('12plus')
+    expect(c.acknowledgedAt).toBeGreaterThan(0)
+    usePlayerStore.setState({
+      compliance: { acknowledgedAt: null, ageBand: null, role: null },
+    })
   })
 })
 
