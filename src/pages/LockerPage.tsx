@@ -11,7 +11,7 @@ export function LockerPage() {
     <div className="px-4 pb-8">
       <h1 className="type-pack text-5xl">Gear</h1>
 
-      <WindowBox className="mt-4" stamp="Harbor RS" series="Form 01">
+      <WindowBox className="mt-4" stamp="Signal" series="Harbor RS">
         <div className="relative">
           <WorldScene
             embed

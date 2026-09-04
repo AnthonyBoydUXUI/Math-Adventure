@@ -14,6 +14,7 @@ const RIM: Record<string, string> = {
   'wheels-gold': VINYL.rimGold,
 }
 
+/** Harbor RS. Muted yellow satin is the locked paint. */
 export function Chassis({
   paint = 'paint-volt',
   wheels = 'wheels-bronze',
