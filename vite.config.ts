@@ -1,3 +1,5 @@
+// Production builds typecheck only tsconfig.app.json so Vite 8 plugin
+// types (rolldown vs rollup) cannot fail a Vercel deploy.
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import { fileURLToPath, URL } from 'node:url'

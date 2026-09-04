@@ -41,15 +41,18 @@ Aero is written to ship as an iOS Education app for students 12+ (not Kids Categ
 
 ## Vercel
 
-This repo is **not live on Vercel yet**. The project includes `vercel.json` and a deploy workflow, but no Hobby account has been connected from this environment (Vercel CLI is logged out; GitHub has no Vercel deployments).
+The failed production deploy on `main` @ `6dd8ee2` imported Vitest into `vite.config.ts`. Vite 8 then typechecked that file (`tsc -b`) and died on a Rollup vs Rolldown `hotUpdate` / `rolldownVersion` mismatch.
 
-Tap once to connect the GitHub repo to a free Vercel Hobby account and deploy:
+That is already fixed on current `main` (PR #2) and this branch:
+
+- `vite.config.ts` imports `vite`, not `vitest/config`
+- `npm run build` typechecks **only** `tsconfig.app.json`, then runs `vite build`
+
+In the Vercel project: Production branch = `main`, then **Redeploy** the latest production (not the old `6dd8ee2` job). To ship Account/sync before PR #3 merges, temporarily set Production to `cursor/app-store-readiness-64b2`.
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/import?s=https://github.com/AnthonyBoydUXUI/Math-Adventure)
 
-In the import screen, set the production branch to `cursor/console-hud-64b2` until [PR #2](https://github.com/AnthonyBoydUXUI/Math-Adventure/pull/2) is merged into `main`. Framework: Vite. Hobby is enough (static app, no server).
-
-After the first import, later pushes can auto-deploy. Optional GitHub secrets for the included workflow: `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`.
+Hobby is enough (static app). Optional GitHub secrets for `.github/workflows/vercel.yml`: `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`.
 
 Tap the speaker in the app HUD to start moving world sound. Browsers block audio until a tap.
 
