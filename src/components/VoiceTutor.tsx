@@ -67,10 +67,10 @@ export function VoiceTutor({
   }
 
   return (
-    <div className="rounded-[22px] border-2 border-navy bg-white p-3">
+    <div className="panel rounded-xl p-3">
       <button
         type="button"
-        className="flex w-full items-center justify-between font-extrabold"
+        className="flex w-full items-center justify-between font-semibold"
         onClick={() => setOpen((o) => !o)}
       >
         <span>Voice tutor</span>
@@ -83,8 +83,8 @@ export function VoiceTutor({
             <button
               type="button"
               className={cn(
-                'press flex-1 rounded-2xl border-2 border-navy py-2 text-sm font-extrabold text-white',
-                hearing ? 'bg-goggle' : 'bg-navy',
+                'press flex-1 rounded-xl py-2 text-sm font-semibold text-white',
+                hearing ? 'bg-goggle' : 'bg-chrome',
               )}
               onClick={listen}
             >
@@ -92,7 +92,7 @@ export function VoiceTutor({
             </button>
             <button
               type="button"
-              className="press rounded-2xl border-2 border-navy bg-mist px-3 text-sm font-extrabold"
+              className="press rounded-xl border border-white/15 bg-mist px-3 text-sm font-semibold"
               onClick={() => {
                 if (question) void provider.speak(question.prompt)
               }}

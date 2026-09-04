@@ -18,7 +18,7 @@ export function VisualMath({ visual }: { visual: VisualSpec }) {
 
 function Card({ children }: { children: ReactNode }) {
   return (
-    <div className="rounded-[22px] border-2 border-navy bg-white p-3 shadow-[0_4px_0_#141628]">
+    <div className="rounded-[22px] border border-white/10 bg-paper p-3">
       {children}
     </div>
   )
@@ -71,7 +71,7 @@ function FractionBar({ v }: { v: Extract<VisualSpec, { kind: 'fraction-bar' }> }
   const bar = (parts: number, filled: number, label?: string, color = '#3d9bff') => (
     <div className="space-y-1">
       {label ? <p className="text-xs font-extrabold uppercase tracking-wide text-navy/60">{label}</p> : null}
-      <div className="flex overflow-hidden rounded-xl border-2 border-navy">
+      <div className="flex overflow-hidden rounded-xl border border-white/10">
         {Array.from({ length: parts }, (_, i) => (
           <div
             key={i}
@@ -103,7 +103,7 @@ function RatioGrid({ v }: { v: Extract<VisualSpec, { kind: 'ratio-grid' }> }) {
         {Array.from({ length: cells }, (_, i) => (
           <div
             key={i}
-            className="aspect-square rounded-md border-2 border-navy"
+            className="aspect-square rounded-md border border-white/10"
             style={{ background: i < v.filled ? '#3d9bff' : '#ffc53d' }}
           />
         ))}
@@ -237,7 +237,7 @@ function Balance({ v }: { v: Extract<VisualSpec, { kind: 'balance' }> }) {
 
 function Pan({ items }: { items: string[] }) {
   return (
-    <div className="min-w-24 rounded-2xl border-2 border-navy bg-cream px-3 py-2 text-center text-sm font-extrabold">
+    <div className="min-w-24 rounded-2xl border border-white/10 bg-cream px-3 py-2 text-center text-sm font-extrabold">
       {items.map((it) => (
         <div key={it}>{it}</div>
       ))}
@@ -266,7 +266,7 @@ function Money({ v }: { v: Extract<VisualSpec, { kind: 'money' }> }) {
   return (
     <Card>
       <div className="flex items-center gap-3">
-        <div className="rounded-xl border-2 border-navy bg-leaf px-4 py-3 font-display text-2xl font-extrabold text-white">
+        <div className="rounded-xl border border-white/10 bg-leaf px-4 py-3 font-display text-2xl font-extrabold text-white">
           ${v.dollars}
           {v.cents ? `.${v.cents}` : ''}
         </div>
