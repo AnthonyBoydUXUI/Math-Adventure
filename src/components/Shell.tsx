@@ -109,13 +109,22 @@ export function Shell() {
       </header>
 
       <div className="flex items-center justify-between gap-3 px-5 pb-2">
-        <p className="stamp text-ink">{world.name}</p>
-        <DayClock compact />
+        {loc.pathname === '/train' ? null : (
+          <>
+            <p className="stamp text-ink">{world.name}</p>
+            <DayClock compact />
+          </>
+        )}
       </div>
 
       <main id="main">
         <Outlet />
-        <footer className={cn('px-4 pb-2 pt-8 text-center text-[11px] font-medium text-ink', compact && 'hidden')}>
+        <footer
+          className={cn(
+            'px-4 pb-2 pt-8 text-center text-[11px] font-medium text-ink',
+            (compact || loc.pathname === '/' || loc.pathname === '/train') && 'hidden',
+          )}
+        >
           <Link to="/privacy" className="inline-flex min-h-11 items-center text-sky">
             Privacy
           </Link>

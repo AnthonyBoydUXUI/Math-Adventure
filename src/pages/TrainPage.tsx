@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Aero } from '../components/Aero.tsx'
 import { ProblemStage } from '../components/ProblemStage.tsx'
-import { firstTopicId, skillById } from '../data/curriculum.ts'
+import { firstTopicId } from '../data/curriculum.ts'
 import { questionById } from '../data/questions.ts'
 import { compositeMastery, emptyStats } from '../engine/mastery.ts'
 import { nextCurriculumStep } from '../engine/progress.ts'
@@ -46,10 +46,10 @@ export function TrainPage() {
 
   return (
     <div className="pb-6">
-      <div className="mx-4 mb-3 h-1 overflow-hidden bg-mist">
+      <div className="mx-4 mb-3 h-1.5 overflow-hidden bg-mist">
         <div className="h-full bg-gold" style={{ width: `${((doneQ + 1) / Math.max(1, totalQ)) * 100}%` }} />
       </div>
-      <ProblemStage question={q} phaseLabel={`${phase.label} · ${skillById(q.skillId)?.name}`} />
+      <ProblemStage question={q} phaseLabel={phase.label} />
     </div>
   )
 }

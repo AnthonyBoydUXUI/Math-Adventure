@@ -128,16 +128,8 @@ export function ProblemStage({ question, phaseLabel }: { question: Question; pha
 
   return (
     <div className="mx-4 space-y-3">
-      <div className="flex items-center justify-between">
-        <p className="text-xs font-medium uppercase tracking-[0.18em] text-ink">{phaseLabel}</p>
-        {parent.pressureLab && phaseLabel.toLowerCase().includes('lab') ? (
-          <span className="rounded-sm bg-goggle px-2 py-0.5 text-[10px] font-semibold uppercase text-white">
-            Lock-in clock
-          </span>
-        ) : null}
-      </div>
-      {question.format !== 'word' ? (
-        <p className="text-center text-[11px] font-semibold uppercase tracking-[0.16em] text-sky">{question.format}</p>
+      {parent.pressureLab && phaseLabel.toLowerCase().includes('lab') ? (
+        <p className="text-center text-[11px] font-semibold uppercase tracking-[0.16em] text-gold">Clock on</p>
       ) : null}
       <div className="panel rounded-sm p-4">
         <p className="font-display text-2xl font-semibold leading-tight">{question.prompt}</p>
@@ -147,9 +139,11 @@ export function ProblemStage({ question, phaseLabel }: { question: Question; pha
             <VisualMath visual={question.visual} />
           </div>
         ) : null}
-        <div className="mt-3">
-          <Scoreboard kind={question.scoreboard} mastery={mastery} compact />
-        </div>
+        {session.hints > 0 ? (
+          <div className="mt-3">
+            <Scoreboard kind={question.scoreboard} mastery={mastery} compact />
+          </div>
+        ) : null}
         {question.answer.type === 'choice' ? (
           <div className="mt-4 grid gap-2">
             {question.answer.choices.map((choice, i) => {
