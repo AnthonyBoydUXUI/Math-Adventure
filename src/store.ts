@@ -8,7 +8,7 @@ import { buildBookmark, defaultBookmark, markPracticeDay, type ProgressBookmark 
 import { evaluateAchievements, HINT_SPARK_COST, xpForAttempt } from './engine/scoring.ts'
 import { buildTestReport } from './engine/testReady.ts'
 import { generateDailyMission } from './engine/session.ts'
-import { resumeAudio, setMuted, sfx, startAmbient, stopAmbient } from './lib/sfx.ts'
+import { resumeAudio, setMuted, sfx, startAmbient, stopAmbient, type AmbientPhase } from './lib/sfx.ts'
 import { worldForModule } from './data/worlds.ts'
 import { clearLocalArchive } from './lib/archive.ts'
 import { checkAnswer } from './lib/answers.ts'
@@ -189,6 +189,20 @@ function refreshBookmark(set: PlayerStoreSetter, get: () => PlayerStore) {
   })
 }
 
+function districtPhase(s: PlayerStore): AmbientPhase {
+  if (!s.session.active) return s.session.completed ? 'recap' : 'idle'
+  return s.mission.phases[s.session.phaseIndex]?.phase ?? 'idle'
+}
+
+function syncDistrictScore(get: () => PlayerStore, worldId?: string, phase?: AmbientPhase) {
+  const s = get()
+  if (!s.soundOn) {
+    stopAmbient()
+    return
+  }
+  startAmbient(worldId ?? worldForModule(s.parent.moduleId).id, phase ?? districtPhase(s))
+}
+
 function grantOpenRoad(get: () => PlayerStore, set: PlayerStoreSetter) {
   const s = get()
   if (s.achievements.includes('open-road')) return
@@ -291,6 +305,7 @@ export const usePlayerStore = create<PlayerStore>()(
         const s = get()
         if (s.session.active && !extra) {
           refreshBookmark(set, get)
+          syncDistrictScore(get)
           return 'resume'
         }
         get().startFlight(extra)
@@ -302,7 +317,7 @@ export const usePlayerStore = create<PlayerStore>()(
         setMuted(!s.soundOn)
         if (s.soundOn) {
           sfx.start()
-          startAmbient(worldForModule(s.parent.moduleId).id)
+          startAmbient(worldForModule(s.parent.moduleId).id, 'warmup')
         }
         const now = new Date()
         const mission = generateDailyMission(s.stats, s.parent, now, extra, s.attempts)
@@ -357,7 +372,7 @@ export const usePlayerStore = create<PlayerStore>()(
         if (next) {
           void resumeAudio()
           sfx.tap()
-          startAmbient(worldForModule(get().parent.moduleId).id)
+          syncDistrictScore(get)
         } else {
           stopAmbient()
         }
@@ -370,7 +385,7 @@ export const usePlayerStore = create<PlayerStore>()(
           mission: generateDailyMission(get().stats, parent, new Date(), false, get().attempts),
           studentName: parent.studentName || get().studentName,
         })
-        if (get().soundOn) startAmbient(worldForModule(parent.moduleId).id)
+        syncDistrictScore(get, worldForModule(parent.moduleId).id)
         refreshBookmark(set, get)
       },
       driveTo: (moduleId, topicId) => {
@@ -384,7 +399,7 @@ export const usePlayerStore = create<PlayerStore>()(
             mission: generateDailyMission(s.stats, parent, new Date(), false, s.attempts),
             studentName: parent.studentName || s.studentName,
           })
-          if (s.soundOn) startAmbient(dest.id)
+          syncDistrictScore(get, dest.id)
         }
         sfx.whoosh()
         if (from.nextId && dest.id === from.nextId) {
@@ -543,6 +558,7 @@ export const usePlayerStore = create<PlayerStore>()(
               paperGate: false,
             },
           })
+          syncDistrictScore(get)
           refreshBookmark(set, get)
           return
         }
@@ -567,6 +583,7 @@ export const usePlayerStore = create<PlayerStore>()(
             questionStartedAt: Date.now(),
           },
         })
+        syncDistrictScore(get)
         refreshBookmark(set, get)
       },
       completeRecap: (choice) => {
@@ -610,6 +627,7 @@ export const usePlayerStore = create<PlayerStore>()(
           toast: unlockedName ? `Unlocked · ${unlockedName}` : s.toast,
         })
         if (s.soundOn) sfx.xp()
+        syncDistrictScore(get)
       },
     }),
     {

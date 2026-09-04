@@ -39,10 +39,16 @@ export function Shell() {
     usePlayerStore.getState().ensureToday()
     const rollover = window.setInterval(() => usePlayerStore.getState().ensureToday(), 60_000)
     const unlock = () => {
+      const s = usePlayerStore.getState()
       void resumeAudio()
-      setMuted(!usePlayerStore.getState().soundOn)
-      if (usePlayerStore.getState().soundOn) {
-        startAmbient(worldForModule(usePlayerStore.getState().parent.moduleId).id)
+      setMuted(!s.soundOn)
+      if (s.soundOn) {
+        const phase = s.session.active
+          ? (s.mission.phases[s.session.phaseIndex]?.phase ?? 'idle')
+          : s.session.completed
+            ? 'recap'
+            : 'idle'
+        startAmbient(worldForModule(s.parent.moduleId).id, phase)
       }
     }
     window.addEventListener('pointerdown', unlock, { once: true })
