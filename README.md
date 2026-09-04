@@ -41,14 +41,7 @@ Aero is written to ship as an iOS Education app for students 12+ (not Kids Categ
 
 ## Vercel
 
-The failed production deploy on `main` @ `6dd8ee2` imported Vitest into `vite.config.ts`. Vite 8 then typechecked that file (`tsc -b`) and died on a Rollup vs Rolldown `hotUpdate` / `rolldownVersion` mismatch.
-
-That is already fixed on current `main` (PR #2) and this branch:
-
-- `vite.config.ts` imports `vite`, not `vitest/config`
-- `npm run build` typechecks **only** `tsconfig.app.json`, then runs `vite build`
-
-In the Vercel project: Production branch = `main`, then **Redeploy** the latest production (not the old `6dd8ee2` job). To ship Account/sync before PR #3 merges, temporarily set Production to `cursor/app-store-readiness-64b2`.
+Vercel runs `npx vite build` only (see `vercel.json`). Local `npm run build` still typechecks `tsconfig.app.json`, then Vite. The old red job on `main` @ `6dd8ee2` imported `vitest/config` and must not be retried — Redeploy **latest** `main`.
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/import?s=https://github.com/AnthonyBoydUXUI/Math-Adventure)
 

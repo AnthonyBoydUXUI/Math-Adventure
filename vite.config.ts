@@ -1,5 +1,5 @@
-// Production builds typecheck only tsconfig.app.json so Vite 8 plugin
-// types (rolldown vs rollup) cannot fail a Vercel deploy.
+// Vercel must not typecheck this file. Vite 8 plugin types
+// (rollup vs rolldown) fail `tsc -b` when vitest is also installed.
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import { fileURLToPath, URL } from 'node:url'
