@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import { Play } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { CircuitTrack, HandoffCard } from '../components/CircuitTrack.tsx'
+import { TestReadinessCard } from '../components/TestReadinessCard.tsx'
 import { RaceCar } from '../components/RaceCar.tsx'
 import { WorldScene } from '../components/WorldScene.tsx'
 import { firstTopicId, moduleById, skillById } from '../data/curriculum.ts'
@@ -130,6 +131,10 @@ export function HomePage() {
 
       <div className="mt-4">
         <CircuitTrack compact />
+      </div>
+
+      <div className="mt-4">
+        <TestReadinessCard compact />
       </div>
 
       <div className="mt-4 grid grid-cols-2 gap-3">

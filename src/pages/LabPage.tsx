@@ -1,8 +1,10 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { TestReadinessCard } from '../components/TestReadinessCard.tsx'
 import { SKILLS } from '../data/curriculum.ts'
 import { familiesForSkill, questionById, questionsForFamily } from '../data/questions.ts'
 import { generateDailyMission, labSequence } from '../engine/session.ts'
+import { buildTestReport } from '../engine/testReady.ts'
 import { hashString, mulberry32 } from '../lib/hash.ts'
 import { usePlayerStore } from '../store.ts'
 
@@ -17,9 +19,12 @@ export function LabPage() {
   return (
     <div className="px-4 pb-8">
       <h1 className="font-display text-4xl font-semibold tracking-tight">Test Lab</h1>
-      <p className="mt-1 font-bold text-navy/65">
-        Same math, different look. Word, equation, graph, table, diagram — one skill.
+      <p className="mt-1 font-medium text-ink">
+        Same math, different look — the move diagnostics actually make. We save every lab play so the next test wrapper is the one you still miss.
       </p>
+      <div className="mt-4">
+        <TestReadinessCard />
+      </div>
       <label className="mt-4 block text-xs font-extrabold uppercase tracking-widest text-navy/45">Skill</label>
       <select
         className="mt-1 w-full rounded-2xl border border-white/10 bg-white px-3 py-3 font-extrabold"
@@ -51,9 +56,10 @@ export function LabPage() {
         type="button"
         className="press mt-6 w-full rounded-xl bg-sky py-4 font-semibold text-chrome"
         onClick={() => {
-          const rng = mulberry32(hashString(`lab:${skillId}`))
-          const lab = labSequence(familyId, rng)
-          const base = generateDailyMission(stats, parent)
+          const report = buildTestReport(usePlayerStore.getState().attempts)
+          const rng = mulberry32(hashString(`lab:${skillId}:${report.weakestFormat ?? 'any'}`))
+          const lab = labSequence(familyId, rng, report.weakestFormat)
+          const base = generateDailyMission(stats, parent, new Date(), true, usePlayerStore.getState().attempts)
           usePlayerStore.setState({
             mission: {
               ...base,
@@ -66,7 +72,9 @@ export function LabPage() {
                   minutes: 4,
                   questionIds: lab.map((q) => q.id),
                   label: 'Same math, different look',
-                  coachLine: 'The question may look different. The math is not.',
+                  coachLine: report.weakestFormat
+                    ? `Lead with ${report.weakestFormat}. That’s the look the test uses.`
+                    : 'The question may look different. The math is not.',
                 },
                 {
                   phase: 'recap',
@@ -100,7 +108,7 @@ export function LabPage() {
           navigate('/train')
         }}
       >
-        Run the formats
+        Drill the test wrapper
       </button>
     </div>
   )

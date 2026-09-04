@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ProblemStage } from '../components/ProblemStage.tsx'
+import { TestReadinessCard } from '../components/TestReadinessCard.tsx'
 import { RaceCar } from '../components/RaceCar.tsx'
 import { firstTopicId, skillById } from '../data/curriculum.ts'
 import { DIAGNOSIS_COPY } from '../engine/diagnosis.ts'
@@ -107,6 +108,9 @@ function Recap({ onDone, onKeep }: { onDone: () => void; onKeep: () => void }) {
       <p className="mt-1 text-center text-xs font-medium text-ink">
         Classroom mastery {Math.round(compositeMastery(focus))}
       </p>
+      <div className="mt-4">
+        <TestReadinessCard />
+      </div>
       {next ? (
         <div className="panel mt-4 rounded-2xl p-4">
           <div className="flex items-center gap-3">

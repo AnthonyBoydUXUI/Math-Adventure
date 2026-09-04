@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { CircuitTrack, HandoffCard } from '../components/CircuitTrack.tsx'
+import { TestReadinessCard } from '../components/TestReadinessCard.tsx'
 import { MODULES, SKILLS } from '../data/curriculum.ts'
 import { WORLDS } from '../data/worlds.ts'
 import { compositeMastery, emptyStats } from '../engine/mastery.ts'
@@ -105,8 +106,11 @@ export function CoachPage() {
     <div className="px-4 pb-8">
       <h1 className="font-display text-4xl font-semibold tracking-tight">Telemetry</h1>
       <p className="mt-1 font-medium text-ink">
-        A 440 overall is a prior, not a personality. Geometry can be strong while stats is noisy. We split the why.
+        A 440 overall is a prior, not a personality. Geometry can be strong while stats is noisy. Test Lab is where that split becomes a plan.
       </p>
+      <div className="mt-4">
+        <TestReadinessCard />
+      </div>
       {focus ? (
         <div className="panel mt-4 rounded-2xl p-4">
           <p className="text-xs font-medium uppercase tracking-widest text-ink">Focus dimensions</p>

@@ -2,6 +2,7 @@ import { MODULES } from '../data/curriculum.ts'
 import { THEMES } from '../types.ts'
 import { usePlayerStore } from '../store.ts'
 import { cn } from '../lib/cn.ts'
+import { TestReadinessCard } from '../components/TestReadinessCard.tsx'
 
 export function ParentPage() {
   const { parent, setParent, setThemes } = usePlayerStore()
@@ -81,7 +82,13 @@ export function ParentPage() {
         })}
       </div>
 
-      <h2 className="mt-6 font-display text-2xl font-extrabold">How to read the diagnostic</h2>
+      <h2 className="mt-6 font-display text-2xl font-semibold">What the test actually is</h2>
+      <div className="mt-2">
+        <TestReadinessCard />
+      </div>
+      <p className="mt-3 text-sm font-medium text-ink">
+        Classwork and diagnostics are different wrappers. This readout uses Test Lab + boss plays — not a grade-level label.
+      </p>
       <ul className="mt-2 space-y-2 text-sm font-bold text-navy/70">
         <li className="rounded-2xl bg-white p-3">Overall 440 is a starting prior — not “fourth grade.”</li>
         <li className="rounded-2xl bg-white p-3">Geometry 480 is a relative strength. Use it as a bridge.</li>

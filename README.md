@@ -70,6 +70,8 @@ That is enough for one student on one device (phone or laptop). Clearing site da
 
 When that day comes, Supabase (Auth + one `profiles` / `attempts` table) is the right add. The store is already a single `PlayerStore` blob, so a later sync layer can upsert that JSON per user without rewriting the math engine. Until then, extra backend would not change how the 15-minute session works.
 
+Test Lab writes the same attempt log. The **test-readiness** readout (transfer, lock-in, paper habit, weakest wrapper) is computed from those plays so diagnostics get a plan, not just XP. If Supabase is added later, sync that attempt log — the report is derived, not a second source of truth.
+
 ## Parent desk
 
 Choose Reveal Math → Module → Topic. That week’s flight overweight that concept. Upload a class page photo to keep the coach pointed at the right room.

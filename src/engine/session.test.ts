@@ -6,6 +6,7 @@ import { buildHomeworkPlan, homeworkFeedback } from './homework.ts'
 import { emptyStats, seedSkillStats } from './mastery.ts'
 import { evaluateAchievements } from './scoring.ts'
 import { generateDailyMission, labSequence, missionMinutes } from './session.ts'
+import { buildTestReport, preferFormats } from './testReady.ts'
 import { parseVoice } from './voice/index.ts'
 import { classroomChain, circuitPits, WORLDS } from '../data/worlds.ts'
 import { usePlayerStore } from '../store.ts'
@@ -191,3 +192,51 @@ describe('connected adventures', () => {
     expect(usePlayerStore.getState().achievements).toContain('open-road')
   })
 })
+
+describe('test readiness', () => {
+  it('flags the wrapper that fails after the classroom look is known', () => {
+    const report = buildTestReport([
+      attempt({ format: 'word', correct: true, diagnosis: 'solid' }),
+      attempt({ format: 'equation', correct: true, diagnosis: 'solid' }),
+      attempt({ format: 'graph', correct: false, diagnosis: 'transfer_difficulty' }),
+      attempt({ format: 'graph', correct: false, diagnosis: 'format_confusion' }),
+    ])
+    expect(report.weakestFormat).toBe('graph')
+    expect(report.loudestDiagnosis).toMatch(/transfer|format/)
+    expect(report.drillLine).toMatch(/Graph/)
+    expect(preferFormats('graph')[0]).toBe('graph')
+  })
+
+  it('puts the weak test wrapper first in Test Lab', () => {
+    const seq = labSequence('hoodie-equation', () => 0.2, 'mcq')
+    expect(seq[0]?.format).toBe('mcq')
+  })
+})
+
+function attempt(
+  patch: Partial<{
+    format: 'word' | 'equation' | 'graph' | 'table'
+    correct: boolean
+    diagnosis: 'solid' | 'transfer_difficulty' | 'format_confusion' | 'second_guessing'
+  }>,
+) {
+  return {
+    id: `${Math.random()}`,
+    at: 1,
+    questionId: 'eq-eq',
+    skillId: 'two-step-eq',
+    familyId: 'hoodie-equation',
+    format: patch.format ?? 'word',
+    phase: 'lab' as const,
+    correct: patch.correct ?? true,
+    firstDraftCorrect: patch.correct ?? true,
+    changed: false,
+    lockedIn: Boolean(patch.correct),
+    usedHint: false,
+    usedPaper: true,
+    confidence: 3,
+    timeMs: 12000,
+    diagnosis: patch.diagnosis ?? 'solid',
+    answerGiven: '42',
+  }
+}
