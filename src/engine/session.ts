@@ -1,6 +1,6 @@
 import { SKILLS, skillsForTopic } from '../data/curriculum.ts'
 import { familiesForSkill, questionById, QUESTIONS, questionsForFamily } from '../data/questions.ts'
-import { worldForModule } from '../data/worlds.ts'
+import { linkedWorld, worldForModule } from '../data/worlds.ts'
 import { dayKey, hashString, mulberry32, pick, shuffle } from '../lib/hash.ts'
 import type { DailyMission, DimensionStats, MissionPhase, ParentSettings, Question } from '../types.ts'
 import { compositeMastery, emptyStats, weakestSkills } from './mastery.ts'
@@ -35,12 +35,8 @@ export function generateDailyMission(
   const families = familiesForSkill(classroomSkill)
   const familyId = families.length ? pick(rng, families) : 'hoodie-equation'
   const world = worldForModule(parent.moduleId)
-  const prevSkills = world.prevId
-    ? (worldForModule(
-        parent.moduleId === 'm1' ? 'm1' : `m${Math.max(1, Number(parent.moduleId.slice(1)) - 1)}`,
-      ).skillIds ?? [])
-    : []
-  const prevSkill = prevSkills[0]
+  const prevWorld = linkedWorld(world, 'prev')
+  const prevSkill = prevWorld?.skillIds[0]
 
   const warmup = pickN(
     rng,
@@ -78,14 +74,16 @@ export function generateDailyMission(
       minutes: PHASE_MINUTES.warmup,
       questionIds: warmup.map((q) => q.id),
       label: 'Warm-Up',
-      coachLine: `${world.name}: easy ignition, including a bridge from the last district.`,
+      coachLine: prevWorld
+        ? `${world.adventure} You rolled in from ${prevWorld.name} with ${world.carry} in the tank.`
+        : `${world.adventure} Ground Lab packed the tank. Easy ignition.`,
     },
     {
       phase: 'builder',
       minutes: PHASE_MINUTES.builder,
       questionIds: builder.map((q) => q.id),
       label: 'Skill Builder',
-      coachLine: `${world.bridgeLine} Paper nearby.`,
+      coachLine: `${world.bridgeLine} Next pit wants: ${world.handoff}`,
     },
     {
       phase: 'lab',
@@ -106,7 +104,7 @@ export function generateDailyMission(
       minutes: PHASE_MINUTES.recap,
       questionIds: [],
       label: 'Recap',
-      coachLine: 'Land the flight. Name what was real vs what was nerves.',
+      coachLine: `Park it. ${world.handoff}`,
     },
   ]
 

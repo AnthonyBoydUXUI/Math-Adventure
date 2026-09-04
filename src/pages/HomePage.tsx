@@ -1,10 +1,12 @@
 import { motion } from 'framer-motion'
 import { Link, useNavigate } from 'react-router-dom'
 import { Aero } from '../components/Aero.tsx'
+import { CircuitTrack, HandoffCard } from '../components/CircuitTrack.tsx'
+import { RaceCar } from '../components/RaceCar.tsx'
 import { WorldScene } from '../components/WorldScene.tsx'
-import { MODULES, skillById } from '../data/curriculum.ts'
+import { firstTopicId, moduleById, skillById } from '../data/curriculum.ts'
 import { questionById } from '../data/questions.ts'
-import { classroomChain, worldById, worldForModule } from '../data/worlds.ts'
+import { classroomChain, linkedWorld, worldForModule } from '../data/worlds.ts'
 import { compositeMastery, emptyStats } from '../engine/mastery.ts'
 import { cn } from '../lib/cn.ts'
 import { resumeAudio } from '../lib/sfx.ts'
@@ -22,7 +24,7 @@ const PHASE_META: Record<Phase, { color: string; icon: string }> = {
 export function HomePage() {
   const navigate = useNavigate()
   const { mission, parent, stats, cosmetics, startFlight, session, achievements } = usePlayerStore()
-  const mod = MODULES.find((m) => m.id === parent.moduleId)
+  const mod = moduleById(parent.moduleId)
   const focus = skillById(mission.focusSkillId)
   const mastery = compositeMastery(stats[mission.focusSkillId] ?? emptyStats())
   const stars = mastery >= 70 ? 3 : mastery >= 55 ? 2 : 1
@@ -30,8 +32,8 @@ export function HomePage() {
   const nodes = mission.phases.filter((p) => p.phase !== 'recap')
 
   const world = worldForModule(parent.moduleId)
-  const prev = world.prevId ? worldById(world.prevId) : undefined
-  const next = world.nextId ? worldById(world.nextId) : undefined
+  const prev = linkedWorld(world, 'prev')
+  const next = linkedWorld(world, 'next')
   const chain = classroomChain()
 
   return (
@@ -57,7 +59,18 @@ export function HomePage() {
         <div className="absolute -right-3 -top-2 w-24 opacity-90 aero-bob">
           <Aero goggles={cosmetics.goggles} hoodie={cosmetics.hoodie} kicks={cosmetics.kicks} mood="lockin" />
         </div>
+        <div className="absolute bottom-2 left-3 w-12">
+          <RaceCar paint={cosmetics.paint} wheels={cosmetics.wheels} wing={cosmetics.wing} />
+        </div>
       </section>
+
+      <div className="mt-3">
+        <HandoffCard />
+      </div>
+
+      <div className="mt-3">
+        <CircuitTrack compact />
+      </div>
 
       <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
         {chain.map((w) => (
@@ -69,7 +82,10 @@ export function HomePage() {
               w.id === world.id ? 'text-white' : 'bg-white text-navy/60',
             )}
             style={w.id === world.id ? { background: w.color } : undefined}
-            onClick={() => usePlayerStore.getState().setParent({ moduleId: w.moduleId ?? parent.moduleId, topicId: MODULES.find((m) => m.id === w.moduleId)?.topics[0]?.id ?? parent.topicId })}
+            onClick={() => {
+              const moduleId = w.moduleId ?? parent.moduleId
+              usePlayerStore.getState().driveTo(moduleId, firstTopicId(moduleId) ?? parent.topicId)
+            }}
           >
             {w.icon} {w.name}
           </button>

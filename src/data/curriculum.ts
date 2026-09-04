@@ -148,6 +148,10 @@ export function skillsForTopic(moduleId: string, topicId: string) {
   return topic?.skillIds ?? []
 }
 
+export function firstTopicId(moduleId: string) {
+  return moduleById(moduleId)?.topics[0]?.id
+}
+
 export const DOMAIN_TO_PRIOR: Record<string, number> = {
   ratios: DIAGNOSTIC_PRIORS.ratios,
   number: DIAGNOSTIC_PRIORS.numberSystem,

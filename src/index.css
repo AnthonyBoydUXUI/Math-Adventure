@@ -78,6 +78,17 @@ body {
   background: linear-gradient(180deg, #f4fbff, #d7ecff);
 }
 
+.garage-floor {
+  background:
+    repeating-linear-gradient(
+      90deg,
+      #3a3d44 0 10px,
+      #2f3238 10px 20px
+    ),
+    #2a2d33;
+  box-shadow: inset 0 -18px 0 rgba(20, 22, 40, 0.35);
+}
+
 .aero-bob {
   animation: aero-bob 2.8s ease-in-out infinite;
 }

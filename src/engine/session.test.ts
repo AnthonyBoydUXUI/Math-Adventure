@@ -7,7 +7,8 @@ import { emptyStats, seedSkillStats } from './mastery.ts'
 import { evaluateAchievements } from './scoring.ts'
 import { generateDailyMission, labSequence, missionMinutes } from './session.ts'
 import { parseVoice } from './voice/index.ts'
-import { classroomChain } from '../data/worlds.ts'
+import { classroomChain, circuitPits, WORLDS } from '../data/worlds.ts'
+import { usePlayerStore } from '../store.ts'
 
 const parent: ParentSettings = {
   moduleId: 'm6',
@@ -159,5 +160,34 @@ describe('connected adventures', () => {
       expect(chain[i]?.nextId).toBe(chain[i + 1]?.id)
       expect(chain[i + 1]?.prevId).toBe(chain[i]?.id)
     }
+  })
+
+  it('gives every world a distinct adventure plus a carry/handoff', () => {
+    for (const world of WORLDS) {
+      expect(world.adventure.length).toBeGreaterThan(8)
+      expect(world.carry.length).toBeGreaterThan(4)
+      expect(world.handoff.length).toBeGreaterThan(8)
+    }
+    const names = WORLDS.filter((w) => w.track === 'classroom').map((w) => w.adventure)
+    expect(new Set(names).size).toBe(names.length)
+  })
+
+  it('lays pits in a connected circuit and names the tank in coach copy', () => {
+    const pits = circuitPits()
+    expect(pits.length).toBe(classroomChain().length)
+    expect(pits.every((p, i) => i === 0 || p.y > pits[i - 1]!.y)).toBe(true)
+    const mission = generateDailyMission(seedSkillStats(), parent, new Date('2026-09-04'))
+    expect(mission.phases[0]?.coachLine).toMatch(/tank/i)
+    expect(mission.phases[1]?.coachLine).toMatch(/Next pit/)
+  })
+
+  it('driveTo rolls into the next classroom and grants Open Road', () => {
+    usePlayerStore.setState({
+      parent: { ...usePlayerStore.getState().parent, moduleId: 'm6', topicId: 'm6-t1' },
+      achievements: [],
+    })
+    usePlayerStore.getState().driveTo('m7', 'm7-t1')
+    expect(usePlayerStore.getState().parent.moduleId).toBe('m7')
+    expect(usePlayerStore.getState().achievements).toContain('open-road')
   })
 })

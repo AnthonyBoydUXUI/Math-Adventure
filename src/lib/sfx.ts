@@ -5,8 +5,12 @@ let bedTimer: ReturnType<typeof setInterval> | undefined
 
 function audio() {
   if (typeof window === 'undefined') return null
-  ctx ??= new AudioContext()
-  return ctx
+  try {
+    ctx ??= new AudioContext()
+    return ctx
+  } catch {
+    return null
+  }
 }
 
 export function isMuted() {

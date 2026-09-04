@@ -2,10 +2,12 @@ import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ProblemStage } from '../components/ProblemStage.tsx'
 import { Aero } from '../components/Aero.tsx'
-import { skillById } from '../data/curriculum.ts'
+import { RaceCar } from '../components/RaceCar.tsx'
+import { firstTopicId, skillById } from '../data/curriculum.ts'
 import { DIAGNOSIS_COPY } from '../engine/diagnosis.ts'
 import { compositeMastery, emptyStats } from '../engine/mastery.ts'
 import { questionById } from '../data/questions.ts'
+import { linkedWorld, worldForModule } from '../data/worlds.ts'
 import { usePlayerStore } from '../store.ts'
 import { DIMENSIONS } from '../types.ts'
 
@@ -60,7 +62,7 @@ export function TrainPage() {
 }
 
 function Recap({ onDone, onKeep }: { onDone: () => void; onKeep: () => void }) {
-  const { attempts, mission, stats, cosmetics, session } = usePlayerStore()
+  const { attempts, mission, stats, cosmetics, session, parent, driveTo } = usePlayerStore()
   const today = useMemo(
     () => attempts.filter((a) => a.at >= (session.startedAt || 0)),
     [attempts, session.startedAt],
@@ -71,6 +73,8 @@ function Recap({ onDone, onKeep }: { onDone: () => void; onKeep: () => void }) {
     return acc
   }, {})
   const focus = stats[mission.focusSkillId] ?? emptyStats()
+  const world = worldForModule(parent.moduleId)
+  const next = linkedWorld(world, 'next')
 
   return (
     <div className="px-4 pb-8">
@@ -104,6 +108,32 @@ function Recap({ onDone, onKeep }: { onDone: () => void; onKeep: () => void }) {
       <p className="mt-1 text-center text-xs font-bold text-navy/40">
         Classroom mastery {Math.round(compositeMastery(focus))} — not a grade-level label.
       </p>
+      {next ? (
+        <div className="mt-4 rounded-[24px] border-2 border-navy bg-navy p-4 text-white">
+          <div className="flex items-center gap-3">
+            <RaceCar className="h-16 w-9" paint={cosmetics.paint} wheels={cosmetics.wheels} wing={cosmetics.wing} />
+            <div>
+              <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-white/50">Next pit</p>
+              <p className="font-display text-xl font-extrabold">{next.name}</p>
+              <p className="text-sm font-bold text-white/75">{world.handoff}</p>
+            </div>
+          </div>
+          {next.moduleId ? (
+            <button
+              type="button"
+              className="press mt-3 w-full rounded-2xl border-2 border-navy bg-gold py-3 font-extrabold text-navy"
+              onClick={() => {
+                driveTo(next.moduleId!, firstTopicId(next.moduleId!) ?? parent.topicId)
+                onDone()
+              }}
+            >
+              Drive to {next.name}
+            </button>
+          ) : (
+            <p className="mt-3 text-center text-sm font-bold text-[#f5d000]">{next.adventure}</p>
+          )}
+        </div>
+      ) : null}
       <button
         type="button"
         className="press mt-5 w-full rounded-2xl border-2 border-navy bg-leaf py-4 font-extrabold text-white"

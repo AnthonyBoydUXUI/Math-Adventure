@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { CircuitTrack, HandoffCard } from '../components/CircuitTrack.tsx'
 import { MODULES, SKILLS } from '../data/curriculum.ts'
 import { WORLDS } from '../data/worlds.ts'
 import { compositeMastery, emptyStats } from '../engine/mastery.ts'
@@ -14,8 +15,8 @@ export function MorePage() {
           <p className="font-display text-2xl font-extrabold">Dimension desk</p>
         </Link>
         <Link to="/map" className="rounded-[24px] border-2 border-navy bg-orange p-5 text-white press">
-          <p className="text-xs font-extrabold uppercase tracking-widest text-white/70">Mastery, not calendar</p>
-          <p className="font-display text-2xl font-extrabold">Three-track map</p>
+          <p className="text-xs font-extrabold uppercase tracking-widest text-white/70">Drive the RS across subjects</p>
+          <p className="font-display text-2xl font-extrabold">Subject circuit</p>
         </Link>
         <Link to="/parent" className="rounded-[24px] border-2 border-navy bg-white p-5 press">
           <p className="text-xs font-extrabold uppercase tracking-widest text-navy/40">Grown-ups</p>
@@ -36,17 +37,27 @@ export function MapPage() {
 
   return (
     <div className="px-4 pb-8">
-      <h1 className="font-display text-4xl font-extrabold">Skill tree</h1>
+      <h1 className="font-display text-4xl font-extrabold">Subject circuit</h1>
       <p className="mt-1 font-bold text-navy/60">
-        Each subject is its own adventure. Each one hands a tool to the next — Ratio Runway tickets into Tip Market, Balance Bridge into Boundary Beach, Sample Station into Sky Peak.
+        Each subject is its own adventure. The Harbor RS rolls from pit to pit, carrying one idea into the next so the math actually connects.
       </p>
+      <div className="mt-3">
+        <HandoffCard />
+      </div>
+      <div className="mt-3">
+        <CircuitTrack />
+      </div>
       <div className="mt-3 space-y-2">
         {WORLDS.filter((w) => w.track === 'classroom').map((w) => (
           <div key={w.id} className="rounded-2xl border-2 border-navy p-3 text-white" style={{ background: w.color }}>
             <p className="font-extrabold">
               {w.icon} {w.name}
             </p>
-            <p className="text-sm font-bold text-white/80">{w.bridgeLine}</p>
+            <p className="text-sm font-bold text-white/90">{w.adventure}</p>
+            <p className="mt-1 text-sm font-bold text-white/80">{w.bridgeLine}</p>
+            <p className="mt-1 text-xs font-extrabold text-white/70">
+              Tank: {w.carry} → {w.handoff}
+            </p>
           </div>
         ))}
       </div>

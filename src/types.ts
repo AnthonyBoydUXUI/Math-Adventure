@@ -232,7 +232,7 @@ export interface AchievementDef {
 export interface CosmeticDef {
   id: string
   name: string
-  slot: 'goggles' | 'hoodie' | 'kicks' | 'figure'
+  slot: 'goggles' | 'hoodie' | 'kicks' | 'figure' | 'paint' | 'wheels' | 'wing'
   subtitle: string
   unlock: string
 }
@@ -259,6 +259,9 @@ export interface PlayerCosmetics {
   goggles: string
   hoodie: string
   kicks: string
+  paint: string
+  wheels: string
+  wing: string
   unlocked: string[]
 }
 

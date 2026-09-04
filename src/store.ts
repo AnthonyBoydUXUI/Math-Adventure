@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { COSMETICS } from './data/meta.ts'
+import { ACHIEVEMENTS, COSMETICS } from './data/meta.ts'
 import { questionById } from './data/questions.ts'
 import { diagnose, familyAccuracy, seenFormats } from './engine/diagnosis.ts'
 import { applyAttempt, seedSkillStats } from './engine/mastery.ts'
@@ -46,6 +46,10 @@ export interface SessionSlice {
   completed: boolean
 }
 
+type PlayerStoreSetter = (
+  partial: Partial<PlayerStore> | ((s: PlayerStore) => Partial<PlayerStore>),
+) => void
+
 interface PlayerStore {
   studentName: string
   xp: number
@@ -75,7 +79,8 @@ interface PlayerStore {
   completeRecap: () => void
   markVoice: () => void
   setParent: (patch: Partial<ParentSettings>) => void
-  equip: (slot: 'goggles' | 'hoodie' | 'kicks', id: string) => void
+  driveTo: (moduleId: string, topicId: string) => void
+  equip: (slot: 'goggles' | 'hoodie' | 'kicks' | 'paint' | 'wheels' | 'wing', id: string) => void
   setThemes: (themes: Theme[]) => void
   setToast: (msg?: string) => void
   toggleSound: () => void
@@ -125,7 +130,32 @@ function unlockCosmetics(cosmetics: PlayerCosmetics, achievements: string[]): Pl
   const extra = COSMETICS.filter((c) => c.unlock === 'start' || achievements.includes(c.unlock)).map(
     (c) => c.id,
   )
-  return { ...cosmetics, unlocked: [...new Set([...cosmetics.unlocked, ...extra])] }
+  return normalizeCosmetics({ ...cosmetics, unlocked: [...new Set([...cosmetics.unlocked, ...extra])] })
+}
+
+function normalizeCosmetics(cosmetics: Partial<PlayerCosmetics> & { unlocked?: string[] }): PlayerCosmetics {
+  return {
+    goggles: cosmetics.goggles ?? 'goggles-base',
+    hoodie: cosmetics.hoodie ?? 'hoodie-base',
+    kicks: cosmetics.kicks ?? 'kicks-base',
+    paint: cosmetics.paint ?? 'paint-volt',
+    wheels: cosmetics.wheels ?? 'wheels-bronze',
+    wing: cosmetics.wing ?? 'wing-black',
+    unlocked: cosmetics.unlocked ?? [],
+  }
+}
+
+function grantOpenRoad(get: () => PlayerStore, set: PlayerStoreSetter) {
+  const s = get()
+  if (s.achievements.includes('open-road')) return
+  if (!ACHIEVEMENTS.some((a) => a.id === 'open-road')) return
+  const achievements = [...s.achievements, 'open-road']
+  set({
+    achievements,
+    cosmetics: unlockCosmetics(s.cosmetics, achievements),
+    toast: 'Open Road — you drove into the next adventure',
+  })
+  sfx.xp()
 }
 
 export const usePlayerStore = create<PlayerStore>()(
@@ -143,6 +173,9 @@ export const usePlayerStore = create<PlayerStore>()(
         goggles: 'goggles-base',
         hoodie: 'hoodie-base',
         kicks: 'kicks-base',
+        paint: 'paint-volt',
+        wheels: 'wheels-bronze',
+        wing: 'wing-black',
         unlocked: COSMETICS.filter((c) => c.unlock === 'start').map((c) => c.id),
       },
       parent: defaultParent,
@@ -211,6 +244,24 @@ export const usePlayerStore = create<PlayerStore>()(
           studentName: parent.studentName || get().studentName,
         })
         if (get().soundOn) startAmbient(worldForModule(parent.moduleId).id)
+      },
+      driveTo: (moduleId, topicId) => {
+        const s = get()
+        const from = worldForModule(s.parent.moduleId)
+        const dest = worldForModule(moduleId)
+        if (s.parent.moduleId !== moduleId || s.parent.topicId !== topicId) {
+          const parent = { ...s.parent, moduleId, topicId }
+          set({
+            parent,
+            mission: generateDailyMission(s.stats, parent),
+            studentName: parent.studentName || s.studentName,
+          })
+          if (s.soundOn) startAmbient(dest.id)
+        }
+        sfx.whoosh()
+        if (from.nextId && dest.id === from.nextId) {
+          grantOpenRoad(get, set)
+        }
       },
       equip: (slot, id) => {
         if (!get().cosmetics.unlocked.includes(id)) return
@@ -403,6 +454,19 @@ export const usePlayerStore = create<PlayerStore>()(
         if (s.soundOn) sfx.xp()
       },
     }),
-    { name: 'aero-math-adventure' },
+    {
+      name: 'aero-math-adventure',
+      version: 3,
+      migrate: (persisted) => persisted as PlayerStore,
+      merge: (persisted, current) => {
+        const p = (persisted ?? {}) as Partial<PlayerStore>
+        return {
+          ...current,
+          ...p,
+          cosmetics: normalizeCosmetics({ ...current.cosmetics, ...(p.cosmetics ?? {}) }),
+          parent: { ...current.parent, ...(p.parent ?? {}) },
+        }
+      },
+    },
   ),
 )

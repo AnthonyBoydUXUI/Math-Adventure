@@ -2,6 +2,7 @@ import { ACHIEVEMENTS, COSMETICS } from '../data/meta.ts'
 import { cn } from '../lib/cn.ts'
 import { usePlayerStore } from '../store.ts'
 import { Aero } from '../components/Aero.tsx'
+import { RaceCar } from '../components/RaceCar.tsx'
 
 export function LockerPage() {
   const { cosmetics, achievements, equip } = usePlayerStore()
@@ -10,11 +11,51 @@ export function LockerPage() {
   return (
     <div className="px-4 pb-8">
       <h1 className="font-display text-4xl font-extrabold">Locker</h1>
-      <p className="mt-1 font-bold text-navy/65">Collectible forms. Cosmetics celebrate habits, not grinding.</p>
+      <p className="mt-1 font-bold text-navy/65">Collectible forms and a garage. Cosmetics celebrate habits, not grinding.</p>
 
       <div className="mt-4 flex justify-center rounded-[28px] border-2 border-navy bg-white py-4">
         <Aero className="h-44" goggles={cosmetics.goggles} hoodie={cosmetics.hoodie} kicks={cosmetics.kicks} mood="cheer" />
       </div>
+
+      <section className="mt-4 overflow-hidden rounded-[28px] border-2 border-navy bg-[#2a2d33] px-4 py-5 text-white">
+        <p className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-white/50">Harbor RS garage</p>
+        <p className="font-display text-2xl font-extrabold text-[#f5d000]">Tune the car that drives the circuit</p>
+        <div className="garage-floor mt-3 flex justify-center rounded-[24px] py-6">
+          <RaceCar
+            className="h-44 w-24"
+            paint={cosmetics.paint}
+            wheels={cosmetics.wheels}
+            wing={cosmetics.wing}
+          />
+        </div>
+      </section>
+
+      {(['paint', 'wheels', 'wing'] as const).map((slot) => (
+        <section key={slot} className="mt-4">
+          <h2 className="text-xs font-extrabold uppercase tracking-widest text-navy/45">{slot}</h2>
+          <div className="mt-2 grid grid-cols-2 gap-2">
+            {COSMETICS.filter((c) => c.slot === slot).map((c) => {
+              const on = cosmetics.unlocked.includes(c.id)
+              return (
+                <button
+                  key={c.id}
+                  type="button"
+                  disabled={!on}
+                  onClick={() => equip(slot, c.id)}
+                  className={cn(
+                    'rounded-2xl border-2 border-navy p-3 text-left',
+                    cosmetics[slot] === c.id ? 'bg-gold' : 'bg-white',
+                    !on && 'opacity-40',
+                  )}
+                >
+                  <p className="font-extrabold">{c.name}</p>
+                  <p className="text-xs font-bold text-navy/50">{on ? c.subtitle : 'Locked'}</p>
+                </button>
+              )
+            })}
+          </div>
+        </section>
+      ))}
 
       {(['goggles', 'hoodie', 'kicks'] as const).map((slot) => (
         <section key={slot} className="mt-4">

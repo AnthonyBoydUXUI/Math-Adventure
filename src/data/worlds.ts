@@ -12,6 +12,9 @@ export interface AdventureWorld {
   prevId?: string
   nextId?: string
   bridgeLine: string
+  adventure: string
+  carry: string
+  handoff: string
 }
 
 export const WORLDS: AdventureWorld[] = [
@@ -26,8 +29,12 @@ export const WORLDS: AdventureWorld[] = [
     accent: '#ffc53d',
     icon: '🛩',
     skillIds: ['unit-rate', 'constant-k'],
+    prevId: 'groundlab',
     nextId: 'market',
     bridgeLine: 'A unit rate is the ticket you carry into percent world.',
+    adventure: 'Qualify on the runway. Pace is a rate.',
+    carry: 'per-one thinking (unit rate / k)',
+    handoff: 'Percent is the same k, wearing /100.',
   },
   {
     id: 'market',
@@ -43,6 +50,9 @@ export const WORLDS: AdventureWorld[] = [
     prevId: 'harbor',
     nextId: 'belowzero',
     bridgeLine: 'Percent of a number is k times the whole — same move as y = kx.',
+    adventure: 'Neon bazaar. Tips, tax, and lap shares.',
+    carry: 'part = percent × whole',
+    handoff: 'A discount is an integer drop. Drive downstairs.',
   },
   {
     id: 'belowzero',
@@ -58,6 +68,9 @@ export const WORLDS: AdventureWorld[] = [
     prevId: 'market',
     nextId: 'gallery',
     bridgeLine: 'A discount is an integer move. You’ll need that downstairs.',
+    adventure: 'Ice number-line. Position can go below zero.',
+    carry: 'integer direction on a line',
+    handoff: 'Fractions are the same line with finer ticks.',
   },
   {
     id: 'gallery',
@@ -73,6 +86,9 @@ export const WORLDS: AdventureWorld[] = [
     prevId: 'belowzero',
     nextId: 'gearworks',
     bridgeLine: 'Negative + fraction is still one number line — just finer ticks.',
+    adventure: 'Paint row. Mix parts of a whole.',
+    carry: 'common denominators / rational ops',
+    handoff: 'Like terms are the same “units” idea in symbols.',
   },
   {
     id: 'gearworks',
@@ -88,6 +104,9 @@ export const WORLDS: AdventureWorld[] = [
     prevId: 'gallery',
     nextId: 'bridge',
     bridgeLine: 'Combining like terms is packing the same units — fraction sense helps.',
+    adventure: 'Factory gears. Expressions that click.',
+    carry: 'simplify before you solve',
+    handoff: 'The Balance Bridge only works if both sides are simplified.',
   },
   {
     id: 'bridge',
@@ -103,6 +122,9 @@ export const WORLDS: AdventureWorld[] = [
     prevId: 'gearworks',
     nextId: 'boundary',
     bridgeLine: 'You simplify first. Then you undo. Gearworks feeds the bridge.',
+    adventure: 'Equation span. Keep both sides honest.',
+    carry: 'undo operations / balance',
+    handoff: 'Inequalities use the same undos — with a shoreline, not a point.',
   },
   {
     id: 'boundary',
@@ -118,6 +140,9 @@ export const WORLDS: AdventureWorld[] = [
     prevId: 'bridge',
     nextId: 'plaza',
     bridgeLine: 'Same undo moves as equations. Open circle instead of a point.',
+    adventure: 'Coastal inequalities. More-than, less-than.',
+    carry: 'inequality direction',
+    handoff: 'Scale factor is a ratio from Harbor. Geometry needs it.',
   },
   {
     id: 'plaza',
@@ -133,6 +158,9 @@ export const WORLDS: AdventureWorld[] = [
     prevId: 'boundary',
     nextId: 'courtcrate',
     bridgeLine: 'A scale factor is a ratio. Harbor never really left.',
+    adventure: 'Angle plaza. Scale drawings and pairs.',
+    carry: 'scale factor / angle pairs',
+    handoff: 'Area scales by the factor squared. Court needs that.',
   },
   {
     id: 'courtcrate',
@@ -148,6 +176,9 @@ export const WORLDS: AdventureWorld[] = [
     prevId: 'plaza',
     nextId: 'arcade',
     bridgeLine: 'Area is a scaled drawing of space. Plaza’s scale factor squared.',
+    adventure: 'Measure yards. Circles, crates, volume.',
+    carry: 'area and volume formulas',
+    handoff: 'Probability is a fraction of a whole — Gallery again, in a game skin.',
   },
   {
     id: 'arcade',
@@ -163,6 +194,9 @@ export const WORLDS: AdventureWorld[] = [
     prevId: 'courtcrate',
     nextId: 'station',
     bridgeLine: 'P(gold) is part/whole — Gallery fractions wearing game skins.',
+    adventure: 'Chance alley. Spinners and compound “and”.',
+    carry: 'favorable over total',
+    handoff: 'A sample is a spinner of people. Station reads the plot.',
   },
   {
     id: 'station',
@@ -178,6 +212,9 @@ export const WORLDS: AdventureWorld[] = [
     prevId: 'arcade',
     nextId: 'peak',
     bridgeLine: 'A mean is a balance point. Arcade chance meets a line plot.',
+    adventure: 'Data dock. Samples that actually represent.',
+    carry: 'center, variability, honest samples',
+    handoff: 'Linear rate from Harbor + balance from the Bridge = y = mx + b at Peak.',
   },
   {
     id: 'groundlab',
@@ -201,6 +238,9 @@ export const WORLDS: AdventureWorld[] = [
     ],
     nextId: 'harbor',
     bridgeLine: 'Foundation is the runway every district takes off from.',
+    adventure: 'Precision bay. The RS does not roll without this.',
+    carry: 'facts, fractions, multi-step paper',
+    handoff: 'Every classroom district uses this as launch fuel.',
   },
   {
     id: 'peak',
@@ -214,6 +254,9 @@ export const WORLDS: AdventureWorld[] = [
     skillIds: ['slope-linear', 'pythag', 'systems-intro', 'exponents', 'function-notation', 'exponential-intro'],
     prevId: 'station',
     bridgeLine: 'Balance Bridge plus Ratio Runway becomes y = mx + b.',
+    adventure: 'Algebra approach. Slope, systems, f(x).',
+    carry: 'linear rate + balanced undos',
+    handoff: 'This is eighth grade and Algebra I air — same car, higher gear.',
   },
 ]
 
@@ -227,4 +270,17 @@ export function worldById(id: string) {
 
 export function classroomChain() {
   return WORLDS.filter((w) => w.track === 'classroom')
+}
+
+export function linkedWorld(world: AdventureWorld, dir: 'prev' | 'next') {
+  const id = dir === 'prev' ? world.prevId : world.nextId
+  return id ? worldById(id) : undefined
+}
+
+export function circuitPits() {
+  return classroomChain().map((world, i) => ({
+    world,
+    x: i % 2 === 0 ? 82 : 248,
+    y: 56 + i * 86,
+  }))
 }
