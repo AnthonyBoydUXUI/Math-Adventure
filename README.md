@@ -41,11 +41,34 @@ Tap once to connect the GitHub repo to a free Vercel Hobby account and deploy:
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/import?s=https://github.com/AnthonyBoydUXUI/Math-Adventure)
 
-In the import screen, set the production branch to `cursor/adaptive-math-trainer-64b2` until that PR is merged into `main`. Framework: Vite. Hobby is enough (static app, no server).
+In the import screen, set the production branch to `cursor/console-hud-64b2` until [PR #2](https://github.com/AnthonyBoydUXUI/Math-Adventure/pull/2) is merged into `main`. Framework: Vite. Hobby is enough (static app, no server).
 
 After the first import, later pushes can auto-deploy. Optional GitHub secrets for the included workflow: `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`.
 
 Tap the speaker in the app HUD to start moving world sound. Browsers block audio until a tap.
+
+## Architecture — no backend (on purpose)
+
+Aero is a **static Vite app**. There is no server, no API, and no Supabase (or any other database) in this repo.
+
+| What | Where it lives |
+| --- | --- |
+| Questions, curriculum, worlds | Bundled TypeScript (`src/data/`) |
+| Adaptive session, diagnosis, scoring | Client engine (`src/engine/`) |
+| XP, streak, mastery, cosmetics, parent settings | Browser `localStorage` via Zustand persist (`aero-math-adventure`) |
+| Voice | Browser Speech Synthesis / Speech Recognition |
+| Homework photos | Data URLs stored locally in that same persist blob |
+
+That is enough for one student on one device (phone or laptop). Clearing site data wipes progress. Two browsers do not sync.
+
+**Do not add Supabase until you need one of these:**
+
+- The same progress on phone *and* laptop
+- A parent login that is not the student’s browser
+- Backup if Safari/Chrome data is cleared
+- More than one student profile in the cloud
+
+When that day comes, Supabase (Auth + one `profiles` / `attempts` table) is the right add. The store is already a single `PlayerStore` blob, so a later sync layer can upsert that JSON per user without rewriting the math engine. Until then, extra backend would not change how the 15-minute session works.
 
 ## Parent desk
 
