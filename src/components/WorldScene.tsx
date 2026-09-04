@@ -1,19 +1,13 @@
-import { GameViewport } from '../engine/render/GameViewport.tsx'
-import type { CastMood } from '../engine/render/cast/canon.ts'
+import { SIGNAL_SHEETS, worldMap } from '../data/sheets.ts'
 import { worldForModule } from '../data/worlds.ts'
 import { cn } from '../lib/cn.ts'
+import { SheetArt } from './SheetArt.tsx'
 
 export function WorldScene({
   moduleId,
   className,
-  paint,
-  wheels,
-  wing,
-  visor,
-  suit,
-  kicks,
-  mood,
   embed,
+  sheet = 'map',
 }: {
   moduleId: string
   className?: string
@@ -23,31 +17,23 @@ export function WorldScene({
   visor?: string
   suit?: string
   kicks?: string
-  mood?: CastMood
+  mood?: string
   embed?: boolean
+  sheet?: 'map' | 'hero'
 }) {
   const world = worldForModule(moduleId)
+  const src = sheet === 'hero' ? SIGNAL_SHEETS.hero : worldMap(world.id)
+  const alt = sheet === 'hero' ? 'Signal and the Harbor RS' : `${world.district} map`
   return (
     <div
       className={cn(
         embed
           ? 'relative h-56 w-full overflow-hidden bg-[#05070b]'
-          : 'pointer-events-none absolute inset-0 overflow-hidden',
+          : 'relative overflow-hidden bg-[#05070b]',
         className,
       )}
-      aria-hidden
     >
-      <GameViewport
-        districtId={world.id}
-        color={world.color}
-        paint={paint}
-        wheels={wheels}
-        wing={wing}
-        visor={visor}
-        suit={suit}
-        kicks={kicks}
-        mood={mood}
-      />
+      <SheetArt src={src} alt={alt} cover={embed} className={embed ? 'h-full' : undefined} />
     </div>
   )
 }

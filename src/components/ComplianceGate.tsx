@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { APP_NAME } from '../content/legal.ts'
 import { usePlayerStore } from '../store.ts'
-import { CastPortrait } from '../engine/render/cast/CastPortrait.tsx'
+import { SignalBust } from './SheetArt.tsx'
 
 export function ComplianceGate() {
   const acknowledgeCompliance = usePlayerStore((s) => s.acknowledgeCompliance)
@@ -14,7 +14,7 @@ export function ComplianceGate() {
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-xl flex-col px-5 pb-10 pt-[max(1.5rem,env(safe-area-inset-top))]">
-      <CastPortrait className="mx-auto mb-2 h-36 w-32" framing="face" />
+      <SignalBust className="mx-auto mb-2 h-40 max-w-[11rem]" />
       <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-ink">{APP_NAME}</p>
       <h1 className="mt-2 font-display text-4xl font-semibold tracking-tight">Before you fly</h1>
       <p className="mt-3 text-sm font-medium text-ink">Parent or student 12+ — once on this device.</p>

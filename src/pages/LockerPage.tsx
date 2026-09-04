@@ -1,30 +1,27 @@
+import { SheetArt } from '../components/SheetArt.tsx'
 import { WindowBox } from '../components/WindowBox.tsx'
-import { WorldScene } from '../components/WorldScene.tsx'
 import { ACHIEVEMENTS, COSMETICS } from '../data/meta.ts'
+import { SIGNAL_SHEETS, VEHICLE_SHEETS } from '../data/sheets.ts'
 import { cn } from '../lib/cn.ts'
 import { usePlayerStore } from '../store.ts'
 
 export function LockerPage() {
-  const { cosmetics, achievements, equip, parent } = usePlayerStore()
+  const { cosmetics, achievements, equip } = usePlayerStore()
 
   return (
     <div className="px-4 pb-8">
       <h1 className="type-pack text-5xl">Gear</h1>
 
-      <WindowBox className="mt-4" stamp="Signal" series="Harbor RS">
-        <div className="relative">
-          <WorldScene
-            embed
-            moduleId={parent.moduleId}
-            paint={cosmetics.paint}
-            wheels={cosmetics.wheels}
-            wing={cosmetics.wing}
-            visor={cosmetics.goggles}
-            suit={cosmetics.hoodie}
-            kicks={cosmetics.kicks}
-            className="h-64"
-          />
-        </div>
+      <WindowBox className="mt-4" stamp="Signal" series="Turnaround">
+        <SheetArt src={SIGNAL_SHEETS.turnaround} alt="Signal turnaround" className="bg-[#c8c4bc]" />
+      </WindowBox>
+
+      <WindowBox className="mt-4" stamp="Harbor RS" series="Turnaround">
+        <SheetArt src={VEHICLE_SHEETS.turnaround} alt="Harbor RS turnaround" className="bg-[#efe8d8]" />
+      </WindowBox>
+
+      <WindowBox className="mt-4" stamp="Signal" series="Expressions">
+        <SheetArt src={SIGNAL_SHEETS.expressions} alt="Signal expressions" className="bg-[#2a2a2c]" />
       </WindowBox>
 
       {(['goggles', 'hoodie', 'kicks', 'paint', 'wheels', 'wing'] as const).map((slot) => (
