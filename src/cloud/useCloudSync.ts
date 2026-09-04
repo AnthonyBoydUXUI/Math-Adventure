@@ -116,7 +116,7 @@ async function pullAndPush(
   setState((s) => ({ ...s, status: 'syncing', error: undefined }))
   const { data, error } = await sb.from('profiles').select('id,payload,updated_at').eq('id', userId).maybeSingle()
   if (error) {
-    setState((s) => ({ ...s, status: 'error', error: error.message }))
+    setState((s) => ({ ...s, status: 'error', error: friendlyCloudError(error.message) }))
     return
   }
   const local = takeCloudSnapshot()
@@ -141,8 +141,15 @@ async function pushProfile(
     updated_at: new Date().toISOString(),
   })
   if (error) {
-    setState((s) => ({ ...s, status: 'error', error: error.message }))
+    setState((s) => ({ ...s, status: 'error', error: friendlyCloudError(error.message) }))
     return
   }
   setState((s) => ({ ...s, status: 'synced', lastSyncedAt: Date.now(), error: undefined }))
+}
+
+function friendlyCloudError(message: string) {
+  if (/PGRST205|schema cache|Could not find the table/i.test(message)) {
+    return 'Connected to Supabase, but public.profiles is missing. Run supabase/schema.sql in the SQL editor, then sign in again.'
+  }
+  return message
 }

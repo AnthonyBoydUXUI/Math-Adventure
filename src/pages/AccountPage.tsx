@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useCloud } from '../cloud/CloudProvider.tsx'
+import { SUPABASE_URL } from '../lib/supabase.ts'
 
 export function AccountPage() {
   const cloud = useCloud()
@@ -25,12 +26,16 @@ export function AccountPage() {
         one device does not wipe the cloud copy.
       </p>
 
-      {!cloud.configured ? (
+      {cloud.configured ? (
+        <p className="mt-3 text-xs font-medium text-ink">
+          Cloud project: {SUPABASE_URL.replace('https://', '')}
+        </p>
+      ) : (
         <p className="panel mt-4 rounded-2xl p-4 text-sm font-medium text-gold">
           Supabase keys are missing in this build. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY, then run
           supabase/schema.sql.
         </p>
-      ) : null}
+      )}
 
       <div className="panel mt-4 rounded-2xl p-4">
         <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-ink">Status</p>
