@@ -35,15 +35,11 @@ Each Reveal module is a district (Ratio Runway, Tip Market, Balance Bridge…). 
 
 ## Vercel
 
-This repo is **not live on Vercel yet**. The project includes `vercel.json` and a deploy workflow, but no Hobby account has been connected from this environment (Vercel CLI is logged out; GitHub has no Vercel deployments).
+The red production deploy on `main` @ `6dd8ee2` failed because `vite.config.ts` imported `vitest/config` and `tsc -b` hit a Vite 8 Rollup/Rolldown type clash. Vercel now runs `npx vite build` only. Local `npm run build` still typechecks the app, then Vite.
 
-Tap once to connect the GitHub repo to a free Vercel Hobby account and deploy:
+Redeploy **latest** `main` after this lands — do not retry the stale `6dd8ee2` job.
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/import?s=https://github.com/AnthonyBoydUXUI/Math-Adventure)
-
-In the import screen, set the production branch to `cursor/console-hud-64b2` until [PR #2](https://github.com/AnthonyBoydUXUI/Math-Adventure/pull/2) is merged into `main`. Framework: Vite. Hobby is enough (static app, no server).
-
-After the first import, later pushes can auto-deploy. Optional GitHub secrets for the included workflow: `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`.
 
 Tap the speaker in the app HUD to start moving world sound. Browsers block audio until a tap.
 
