@@ -32,29 +32,10 @@ function useFaceMap() {
   return map
 }
 
-function Face({
-  mood,
-  quality,
-  map,
-}: {
-  mood: CastMood
-  quality: CastLook['quality']
-  map: Texture | null
-}) {
+function Lids({ mood, quality }: { mood: CastMood; quality: CastLook['quality'] }) {
   const expr = faceFor(mood)
   return (
     <group>
-      {map ? (
-        <Decal position={[0, H * 0.02, H * 0.22]} rotation={[0, 0, 0]} scale={[H * 0.62, H * 0.68, H * 0.28]}>
-          <meshPhysicalMaterial
-            map={map}
-            roughness={0.46}
-            metalness={0.02}
-            polygonOffset
-            polygonOffsetFactor={-4}
-          />
-        </Decal>
-      ) : null}
       <mesh
         position={[0, H * 0.16 + expr.browY * H * 0.1, H * 0.3]}
         scale={[1, Math.max(0.12, 1.05 - expr.lid + expr.squint * 0.6), 1]}
@@ -140,7 +121,7 @@ function Head({
           </Decal>
         ) : null}
       </mesh>
-      <Face mood={mood} quality={quality} map={null} />
+      <Lids mood={mood} quality={quality} />
       <mesh position={[0, -H * 0.18, H * 0.1]} scale={[0.72, 0.45, 0.55]}>
         <sphereGeometry args={[H * 0.28, n, 10]} />
         <Skin />
