@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  CAST_APPROVED,
   CAST_HEAD,
   CAST_HEADS,
   CAST_HEIGHT,
@@ -38,5 +39,7 @@ describe('Harbor cast canon', () => {
     expect(CAST_PIPELINE.at(-1)).toBe('app')
     expect(CAST_MISSING.productionGlb).toBe(true)
     expect(CAST_MISSING.humanoidRig).toBe(true)
+    expect(CAST_APPROVED).toBe('signal')
+    expect(CAST_MISSING.turnaroundApproved).toBe(true)
   })
 })

@@ -66,29 +66,39 @@ export const CAST_PIPELINE = [
   'app',
 ] as const
 
-/** Honest gap: the in-engine sculpt is not a production AccuRIG hero. */
+/** Locked player identity. Production GLB is still missing. */
+export const CAST_APPROVED = 'signal' as const
+
 export const CAST_MISSING = {
   productionGlb: true,
   lodSet: true,
   humanoidRig: true,
   speechBlendshapes: true,
   textures2k: true,
-  turnaroundApproved: false,
+  turnaroundApproved: true,
+} as const
+
+export const SIGNAL = {
+  bone: '#e8e4dc',
+  navy: '#0e1a3a',
+  gold: '#e4c24a',
+  amber: '#c48a2a',
 } as const
 
 export function visorHex(id = 'goggles-base') {
   if (id === 'goggles-gold') return '#f0d36a'
   if (id === 'goggles-paint') return '#7b8cff'
-  return '#e4c24a'
+  return SIGNAL.gold
 }
 
 export function suitHex(id = 'hoodie-base', role: CastRole = 'player') {
   if (role === 'coach') return '#14304e'
   if (role === 'guide') return '#3a2a68'
-  if (role === 'rival') return '#5a2418'
+  if (role === 'rival') return '#7a2e14'
   if (id === 'hoodie-court') return '#7a2e14'
-  if (id === 'hoodie-signal') return '#0f5c56'
-  return '#0e1a3a'
+  if (id === 'hoodie-signal') return SIGNAL.bone
+  if (role === 'player') return SIGNAL.bone
+  return SIGNAL.bone
 }
 
 export function kickHex(id = 'kicks-base') {

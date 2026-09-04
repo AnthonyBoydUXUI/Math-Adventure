@@ -2,7 +2,7 @@ import { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { Decal } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { SRGBColorSpace, TextureLoader, type Group, type Texture } from 'three'
-import { CAST_HEAD, CAST_Y, kickHex, suitHex, visorHex, type CastLook, type CastMood, type CastRole } from './canon.ts'
+import { CAST_HEAD, CAST_Y, SIGNAL, kickHex, suitHex, visorHex, type CastLook, type CastMood, type CastRole } from './canon.ts'
 import { faceFor } from './expressions.ts'
 import { CAST_MAT } from './materials.ts'
 
@@ -59,7 +59,46 @@ function Lids({ mood, quality }: { mood: CastMood; quality: CastLook['quality'] 
   )
 }
 
+function SignalHood({ accent, quality }: { accent: string; quality: CastLook['quality'] }) {
+  const n = segs(quality)
+  return (
+    <group>
+      <mesh castShadow position={[0, H * 0.18, -H * 0.04]} scale={[1.15, 0.85, 1.2]}>
+        <sphereGeometry args={[H * 0.4, n, n]} />
+        <meshPhysicalMaterial color={SIGNAL.bone} {...CAST_MAT.suit} />
+      </mesh>
+      <mesh castShadow position={[0, H * 0.08, -H * 0.22]} scale={[1.05, 0.7, 0.75]}>
+        <sphereGeometry args={[H * 0.28, n, 10]} />
+        <meshPhysicalMaterial color={SIGNAL.bone} {...CAST_MAT.suit} />
+      </mesh>
+      <mesh position={[0, H * 0.12, H * 0.34]} rotation={[0.15, 0, 0]}>
+        <boxGeometry args={[H * 0.28, H * 0.045, H * 0.05]} />
+        <meshPhysicalMaterial
+          color={accent}
+          roughness={0.16}
+          metalness={0.4}
+          clearcoat={0.9}
+          clearcoatRoughness={0.12}
+        />
+      </mesh>
+      <mesh position={[-H * 0.1, H * 0.2, H * 0.3]} rotation={[0.2, 0, 0.55]}>
+        <boxGeometry args={[H * 0.16, H * 0.03, H * 0.04]} />
+        <meshPhysicalMaterial color={accent} roughness={0.16} metalness={0.4} />
+      </mesh>
+      <mesh position={[H * 0.1, H * 0.2, H * 0.3]} rotation={[0.2, 0, -0.55]}>
+        <boxGeometry args={[H * 0.16, H * 0.03, H * 0.04]} />
+        <meshPhysicalMaterial color={accent} roughness={0.16} metalness={0.4} />
+      </mesh>
+      <mesh position={[0, H * 0.22, H * 0.18]} scale={[0.7, 0.35, 0.45]}>
+        <sphereGeometry args={[H * 0.16, 10, 8]} />
+        <meshPhysicalMaterial {...CAST_MAT.hair} />
+      </mesh>
+    </group>
+  )
+}
+
 function Hair({ role, accent, quality }: { role: CastRole; accent: string; quality: CastLook['quality'] }) {
+  if (role === 'player') return <SignalHood accent={accent} quality={quality} />
   const n = segs(quality)
   return (
     <group>
@@ -67,31 +106,13 @@ function Hair({ role, accent, quality }: { role: CastRole; accent: string; quali
         <sphereGeometry args={[H * 0.4, n, n]} />
         <meshPhysicalMaterial {...CAST_MAT.hair} />
       </mesh>
-      <mesh castShadow position={[-H * 0.16, H * 0.22, H * 0.08]} rotation={[0.4, 0.5, -0.55]} scale={[0.85, 0.45, 0.7]}>
-        <sphereGeometry args={[H * 0.22, n, 10]} />
-        <meshPhysicalMaterial {...CAST_MAT.hair} />
-      </mesh>
-      <mesh castShadow position={[H * 0.18, H * 0.2, 0]} rotation={[0.2, -0.4, 0.5]} scale={[0.7, 0.4, 0.6]}>
-        <sphereGeometry args={[H * 0.18, n, 10]} />
-        <meshPhysicalMaterial {...CAST_MAT.hair} />
-      </mesh>
       <mesh castShadow position={[0, H * 0.1, -H * 0.28]} scale={[1, 0.65, 0.7]}>
         <sphereGeometry args={[H * 0.3, n, 10]} />
         <meshPhysicalMaterial {...CAST_MAT.hair} />
       </mesh>
-      <mesh
-        castShadow
-        position={role === 'coach' ? [H * 0.16, H * 0.26, H * 0.06] : [-H * 0.1, H * 0.3, H * 0.12]}
-        rotation={[0.55, 0.35, -0.2]}
-      >
+      <mesh castShadow position={[-H * 0.1, H * 0.3, H * 0.12]} rotation={[0.55, 0.35, -0.2]}>
         <capsuleGeometry args={[H * 0.045, H * 0.22, 5, n]} />
-        <meshPhysicalMaterial
-          color={accent}
-          roughness={0.2}
-          metalness={0.22}
-          clearcoat={0.75}
-          clearcoatRoughness={0.16}
-        />
+        <meshPhysicalMaterial color={accent} roughness={0.2} metalness={0.22} clearcoat={0.75} clearcoatRoughness={0.16} />
       </mesh>
     </group>
   )
@@ -126,34 +147,22 @@ function Head({
         <sphereGeometry args={[H * 0.28, n, 10]} />
         <Skin />
       </mesh>
-      <mesh position={[-H * 0.2, H * 0.08, H * 0.3]} rotation={[0.1, 0.35, 0.1]}>
-        <boxGeometry args={[H * 0.07, H * 0.035, H * 0.025]} />
-        <meshPhysicalMaterial
-          color={visor}
-          roughness={0.14}
-          metalness={0.45}
-          clearcoat={1}
-          clearcoatRoughness={0.1}
-          emissive={visor}
-          emissiveIntensity={0.1}
-        />
-      </mesh>
       <Hair role={role} accent={visor} quality={quality} />
     </group>
   )
 }
 
-function Hand({ side }: { side: -1 | 1 }) {
+function Hand({ side, glove }: { side: -1 | 1; glove?: boolean }) {
   return (
     <group>
       <mesh castShadow scale={[1.15, 0.75, 0.9]}>
         <sphereGeometry args={[H * 0.13, 12, 10]} />
-        <Skin />
+        {glove ? <meshPhysicalMaterial color={SIGNAL.navy} {...CAST_MAT.suit} /> : <Skin />}
       </mesh>
       {[-0.07, 0, 0.07].map((z, i) => (
         <mesh key={i} position={[side * H * 0.02, -H * 0.11, z * H]} rotation={[0.35, 0, side * 0.12]}>
           <capsuleGeometry args={[H * 0.032, H * 0.09, 4, 6]} />
-          <Skin />
+          {glove ? <meshPhysicalMaterial color={SIGNAL.navy} {...CAST_MAT.suit} /> : <Skin />}
         </mesh>
       ))}
     </group>
@@ -166,12 +175,14 @@ function Arm({
   fore,
   quality,
   suit,
+  glove,
 }: {
   side: -1 | 1
   upper: [number, number, number]
   fore: [number, number, number]
   quality: CastLook['quality']
   suit: string
+  glove?: boolean
 }) {
   const n = segs(quality)
   const upperLen = H * 1.15
@@ -188,7 +199,7 @@ function Arm({
           <meshPhysicalMaterial color={suit} {...CAST_MAT.suit} />
         </mesh>
         <group position={[0, -foreLen - H * 0.09, 0]}>
-          <Hand side={side} />
+          <Hand side={side} glove={glove} />
         </group>
       </group>
     </group>
@@ -310,36 +321,42 @@ export function CastFigure({
           <sphereGeometry args={[H * 0.28, n, 10]} />
           <meshPhysicalMaterial color={s} {...CAST_MAT.suit} />
         </mesh>
-        <mesh position={[0, CAST_Y.chest + H * 0.06, H * 0.26]}>
-          <boxGeometry args={[H * 0.5, H * 0.14, H * 0.05]} />
-          <meshPhysicalMaterial {...CAST_MAT.plate} />
-        </mesh>
-        <mesh position={[0, CAST_Y.chest + H * 0.06, H * 0.29]}>
-          <boxGeometry args={[H * 0.5, H * 0.014, H * 0.012]} />
-          <meshPhysicalMaterial color={v} roughness={0.18} metalness={0.35} />
-        </mesh>
         <mesh castShadow position={[0, CAST_Y.chest + H * 0.2, -H * 0.16]} rotation={[0.4, 0, 0]} scale={[1.1, 0.5, 0.65]}>
           <sphereGeometry args={[H * 0.24, n, 10]} />
           <meshPhysicalMaterial color={s} {...CAST_MAT.suit} />
         </mesh>
+        <mesh position={[H * 0.02, CAST_Y.chest - H * 0.02, H * 0.12]} rotation={[0.15, 0, -0.55]}>
+          <boxGeometry args={[H * 0.08, H * 0.72, H * 0.04]} />
+          <meshPhysicalMaterial color={SIGNAL.navy} {...CAST_MAT.suit} />
+        </mesh>
+        <mesh castShadow position={[H * 0.22, CAST_Y.hip + H * 0.08, H * 0.08]}>
+          <boxGeometry args={[H * 0.16, H * 0.14, H * 0.1]} />
+          <meshPhysicalMaterial color={SIGNAL.navy} {...CAST_MAT.suit} />
+        </mesh>
         <Head mood={mood} visor={v} role={role} quality={quality} />
-        <Arm side={-1} upper={left.upper} fore={left.fore} quality={quality} suit={s} />
-        <Arm side={1} upper={right.upper} fore={right.fore} quality={quality} suit={s} />
+        <Arm side={-1} upper={left.upper} fore={left.fore} quality={quality} suit={s} glove={role === 'player'} />
+        <Arm side={1} upper={right.upper} fore={right.fore} quality={quality} suit={s} glove={role === 'player'} />
       </group>
       <mesh castShadow position={[0, CAST_Y.hip + H * 0.04, 0]} scale={[1.15, 0.55, 0.85]}>
         <sphereGeometry args={[H * 0.3, n, 10]} />
-        <meshPhysicalMaterial color={s} {...CAST_MAT.suit} />
+        <meshPhysicalMaterial color={SIGNAL.navy} {...CAST_MAT.suit} />
       </mesh>
-      <mesh position={[-H * 0.3, CAST_Y.hip - H * 0.02, 0]}>
-        <boxGeometry args={[H * 0.07, H * 0.26, H * 0.2]} />
-        <meshPhysicalMaterial {...CAST_MAT.plate} />
-      </mesh>
-      <mesh position={[H * 0.3, CAST_Y.hip - H * 0.02, 0]}>
-        <boxGeometry args={[H * 0.07, H * 0.26, H * 0.2]} />
-        <meshPhysicalMaterial {...CAST_MAT.plate} />
-      </mesh>
-      <Leg side={-1} thighRot={[0.08, 0, 0.04]} calfRot={[-0.06, 0, 0]} kicks={k} quality={quality} tights={s} />
-      <Leg side={1} thighRot={[-0.03, 0, -0.03]} calfRot={[0.05, 0, 0]} kicks={k} quality={quality} tights={s} />
+      <Leg
+        side={-1}
+        thighRot={[0.08, 0, 0.04]}
+        calfRot={[-0.06, 0, 0]}
+        kicks={k}
+        quality={quality}
+        tights={SIGNAL.navy}
+      />
+      <Leg
+        side={1}
+        thighRot={[-0.03, 0, -0.03]}
+        calfRot={[0.05, 0, 0]}
+        kicks={k}
+        quality={quality}
+        tights={SIGNAL.navy}
+      />
     </group>
   )
 }
