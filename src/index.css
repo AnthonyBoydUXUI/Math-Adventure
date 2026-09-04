@@ -74,6 +74,17 @@ body {
   min-height: 100dvh;
 }
 
+.watch-face {
+  min-height: 100dvh;
+}
+
+@media (min-width: 768px) {
+  .shell-frame {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+}
+
 .font-display {
   font-family: var(--font-display);
 }

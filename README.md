@@ -53,30 +53,25 @@ After the first import, later pushes can auto-deploy. Optional GitHub secrets fo
 
 Tap the speaker in the app HUD to start moving world sound. Browsers block audio until a tap.
 
-## Architecture — no backend (on purpose)
+## Architecture — local first, optional cloud
 
-Aero is a **static Vite app**. There is no server, no API, and no Supabase (or any other database) in this repo.
+Aero is a **static Vite app**. Math still runs in the browser. Optional **Supabase Auth + one `profiles` table** backs up the same JSON blob so phone, tablet, laptop, and the `/watch` glance share a save.
 
 | What | Where it lives |
 | --- | --- |
 | Questions, curriculum, worlds | Bundled TypeScript (`src/data/`) |
 | Adaptive session, practice feedback, scoring | Client engine (`src/engine/`) |
-| XP, streak, mastery, cosmetics, parent settings | Browser `localStorage` via Zustand persist (`aero-math-adventure`) |
+| XP, streak, mastery, cosmetics, parent settings | Device `localStorage` (`aero-math-adventure`) and, if signed in, `profiles.payload` |
 | Voice | Browser Speech Synthesis / Speech Recognition |
-| Homework photos | Data URLs stored locally in that same persist blob |
+| Homework photos | Stay on the device that captured them (stripped from cloud) |
 
-That is enough for one student on one device (phone or laptop). Clearing site data wipes progress. Two browsers do not sync.
+**One-time setup:** run `supabase/schema.sql` in the Supabase SQL editor. Env: `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` (see `.env.example`).
 
-**Do not add Supabase until you need one of these:**
+Sign in under System → Account + sync. After clearing site data, sign in again to restore.
 
-- The same progress on phone *and* laptop
-- A parent login that is not the student’s browser
-- Backup if Safari/Chrome data is cleared
-- More than one student profile in the cloud
+The 15-minute session is built for phone, tablet, and web. `/watch` is a glance (streak, clock, left-off, resume) for a watch-sized browser — not a full lesson on the wrist.
 
-When that day comes, Supabase (Auth + one `profiles` / `attempts` table) is the right add. The store is already a single `PlayerStore` blob, so a later sync layer can upsert that JSON per user without rewriting the math engine. Until then, extra backend would not change how the 15-minute session works.
-
-Test Lab writes the same attempt log. The **test-readiness** readout (transfer, lock-in, paper habit, weakest wrapper) is computed from those plays so timed-test wrappers get a plan, not just XP. If Supabase is added later, sync that attempt log — the report is derived, not a second source of truth.
+Test Lab writes the same attempt log. The **test-readiness** readout is derived from those plays. The cloud profile stores that log; it is not a second scoring engine.
 
 ## Parent desk
 

@@ -19,8 +19,8 @@ Age-rating questionnaire (typical answers):
 ## Privacy Nutrition Labels (App Store Connect)
 
 - **Data used to track you:** none. No ATT prompt. No IDFA.
-- **Data linked to the user:** none. There is no account.
-- **Data not linked to the user:** none collected by the developer. Name, photos, and attempt history stay in on-device storage.
+- **Data linked to the user:** optional Contact Info (email) and User Content (progress JSON) if they create an account. Used for app functionality (sync / backup). Not used to track.
+- **Data not linked to the user:** on-device practice without an account.
 - **Privacy Policy URL:** `https://<your-host>/privacy.html` (must load without the app)
 - **Support URL:** `https://<your-host>/support.html`
 

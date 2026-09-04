@@ -33,5 +33,6 @@ describe('App Store legal copy', () => {
     expect(privacy).toMatch(/do not sell data|no sale/i)
     expect(terms).toMatch(/not affiliated/i)
     expect(terms).toMatch(/12 or older/)
+    expect(privacy).toMatch(/optional email login|If you create an account/i)
   })
 })

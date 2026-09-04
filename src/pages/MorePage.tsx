@@ -23,6 +23,14 @@ export function MorePage() {
           <p className="text-xs font-medium uppercase tracking-widest text-ink">Adults</p>
           <p className="font-display text-2xl font-semibold">Parent desk</p>
         </Link>
+        <Link to="/account" className="panel press rounded-2xl p-5">
+          <p className="text-xs font-medium uppercase tracking-widest text-ink">Backup</p>
+          <p className="font-display text-2xl font-semibold">Account + sync</p>
+        </Link>
+        <Link to="/watch" className="panel press rounded-2xl p-5">
+          <p className="text-xs font-medium uppercase tracking-widest text-ink">Wearable</p>
+          <p className="font-display text-2xl font-semibold">Watch glance</p>
+        </Link>
         <Link to="/privacy-center" className="panel press rounded-2xl p-5">
           <p className="text-xs font-medium uppercase tracking-widest text-ink">Data rights</p>
           <p className="font-display text-2xl font-semibold">Privacy Center</p>

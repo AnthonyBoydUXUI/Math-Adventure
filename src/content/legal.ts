@@ -10,7 +10,7 @@ export interface LegalSection {
 }
 
 export const PRIVACY_INTRO =
-  'Aero is a local-first math practice app for students 12 and older. We do not create accounts, we do not run ads or analytics, and we do not sell data. What you type, photograph, or say stays on this device unless you export it.'
+  'Aero is a math practice app for students 12 and older. Practice works without an account. An optional email login backs up one profile so phone, tablet, laptop, and the watch glance stay in sync. We do not run ads or analytics, and we do not sell data.'
 
 export const PRIVACY_SECTIONS: LegalSection[] = [
   {
@@ -23,18 +23,18 @@ export const PRIVACY_SECTIONS: LegalSection[] = [
   {
     heading: 'What we collect — and where it lives',
     paragraphs: [
-      'Aero has no login and no backend. Progress is stored only in this device’s browser or app storage (localStorage key aero-math-adventure).',
-      'Optional student name, classroom topic, interest themes, XP, streaks, mastery, and attempt history stay on device.',
-      'Optional homework or paper photos are stored as images on this device. They are never uploaded to Aero servers — there are no Aero servers.',
+      'Without an account, progress is stored only in this device’s browser or app storage (localStorage key aero-math-adventure).',
+      'If you create an account, we store your email (via Supabase Auth) and one profile row: XP, streak, mastery, attempt history, bookmark, and settings. That row is how phone and laptop share a save, and how a site-data clear can be recovered.',
+      'Homework or paper photos stay on the device that took them. They are stripped from the cloud profile.',
       'Optional voice tutoring uses the operating system’s speech APIs on this device. Aero does not record, upload, or keep audio.',
     ],
   },
   {
     heading: 'What we do not collect',
     paragraphs: [
-      'No email, phone number, precise location, contacts, or payment information.',
+      'No phone number, precise location, contacts, or payment information. Email is collected only if you choose to sign in.',
       'No advertising identifiers, no tracking pixels, no third-party analytics, and no sale or share of personal data for cross-app tracking.',
-      'Aero does not use Sign in with Apple because there is no account.',
+      'The only login is email and password. There is no third-party social login, so Sign in with Apple is not required.',
     ],
   },
   {
@@ -48,22 +48,23 @@ export const PRIVACY_SECTIONS: LegalSection[] = [
   {
     heading: 'Your rights',
     paragraphs: [
-      'Export a copy of everything stored on this device from Privacy Center in the app.',
-      'Delete everything stored on this device from Privacy Center. That wipe cannot be undone on this device.',
-      'Clearing Safari or site data also erases progress. Two devices do not sync.',
+      'Export a copy of the on-device save from Privacy Center.',
+      'Delete the on-device save from Privacy Center. If you are signed in, the cloud profile remains until you delete it on the Account screen.',
+      'Sign in after clearing site data to restore the cloud profile onto that device.',
     ],
   },
   {
     heading: 'Children’s privacy',
     paragraphs: [
-      'Aero is not intended for children under 13. If you believe a child under 13 has used the app, delete the local data from Privacy Center and stop use.',
-      'Because data never leaves the device, there is no cloud profile for us to delete on a server.',
+      'Aero is not intended for children under 13. If you believe a child under 13 has used the app, delete the local data, delete the cloud profile if one exists, and stop use.',
+      'A parent can delete the cloud profile from Account. That removes the synced row. Contact support if you also need the Auth user removed.',
     ],
   },
   {
     heading: 'Third parties',
     paragraphs: [
       'The shipped app does not load analytics or advertising SDKs. Practice content is bundled with the app.',
+      'Optional sync uses Supabase (Auth + one profiles table). Supabase’s privacy policy applies to that service.',
       'If you open Support and file a GitHub issue, GitHub’s own privacy policy applies to that website.',
     ],
   },
@@ -169,8 +170,8 @@ export const SUPPORT_SECTIONS: LegalSection[] = [
   {
     heading: 'Progress and data',
     paragraphs: [
-      'Progress lives on this device. Export or delete it from Privacy Center (System → Privacy Center).',
-      'Clearing browser data wipes the flight log. There is no cloud restore.',
+      'Progress lives on this device first. Sign in under System → Account + sync to back it up to one profile.',
+      'Clearing browser data wipes the local flight log. Sign in again to restore the cloud copy.',
     ],
   },
   {

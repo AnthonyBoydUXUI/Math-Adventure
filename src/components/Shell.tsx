@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { DayClock } from './DayClock.tsx'
 import {
+  Cloud,
   Crosshair,
   FlaskConical,
   Gauge,
@@ -13,8 +14,10 @@ import {
   Zap,
 } from 'lucide-react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
+import { useCloud } from '../cloud/CloudProvider.tsx'
 import { worldForModule } from '../data/worlds.ts'
 import { levelFromXp, xpIntoLevel } from '../engine/scoring.ts'
+import { useDeviceSurface } from '../hooks/useDeviceSurface.ts'
 import { cn } from '../lib/cn.ts'
 import { resumeAudio, setMuted, startAmbient } from '../lib/sfx.ts'
 import { usePlayerStore } from '../store.ts'
@@ -34,6 +37,8 @@ const UNGATED = new Set(['/privacy', '/terms', '/support', '/privacy-center'])
 export function Shell() {
   const { xp, sparks, streak, toast, setToast, studentName, soundOn, toggleSound, parent, compliance } =
     usePlayerStore()
+  const cloud = useCloud()
+  const surface = useDeviceSurface()
   const level = levelFromXp(xp)
   const into = xpIntoLevel(xp)
   const audioEnabled = soundOn !== false
@@ -41,6 +46,7 @@ export function Shell() {
   const world = worldForModule(parent.moduleId)
   const gated = !compliance.acknowledgedAt && !UNGATED.has(loc.pathname)
   const displayName = studentName.trim() || 'Student'
+  const compact = loc.pathname === '/watch' || surface === 'watch'
 
   useEffect(() => {
     usePlayerStore.getState().ensureToday()
@@ -62,7 +68,15 @@ export function Shell() {
   if (gated) return <ComplianceGate />
 
   return (
-    <div className="mx-auto min-h-dvh max-w-xl pb-[calc(7.5rem+env(safe-area-inset-bottom))]">
+    <div
+      className={cn(
+        'shell-frame mx-auto min-h-dvh',
+        compact
+          ? 'max-w-[280px] pb-6'
+          : 'max-w-xl pb-[calc(7.5rem+env(safe-area-inset-bottom))] md:max-w-2xl lg:max-w-3xl',
+      )}
+      data-surface={surface}
+    >
       <a href="#main" className="skip-link">
         Skip to content
       </a>
@@ -94,6 +108,15 @@ export function Shell() {
         >
           {audioEnabled ? <Volume2 className="h-4 w-4 text-sky" /> : <VolumeX className="h-4 w-4 text-ink" />}
         </button>
+        {cloud.user ? (
+          <Link
+            to="/account"
+            className="hud-pill flex h-11 w-11 items-center justify-center rounded-full"
+            aria-label={cloud.status === 'synced' ? 'Cloud backup on' : 'Account'}
+          >
+            <Cloud className={cn('h-4 w-4', cloud.status === 'synced' ? 'text-leaf' : 'text-gold')} />
+          </Link>
+        ) : null}
         <div className="hud-pill ml-auto flex min-h-11 items-center gap-2 rounded-full px-2.5 py-1 text-xs font-semibold">
           <span className="text-ink">LV</span>
           {level}
@@ -112,7 +135,7 @@ export function Shell() {
 
       <main id="main">
         <Outlet />
-        <footer className="px-4 pb-2 pt-8 text-center text-[11px] font-medium text-ink">
+        <footer className={cn('px-4 pb-2 pt-8 text-center text-[11px] font-medium text-ink', compact && 'hidden')}>
           <Link to="/privacy" className="inline-flex min-h-11 items-center text-sky">
             Privacy
           </Link>
@@ -137,8 +160,8 @@ export function Shell() {
         </button>
       ) : null}
 
-      <nav className="dock fixed bottom-0 left-0 right-0 z-30 px-2 pt-2" aria-label="Primary">
-        <div className="mx-auto flex max-w-xl items-end justify-around pb-[max(0.5rem,env(safe-area-inset-bottom))]">
+      <nav className={cn('dock fixed bottom-0 left-0 right-0 z-30 px-2 pt-2', compact && 'hidden')} aria-label="Primary">
+        <div className="mx-auto flex max-w-xl items-end justify-around pb-[max(0.5rem,env(safe-area-inset-bottom))] md:max-w-2xl lg:max-w-3xl">
           {NAV.map((item) => (
             <NavLink key={item.to} to={item.to} aria-label={item.label} className="flex min-h-11 flex-col items-center gap-1 px-1">
               {({ isActive }) => (

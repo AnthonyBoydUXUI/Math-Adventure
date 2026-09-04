@@ -14,7 +14,8 @@ export function PrivacyCenter() {
     <div className="px-4 pb-8">
       <h1 className="font-display text-4xl font-semibold tracking-tight">Privacy Center</h1>
       <p className="mt-2 text-sm font-medium text-ink">
-        Everything Aero knows lives on this device. There is no account and no cloud copy.
+        Progress starts on this device. Sign in under Account to copy it to one cloud profile so phone, tablet, laptop,
+        and the watch glance stay in sync — and so a site-data clear is not the end of the streak.
       </p>
 
       <div className="panel mt-4 rounded-2xl p-4">
@@ -60,6 +61,10 @@ export function PrivacyCenter() {
           </button>
         </div>
       )}
+
+      <Link to="/account" className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-sky">
+        Open Account + sync
+      </Link>
 
       <nav className="mt-8 flex flex-wrap gap-x-4 gap-y-2 text-sm font-semibold text-sky" aria-label="Legal">
         <Link to="/privacy">Privacy Policy</Link>

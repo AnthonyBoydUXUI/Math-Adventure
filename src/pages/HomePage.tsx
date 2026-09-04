@@ -85,17 +85,16 @@ export function HomePage() {
         </div>
       </section>
 
-      <div className="mt-5">
+      <div className="mt-5 md:grid md:grid-cols-2 md:gap-4">
         <WeekStrip practiced={practiceDays} inProgressKey={session.active ? dayKey() : undefined} />
-      </div>
-
-      <div className="panel mt-4 rounded-2xl p-4">
+        <div className="panel mt-4 rounded-2xl p-4 md:mt-0">
         <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-ink">Where you left off</p>
         <p className="mt-1 font-display text-xl font-semibold">{bookmark.label}</p>
         {bookmark.nextLabel ? <p className="mt-1 text-sm font-medium text-ink">Forward: {bookmark.nextLabel}</p> : null}
         <p className="mt-2">
           <DayClock />
         </p>
+        </div>
       </div>
 
       <p className="mt-5 text-[11px] font-medium uppercase tracking-[0.22em] text-ink">Library</p>
