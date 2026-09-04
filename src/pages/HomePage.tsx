@@ -1,9 +1,10 @@
 import { Play } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { LiveDay } from '../components/LiveWorld.tsx'
 import { SheetArt } from '../components/SheetArt.tsx'
 import { WeekStrip } from '../components/WeekStrip.tsx'
 import { WindowBox } from '../components/WindowBox.tsx'
-import { SIGNAL_SHEETS, worldMap } from '../data/sheets.ts'
+import { SIGNAL_SHEETS } from '../data/sheets.ts'
 import { moduleById, skillById } from '../data/curriculum.ts'
 import { worldForModule } from '../data/worlds.ts'
 import { dayKey } from '../lib/clock.ts'
@@ -28,7 +29,7 @@ export function HomePage() {
   return (
     <div className="px-4 pb-8">
       <WindowBox stamp={world.district} series={`M${mod?.number ?? ''} · Map`}>
-        <SheetArt src={worldMap(world.id)} alt={`${world.district} map`} />
+        <LiveDay />
         <div className="bg-[#070910] px-4 py-5 text-white">
           <h1 className="type-pack text-[44px]">{world.name}</h1>
           <p className="mt-1 text-sm font-semibold text-white/80">{world.adventure}</p>

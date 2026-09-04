@@ -1,6 +1,7 @@
-import { SIGNAL_SHEETS, worldMap } from '../data/sheets.ts'
+import { SIGNAL_SHEETS } from '../data/sheets.ts'
 import { worldForModule } from '../data/worlds.ts'
 import { cn } from '../lib/cn.ts'
+import { LiveWorld } from './LiveWorld.tsx'
 import { SheetArt } from './SheetArt.tsx'
 
 export function WorldScene({
@@ -22,8 +23,9 @@ export function WorldScene({
   sheet?: 'map' | 'hero'
 }) {
   const world = worldForModule(moduleId)
-  const src = sheet === 'hero' ? SIGNAL_SHEETS.hero : worldMap(world.id)
-  const alt = sheet === 'hero' ? 'Signal and the Harbor RS' : `${world.district} map`
+  if (sheet === 'map') {
+    return <LiveWorld worldId={world.id} compact={embed} className={className} />
+  }
   return (
     <div
       className={cn(
@@ -33,7 +35,7 @@ export function WorldScene({
         className,
       )}
     >
-      <SheetArt src={src} alt={alt} cover={embed} className={embed ? 'h-full' : undefined} />
+      <SheetArt src={SIGNAL_SHEETS.hero} alt="Signal and the Harbor RS" cover={embed} className={embed ? 'h-full' : undefined} />
     </div>
   )
 }

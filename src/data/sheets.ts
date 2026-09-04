@@ -11,10 +11,18 @@ export const SIGNAL_SHEETS = {
 export const VEHICLE_SHEETS = {
   turnaround: '/sheets/vehicle/turnaround.jpg',
   hero: '/sheets/vehicle/hero.jpg',
+  /** Top-down Harbor RS cut from the Sky Harbor courtyard, not an SVG stand-in. */
+  mapRs: '/sheets/vehicle/map-rs.png',
 } as const
 
 export function worldMap(id: string) {
   return `/sheets/worlds/${id}.jpg`
+}
+
+/** Live drive uses a Harbor map with the painted car removed so only the sprite moves. */
+export function worldLiveMap(id: string) {
+  if (id === 'harbor') return '/sheets/worlds/harbor.live.jpg'
+  return worldMap(id)
 }
 
 export function worldThumb(id: string) {

@@ -1,10 +1,9 @@
 import { Link } from 'react-router-dom'
 import { CircuitTrack, HandoffCard } from '../components/CircuitTrack.tsx'
-import { SheetArt } from '../components/SheetArt.tsx'
+import { LiveDay } from '../components/LiveWorld.tsx'
 import { TestReadinessCard } from '../components/TestReadinessCard.tsx'
 import { WindowBox } from '../components/WindowBox.tsx'
 import { SKILLS } from '../data/curriculum.ts'
-import { worldMap } from '../data/sheets.ts'
 import { worldForModule } from '../data/worlds.ts'
 import { compositeMastery, emptyStats } from '../engine/mastery.ts'
 import { usePlayerStore } from '../store.ts'
@@ -56,7 +55,7 @@ export function MapPage() {
     <div className="px-4 pb-8">
       <h1 className="type-pack text-5xl">Map</h1>
       <WindowBox className="mt-3" stamp={world.district} series="Now">
-        <SheetArt src={worldMap(world.id)} alt={`${world.district} map`} />
+        <LiveDay />
       </WindowBox>
       <div className="mt-3">
         <HandoffCard />
