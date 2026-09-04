@@ -54,7 +54,7 @@ export function LabPage() {
       </ul>
       <button
         type="button"
-        className="press mt-6 w-full rounded-xl bg-sky py-4 font-semibold text-chrome"
+        className="press mt-6 w-full bg-[#0e1a3a] py-4 font-semibold uppercase tracking-[0.12em] text-bone"
         onClick={() => {
           const report = buildTestReport(usePlayerStore.getState().attempts)
           const rng = mulberry32(hashString(`lab:${skillId}:${report.weakestFormat ?? 'any'}`))

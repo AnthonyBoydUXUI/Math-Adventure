@@ -42,7 +42,7 @@ export function HelpPage() {
       {photo ? <img src={photo} alt="Uploaded work" className="mt-3 max-h-48 rounded-sm border border-white/10 object-cover" /> : null}
       <button
         type="button"
-        className="press mt-4 w-full rounded-xl bg-sky py-3 font-semibold text-chrome"
+        className="press mt-4 w-full bg-[#0e1a3a] py-3 font-semibold uppercase tracking-[0.12em] text-bone"
         onClick={() => {
           const next = buildHomeworkPlan(raw || 'multi-step word problem from a photo')
           setPlan(next)
@@ -70,7 +70,7 @@ export function HelpPage() {
           {step < 3 ? (
             <button
               type="button"
-              className="press w-full rounded-xl bg-sky py-3 font-semibold text-chrome"
+              className="press w-full bg-[#0e1a3a] py-3 font-semibold uppercase tracking-[0.12em] text-bone"
               onClick={() => setStep((s) => s + 1)}
             >
               Next prompt

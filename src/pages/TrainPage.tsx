@@ -139,7 +139,7 @@ function Recap({ onDone, onKeep }: { onDone: () => void; onKeep: () => void }) {
           {next.moduleId ? (
             <button
               type="button"
-              className="press mt-3 w-full rounded-sm bg-sky py-3 font-semibold text-chrome"
+              className="press mt-3 w-full bg-[#0e1a3a] py-3 font-semibold uppercase tracking-[0.12em] text-bone"
               onClick={() => {
                 driveTo(next.moduleId!, firstTopicId(next.moduleId!) ?? parent.topicId)
                 onDone()

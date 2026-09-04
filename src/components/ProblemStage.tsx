@@ -35,7 +35,7 @@ export function ProblemStage({ question, phaseLabel }: { question: Question; pha
         <div className="mt-5 flex flex-col gap-2">
           <button
             type="button"
-            className="press rounded-xl bg-sky py-3 font-semibold text-chrome"
+            className="press bg-[#0e1a3a] py-3 font-semibold uppercase tracking-[0.12em] text-bone"
             onClick={acceptPaperGate}
           >
             Paper’s out
@@ -57,7 +57,7 @@ export function ProblemStage({ question, phaseLabel }: { question: Question; pha
         <div className="grid grid-cols-2 gap-2">
           <button
             type="button"
-            className="press rounded-xl bg-sky py-3 font-semibold text-chrome"
+            className="press bg-[#0e1a3a] py-3 font-semibold uppercase tracking-[0.12em] text-bone"
             onClick={() => lockIn(true)}
           >
             Keep it
@@ -118,7 +118,7 @@ export function ProblemStage({ question, phaseLabel }: { question: Question; pha
         </div>
         <button
           type="button"
-          className="press w-full rounded-xl bg-sky py-3 font-semibold text-chrome"
+          className="press w-full bg-[#0e1a3a] py-3 font-semibold uppercase tracking-[0.12em] text-bone"
           onClick={nextItem}
         >
           Next
@@ -220,7 +220,7 @@ export function ProblemStage({ question, phaseLabel }: { question: Question; pha
         ) : null}
         <button
           type="button"
-          className="press mt-4 w-full rounded-xl bg-sky py-3 font-semibold text-chrome disabled:opacity-40"
+          className="press mt-4 w-full bg-[#0e1a3a] py-3 font-semibold uppercase tracking-[0.12em] text-bone disabled:opacity-40"
           disabled={!session.draft.trim()}
           onClick={submitDraft}
         >
