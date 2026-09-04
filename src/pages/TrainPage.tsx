@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { DayClock } from '../components/DayClock.tsx'
 import { ProblemStage } from '../components/ProblemStage.tsx'
 import { TestReadinessCard } from '../components/TestReadinessCard.tsx'
-import { RaceCar } from '../components/RaceCar.tsx'
+import { WorldScene } from '../components/WorldScene.tsx'
 import { firstTopicId, skillById } from '../data/curriculum.ts'
 import { DIAGNOSIS_COPY } from '../engine/diagnosis.ts'
 import { compositeMastery, emptyStats } from '../engine/mastery.ts'
@@ -29,7 +29,7 @@ export function TrainPage() {
         </p>
         <button
           type="button"
-          className="press mt-6 min-h-11 w-full rounded-xl bg-sky py-4 font-semibold text-chrome"
+          className="press mt-6 min-h-11 w-full rounded-sm bg-sky py-4 font-semibold text-chrome"
           onClick={() => resumeOrStart(false)}
         >
           Start today’s 15
@@ -54,7 +54,7 @@ export function TrainPage() {
 
   return (
     <div className="pb-6">
-      <div className="mx-4 mb-3 flex items-center justify-between rounded-xl border border-white/10 bg-paper px-3 py-2 text-xs font-semibold">
+      <div className="mx-4 mb-3 flex items-center justify-between rounded-sm border border-white/10 bg-paper px-3 py-2 text-xs font-semibold">
         <span>{phase.label}</span>
         <span className="text-ink">
           {doneQ + 1}/{totalQ} · ~{minutesLeft} min remaining
@@ -96,10 +96,10 @@ function Recap({ onDone, onKeep }: { onDone: () => void; onKeep: () => void }) {
       </p>
       <div className="mt-4 grid grid-cols-2 gap-2">
         {DIMENSIONS.map((d) => (
-          <div key={d} className="panel rounded-xl p-3">
+          <div key={d} className="panel rounded-sm p-3">
             <p className="text-[10px] font-medium uppercase tracking-widest text-ink">{d}</p>
             <p className="font-display text-2xl font-semibold">{Math.round(focus[d])}</p>
-            <div className="mt-1 h-1 overflow-hidden rounded-full bg-mist">
+            <div className="mt-1 h-1 overflow-hidden bg-mist">
               <div className="h-full bg-sky" style={{ width: `${focus[d]}%` }} />
             </div>
           </div>
@@ -107,7 +107,7 @@ function Recap({ onDone, onKeep }: { onDone: () => void; onKeep: () => void }) {
       </div>
       <div className="mt-4 space-y-2">
         {Object.entries(diagnoses).map(([k, n]) => (
-          <p key={k} className="rounded-xl bg-paper px-3 py-2 text-sm font-medium">
+          <p key={k} className="rounded-sm bg-paper px-3 py-2 text-sm font-medium">
             <span className="font-semibold">{DIAGNOSIS_COPY[k as keyof typeof DIAGNOSIS_COPY]?.title}</span>
             <span className="text-ink"> · {n}</span>
           </p>
@@ -123,19 +123,23 @@ function Recap({ onDone, onKeep }: { onDone: () => void; onKeep: () => void }) {
         <TestReadinessCard />
       </div>
       {next ? (
-        <div className="panel mt-4 rounded-2xl p-4">
-          <div className="flex items-center gap-3">
-            <RaceCar className="h-16 w-9" paint={cosmetics.paint} wheels={cosmetics.wheels} wing={cosmetics.wing} />
-            <div>
-              <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-ink">Next sector</p>
-              <p className="font-display text-xl font-semibold">{next.name}</p>
-              <p className="text-sm font-medium text-ink">{world.handoff}</p>
-            </div>
-          </div>
+        <div className="panel mt-4 overflow-hidden rounded-sm">
+          <WorldScene
+            embed
+            moduleId={next.moduleId ?? parent.moduleId}
+            paint={cosmetics.paint}
+            wheels={cosmetics.wheels}
+            wing={cosmetics.wing}
+            className="h-40"
+          />
+          <div className="p-4">
+            <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-ink">Next sector</p>
+            <p className="font-display text-xl font-semibold">{next.name}</p>
+            <p className="text-sm font-medium text-ink">{world.handoff}</p>
           {next.moduleId ? (
             <button
               type="button"
-              className="press mt-3 w-full rounded-xl bg-sky py-3 font-semibold text-chrome"
+              className="press mt-3 w-full rounded-sm bg-sky py-3 font-semibold text-chrome"
               onClick={() => {
                 driveTo(next.moduleId!, firstTopicId(next.moduleId!) ?? parent.topicId)
                 onDone()
@@ -146,11 +150,12 @@ function Recap({ onDone, onKeep }: { onDone: () => void; onKeep: () => void }) {
           ) : (
             <p className="mt-3 text-center text-sm font-medium text-gold">{next.adventure}</p>
           )}
+          </div>
         </div>
       ) : null}
       <button
         type="button"
-        className="press mt-5 w-full rounded-xl border border-white/15 py-4 font-semibold"
+        className="press mt-5 w-full rounded-sm border border-white/15 py-4 font-semibold"
         onClick={onDone}
       >
         End session

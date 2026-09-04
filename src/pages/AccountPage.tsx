@@ -31,13 +31,13 @@ export function AccountPage() {
           Cloud project: {SUPABASE_URL.replace('https://', '')}
         </p>
       ) : (
-        <p className="panel mt-4 rounded-2xl p-4 text-sm font-medium text-gold">
+        <p className="panel mt-4 rounded-sm p-4 text-sm font-medium text-gold">
           Supabase keys are missing in this build. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY, then run
           supabase/schema.sql.
         </p>
       )}
 
-      <div className="panel mt-4 rounded-2xl p-4">
+      <div className="panel mt-4 rounded-sm p-4">
         <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-ink">Status</p>
         <p className="mt-1 font-display text-2xl font-semibold">
           {cloud.user ? cloud.user.email : 'Signed out · local only'}

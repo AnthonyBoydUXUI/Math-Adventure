@@ -17,7 +17,7 @@ export function WatchPage() {
       <p className="mt-4 text-sm font-semibold leading-snug text-navy">{bookmark.label}</p>
       <Link
         to="/train"
-        className="press mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-full bg-sky text-sm font-semibold text-chrome"
+        className="press mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-sm bg-sky text-sm font-semibold text-chrome"
       >
         {session.active ? 'Resume' : 'Today’s 15'}
       </Link>

@@ -5,11 +5,11 @@ import { CircuitTrack, HandoffCard } from '../components/CircuitTrack.tsx'
 import { DayClock } from '../components/DayClock.tsx'
 import { TestReadinessCard } from '../components/TestReadinessCard.tsx'
 import { WeekStrip } from '../components/WeekStrip.tsx'
-import { RaceCar } from '../components/RaceCar.tsx'
 import { WorldScene } from '../components/WorldScene.tsx'
 import { firstTopicId, moduleById, skillById } from '../data/curriculum.ts'
 import { classroomChain, linkedWorld, worldForModule } from '../data/worlds.ts'
 import { compositeMastery, emptyStats } from '../engine/mastery.ts'
+import { nightHex } from '../engine/render/palette.ts'
 import { cn } from '../lib/cn.ts'
 import { dayKey } from '../lib/clock.ts'
 import { resumeAudio } from '../lib/sfx.ts'
@@ -50,22 +50,21 @@ export function HomePage() {
 
   return (
     <div className="px-4 pb-8">
-      <section className="relative min-h-[240px] overflow-hidden rounded-2xl text-white">
-        <div
-          className="absolute inset-0"
-          style={{
-            background: `linear-gradient(180deg, ${world.color} 0%, ${world.color}99 38%, #080a0e 100%)`,
-          }}
+      <section className="relative min-h-[280px] overflow-hidden rounded-sm border border-white/10 text-white">
+        <WorldScene
+          moduleId={parent.moduleId}
+          paint={cosmetics.paint}
+          wheels={cosmetics.wheels}
+          wing={cosmetics.wing}
         />
-        <WorldScene moduleId={parent.moduleId} />
-        <div className="cover-shine pointer-events-none absolute inset-0" />
-        <div className="relative flex min-h-[240px] flex-col justify-end px-5 pb-5 pt-8">
-          <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-white/70">
-            Now playing · Module {mod?.number} · {new Date().getFullYear()}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#05070b] via-[#05070b]/25 to-transparent" />
+        <div className="relative flex min-h-[280px] flex-col justify-end px-5 pb-5 pt-8">
+          <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-white/55">
+            Live sector · M{mod?.number} · {new Date().getFullYear()}
           </p>
           <h1 className="mt-1 font-display text-[32px] font-semibold leading-none tracking-tight">{world.name}</h1>
           <p className="mt-2 max-w-[16rem] text-sm font-medium text-white/80">{focus?.name}</p>
-          <div className="mt-3 h-1 w-36 overflow-hidden rounded-full bg-black/30">
+          <div className="mt-3 h-1 w-36 overflow-hidden bg-black/30">
             <div className="h-full bg-sky" style={{ width: `${mastery}%` }} />
           </div>
           <p className="mt-1 text-[11px] font-medium uppercase tracking-[0.16em] text-white/55">
@@ -73,21 +72,18 @@ export function HomePage() {
           </p>
           <button
             type="button"
-            className="press mt-4 inline-flex w-fit items-center gap-2 rounded-full bg-sky px-5 py-2.5 text-sm font-semibold text-chrome"
+            className="press mt-4 inline-flex w-fit items-center gap-2 rounded-sm bg-sky px-5 py-2.5 text-sm font-semibold text-chrome"
             onClick={startSession}
           >
             <Play className="h-4 w-4 fill-chrome" />
             {cta}
           </button>
         </div>
-        <div className="absolute right-3 top-6 w-14 opacity-90">
-          <RaceCar paint={cosmetics.paint} wheels={cosmetics.wheels} wing={cosmetics.wing} />
-        </div>
       </section>
 
       <div className="mt-5 md:grid md:grid-cols-2 md:gap-4">
         <WeekStrip practiced={practiceDays} inProgressKey={session.active ? dayKey() : undefined} />
-        <div className="panel mt-4 rounded-2xl p-4 md:mt-0">
+        <div className="panel mt-4 rounded-sm p-4 md:mt-0">
         <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-ink">Where you left off</p>
         <p className="mt-1 font-display text-xl font-semibold">{bookmark.label}</p>
         {bookmark.nextLabel ? <p className="mt-1 text-sm font-medium text-ink">Forward: {bookmark.nextLabel}</p> : null}
@@ -104,17 +100,16 @@ export function HomePage() {
             key={w.id}
             type="button"
             className={cn(
-              'relative h-[132px] w-[108px] shrink-0 overflow-hidden rounded-xl text-left',
+              'relative h-[132px] w-[108px] shrink-0 overflow-hidden rounded-sm text-left',
               w.id === world.id && 'ring-1 ring-sky',
             )}
-            style={{ background: w.color }}
+            style={{ background: nightHex(w.color, 0.55, 0.22) }}
             onClick={() => {
               const moduleId = w.moduleId ?? parent.moduleId
               usePlayerStore.getState().driveTo(moduleId, firstTopicId(moduleId) ?? parent.topicId)
             }}
           >
-            <div className="cover-shine absolute inset-0" />
-            <div className="absolute inset-x-0 bottom-0 bg-black/55 px-2 py-2">
+            <div className="absolute inset-x-0 bottom-0 bg-black/70 px-2 py-2">
               <p className="text-[10px] font-medium uppercase tracking-[0.16em] text-white/55">{w.district}</p>
               <p className="text-sm font-semibold leading-tight text-white">{w.name}</p>
             </div>
@@ -136,7 +131,7 @@ export function HomePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05 }}
             className={cn(
-              'panel relative h-[118px] w-[132px] shrink-0 rounded-xl p-3 text-left',
+              'panel relative h-[118px] w-[132px] shrink-0 rounded-sm p-3 text-left',
               session.active && session.phaseIndex === i && 'ring-1 ring-sky',
               session.active && session.phaseIndex > i && 'opacity-60',
             )}
@@ -149,7 +144,7 @@ export function HomePage() {
             <p className="mt-1 text-xs font-medium text-ink">{node.label}</p>
           </motion.button>
         ))}
-        <div className="flex h-[118px] w-[120px] shrink-0 flex-col justify-end rounded-xl border border-dashed border-white/15 p-3">
+        <div className="flex h-[118px] w-[120px] shrink-0 flex-col justify-end rounded-sm border border-dashed border-white/15 p-3">
           <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-ink">Queued</p>
           <p className="mt-1 font-display text-lg font-semibold">{next?.name ?? 'Sky Peak'}</p>
         </div>
@@ -164,11 +159,11 @@ export function HomePage() {
       </div>
 
       <div className="mt-4 grid grid-cols-2 gap-3">
-        <Link to="/lab" className="panel press rounded-xl p-4">
+        <Link to="/lab" className="panel press rounded-sm p-4">
           <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-ink">Formats</p>
           <p className="mt-1 font-display text-lg font-semibold">Test Lab</p>
         </Link>
-        <Link to="/help" className="panel press rounded-xl p-4">
+        <Link to="/help" className="panel press rounded-sm p-4">
           <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-ink">Homework</p>
           <p className="mt-1 font-display text-lg font-semibold">Assist</p>
         </Link>
@@ -176,7 +171,7 @@ export function HomePage() {
 
       <button
         type="button"
-        className="press mt-4 w-full rounded-xl bg-sky py-3.5 font-display text-lg font-semibold text-chrome"
+        className="press mt-4 w-full rounded-sm bg-sky py-3.5 font-display text-lg font-semibold text-chrome"
         onClick={startSession}
       >
         {cta}

@@ -19,7 +19,7 @@ export function PermissionSheet({
         role="dialog"
         aria-modal="true"
         aria-labelledby="permission-title"
-        className="panel w-full max-w-md rounded-2xl p-5"
+        className="panel w-full max-w-md rounded-sm p-5"
       >
         <h2 id="permission-title" className="font-display text-2xl font-semibold">
           {title}

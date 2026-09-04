@@ -36,7 +36,7 @@ export function Scoreboard({
         <span
           key={step}
           className={cn(
-            'rounded-full border border-white/10 px-2.5 py-1 text-[10px] font-medium uppercase tracking-wide text-ink',
+            'rounded-sm border border-white/10 px-2.5 py-1 text-[10px] font-medium uppercase tracking-wide text-ink',
             i === 0 && 'border-sky/40 bg-sky/10 text-sky',
           )}
         >

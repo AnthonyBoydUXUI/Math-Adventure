@@ -7,7 +7,7 @@ export function TestReadinessCard({ compact }: { compact?: boolean }) {
   const report = buildTestReport(attempts)
 
   return (
-    <div className="panel rounded-2xl p-4">
+    <div className="panel rounded-sm p-4">
       <div className="flex items-end justify-between gap-3">
         <div>
           <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-ink">Test readiness</p>
@@ -17,21 +17,21 @@ export function TestReadinessCard({ compact }: { compact?: boolean }) {
           {report.sampleSize ? `${report.sampleSize} test-style plays` : 'No lab sample yet'}
         </p>
       </div>
-      <div className="mt-2 h-1 overflow-hidden rounded-full bg-mist">
+      <div className="mt-2 h-1 overflow-hidden bg-mist">
         <div className="h-full bg-sky" style={{ width: `${report.readiness}%` }} />
       </div>
       {!compact ? (
         <>
           <div className="mt-3 grid grid-cols-3 gap-2 text-center text-[11px] font-semibold">
-            <div className="rounded-xl bg-mist/70 p-2">
+            <div className="rounded-sm bg-mist/70 p-2">
               <p className="text-ink">Transfer</p>
               <p>{report.transfer}</p>
             </div>
-            <div className="rounded-xl bg-mist/70 p-2">
+            <div className="rounded-sm bg-mist/70 p-2">
               <p className="text-ink">Lock-in</p>
               <p>{report.lockInRate}</p>
             </div>
-            <div className="rounded-xl bg-mist/70 p-2">
+            <div className="rounded-sm bg-mist/70 p-2">
               <p className="text-ink">Paper</p>
               <p>{report.paperHabit}</p>
             </div>
@@ -41,7 +41,7 @@ export function TestReadinessCard({ compact }: { compact?: boolean }) {
               {report.formats.map((cell) => (
                 <span
                   key={cell.format}
-                  className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-ink"
+                  className="rounded-sm border border-white/10 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-ink"
                 >
                   {cell.format} {Math.round(cell.accuracy)}
                 </span>

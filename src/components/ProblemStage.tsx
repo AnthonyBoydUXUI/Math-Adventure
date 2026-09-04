@@ -28,7 +28,7 @@ export function ProblemStage({ question, phaseLabel }: { question: Question; pha
 
   if (session.paperGate) {
     return (
-      <div className="paper-card mx-4 rounded-2xl border border-white/10 p-6 text-center">
+      <div className="paper-card mx-4 rounded-sm border border-white/10 p-6 text-center">
         <PenLine className="mx-auto mb-3 h-10 w-10 text-sky" />
         <p className="font-display text-3xl font-semibold">Paper first.</p>
         <p className="mt-2 font-medium text-ink">Write this one down first. The screen is the scoreboard, not the work.</p>
@@ -50,7 +50,7 @@ export function ProblemStage({ question, phaseLabel }: { question: Question; pha
 
   if (session.awaitingLock) {
     return (
-      <div className="panel mx-4 space-y-3 rounded-2xl p-5">
+      <div className="panel mx-4 space-y-3 rounded-sm p-5">
         <p className="text-xs font-medium uppercase tracking-[0.2em] text-ink">Lock it in?</p>
         <p className="font-display text-4xl font-semibold">{session.draft}</p>
         <p className="font-medium text-ink">First instinct is often the math you actually know.</p>
@@ -81,10 +81,10 @@ export function ProblemStage({ question, phaseLabel }: { question: Question; pha
   if (session.lastResult) {
     const copy = DIAGNOSIS_COPY[session.lastResult.diagnosis]
     return (
-      <div className="panel mx-4 space-y-3 rounded-2xl p-5">
+      <div className="panel mx-4 space-y-3 rounded-sm p-5">
         <p
           className={cn(
-            'inline-block rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em]',
+            'inline-block rounded-sm border px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em]',
             session.lastResult.correct ? 'border-leaf/40 bg-leaf/15 text-leaf' : 'border-gold/40 bg-gold/15 text-gold',
           )}
         >
@@ -132,7 +132,7 @@ export function ProblemStage({ question, phaseLabel }: { question: Question; pha
       <div className="flex items-center justify-between">
         <p className="text-xs font-medium uppercase tracking-[0.18em] text-ink">{phaseLabel}</p>
         {parent.pressureLab && phaseLabel.toLowerCase().includes('lab') ? (
-          <span className="rounded-full bg-goggle px-2 py-0.5 text-[10px] font-extrabold uppercase text-white">
+          <span className="rounded-sm bg-goggle px-2 py-0.5 text-[10px] font-semibold uppercase text-white">
             Lock-in clock
           </span>
         ) : null}
@@ -142,7 +142,7 @@ export function ProblemStage({ question, phaseLabel }: { question: Question; pha
           Same math, different look · {question.format}
         </p>
       ) : null}
-      <div className="panel rounded-2xl p-4">
+      <div className="panel rounded-sm p-4">
         <p className="font-display text-2xl font-semibold leading-tight">{question.prompt}</p>
         {question.stem ? <p className="mt-2 font-medium text-ink">{question.stem}</p> : null}
         {question.visual ? (
@@ -185,7 +185,7 @@ export function ProblemStage({ question, phaseLabel }: { question: Question; pha
         <div className="mt-3 flex flex-wrap gap-2">
           <button
             type="button"
-            className="rounded-full border border-white/15 px-3 py-1 text-xs font-medium"
+            className="rounded-sm border border-white/15 px-3 py-1 text-xs font-medium"
             onClick={useHint}
           >
             Hint {session.hints ? `(${session.hints})` : ''}
@@ -193,7 +193,7 @@ export function ProblemStage({ question, phaseLabel }: { question: Question; pha
           <button
             type="button"
             className={cn(
-              'rounded-full border border-white/15 px-3 py-1 text-xs font-medium',
+              'rounded-sm border border-white/15 px-3 py-1 text-xs font-medium',
               session.paper && 'border-leaf/40 bg-leaf/15 text-leaf',
             )}
             onClick={markPaper}
@@ -203,7 +203,7 @@ export function ProblemStage({ question, phaseLabel }: { question: Question; pha
           <MediaCapture
             capture
             onPhoto={setPhoto}
-            className="flex min-h-11 items-center gap-1 rounded-full border border-white/15 px-3 text-xs font-medium"
+            className="flex min-h-11 items-center gap-1 rounded-sm border border-white/15 px-3 text-xs font-medium"
             label={
               <>
                 <Camera className="h-3.5 w-3.5" />

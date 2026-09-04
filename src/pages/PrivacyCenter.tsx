@@ -18,7 +18,7 @@ export function PrivacyCenter() {
         and the watch glance stay in sync — and so a site-data clear is not the end of the streak.
       </p>
 
-      <div className="panel mt-4 rounded-2xl p-4">
+      <div className="panel mt-4 rounded-sm p-4">
         <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-ink">On this device</p>
         <p className="mt-1 font-display text-2xl font-semibold">{attempts.length} saved plays</p>
         <p className="mt-1 text-sm font-medium text-ink">

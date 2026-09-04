@@ -80,24 +80,26 @@ export function Shell() {
       <a href="#main" className="skip-link">
         Skip to content
       </a>
-      <header className="sticky top-0 z-30 flex items-center gap-2 px-4 py-3 pt-[max(0.75rem,env(safe-area-inset-top))] backdrop-blur-xl">
-        <div className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-paper" aria-hidden>
+      <header className="sticky top-0 z-30 flex items-center gap-1.5 px-4 py-3 pt-[max(0.75rem,env(safe-area-inset-top))] backdrop-blur-xl">
+        <div className="flex h-11 w-11 items-center justify-center rounded-sm border border-white/10 bg-paper" aria-hidden>
           <Crosshair className="h-4 w-4 text-sky" />
         </div>
-        <div className="hud-pill flex min-h-11 items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold">
+        <div className="hud-chip flex min-h-11 items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold tracking-[0.12em]">
           <Zap className="h-3.5 w-3.5 text-gold" aria-hidden />
           <span className="sr-only">Streak</span>
+          <span className="text-ink">STR</span>
           {streak}
         </div>
-        <div className="hud-pill flex min-h-11 items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold">
-          <span className="h-2 w-2 rounded-full bg-sky" aria-hidden />
+        <div className="hud-chip flex min-h-11 items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold tracking-[0.12em]">
+          <span className="h-1.5 w-1.5 bg-sky" aria-hidden />
           <span className="sr-only">Sparks</span>
+          <span className="text-ink">SPK</span>
           {sparks}
         </div>
         <button
           type="button"
           className={cn(
-            'hud-pill flex h-11 w-11 items-center justify-center rounded-full',
+            'hud-chip flex h-11 w-11 items-center justify-center',
             !audioEnabled && 'opacity-40',
           )}
           aria-label={audioEnabled ? 'Mute sound' : 'Turn sound on'}
@@ -111,16 +113,16 @@ export function Shell() {
         {cloud.user ? (
           <Link
             to="/account"
-            className="hud-pill flex h-11 w-11 items-center justify-center rounded-full"
+            className="hud-chip flex h-11 w-11 items-center justify-center"
             aria-label={cloud.status === 'synced' ? 'Cloud backup on' : 'Account'}
           >
             <Cloud className={cn('h-4 w-4', cloud.status === 'synced' ? 'text-leaf' : 'text-gold')} />
           </Link>
         ) : null}
-        <div className="hud-pill ml-auto flex min-h-11 items-center gap-2 rounded-full px-2.5 py-1 text-xs font-semibold">
+        <div className="hud-chip ml-auto flex min-h-11 items-center gap-2 px-2.5 py-1 text-[11px] font-semibold tracking-[0.12em]">
           <span className="text-ink">LV</span>
           {level}
-          <span className="h-1 w-16 overflow-hidden rounded-full bg-mist" aria-hidden>
+          <span className="h-1 w-16 overflow-hidden bg-mist" aria-hidden>
             <span className="block h-full bg-sky" style={{ width: `${(into / 120) * 100}%` }} />
           </span>
         </div>
@@ -153,7 +155,7 @@ export function Shell() {
       {toast ? (
         <button
           type="button"
-          className="fixed bottom-28 left-1/2 z-40 min-h-11 -translate-x-1/2 rounded-full border border-sky/40 bg-chrome px-4 py-2 text-sm font-semibold text-sky"
+          className="fixed bottom-28 left-1/2 z-40 min-h-11 -translate-x-1/2 rounded-sm border border-sky/40 bg-chrome px-4 py-2 text-sm font-semibold text-sky"
           onClick={() => setToast(undefined)}
         >
           {toast}
@@ -168,7 +170,7 @@ export function Shell() {
                 <>
                   <span
                     className={cn(
-                      'flex h-11 w-11 items-center justify-center rounded-xl border border-transparent text-ink',
+                      'flex h-11 w-11 items-center justify-center rounded-sm border border-transparent text-ink',
                       isActive && 'border-sky/40 bg-white/5 text-sky',
                     )}
                   >

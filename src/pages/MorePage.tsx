@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { CircuitTrack, HandoffCard } from '../components/CircuitTrack.tsx'
+import { nightHex } from '../engine/render/palette.ts'
 import { TestReadinessCard } from '../components/TestReadinessCard.tsx'
 import { MODULES, SKILLS } from '../data/curriculum.ts'
 import { WORLDS } from '../data/worlds.ts'
@@ -11,27 +12,27 @@ export function MorePage() {
     <div className="px-4 pb-8">
       <h1 className="font-display text-4xl font-semibold tracking-tight">System</h1>
       <div className="mt-4 grid gap-3">
-        <Link to="/coach" className="panel press rounded-2xl p-5">
+        <Link to="/coach" className="panel press rounded-sm p-5">
           <p className="text-xs font-medium uppercase tracking-widest text-ink">Telemetry</p>
           <p className="font-display text-2xl font-semibold">Dimension desk</p>
         </Link>
-        <Link to="/map" className="panel press rounded-2xl p-5">
+        <Link to="/map" className="panel press rounded-sm p-5">
           <p className="text-xs font-medium uppercase tracking-widest text-ink">Worlds</p>
           <p className="font-display text-2xl font-semibold">Subject circuit</p>
         </Link>
-        <Link to="/parent" className="panel press rounded-2xl p-5">
+        <Link to="/parent" className="panel press rounded-sm p-5">
           <p className="text-xs font-medium uppercase tracking-widest text-ink">Adults</p>
           <p className="font-display text-2xl font-semibold">Parent desk</p>
         </Link>
-        <Link to="/account" className="panel press rounded-2xl p-5">
+        <Link to="/account" className="panel press rounded-sm p-5">
           <p className="text-xs font-medium uppercase tracking-widest text-ink">Backup</p>
           <p className="font-display text-2xl font-semibold">Account + sync</p>
         </Link>
-        <Link to="/watch" className="panel press rounded-2xl p-5">
+        <Link to="/watch" className="panel press rounded-sm p-5">
           <p className="text-xs font-medium uppercase tracking-widest text-ink">Wearable</p>
           <p className="font-display text-2xl font-semibold">Watch glance</p>
         </Link>
-        <Link to="/privacy-center" className="panel press rounded-2xl p-5">
+        <Link to="/privacy-center" className="panel press rounded-sm p-5">
           <p className="text-xs font-medium uppercase tracking-widest text-ink">Data rights</p>
           <p className="font-display text-2xl font-semibold">Privacy Center</p>
         </Link>
@@ -67,7 +68,7 @@ export function MapPage() {
       </div>
       <div className="mt-3 space-y-2">
         {WORLDS.filter((w) => w.track === 'classroom').map((w) => (
-          <div key={w.id} className="overflow-hidden rounded-xl p-3 text-white" style={{ background: w.color }}>
+          <div key={w.id} className="overflow-hidden rounded-sm p-3 text-white" style={{ background: nightHex(w.color, 0.5, 0.2) }}>
             <p className="font-semibold">{w.name}</p>
             <p className="text-sm font-medium text-white/90">{w.adventure}</p>
             <p className="mt-1 text-sm font-medium text-white/80">{w.bridgeLine}</p>
@@ -85,12 +86,12 @@ export function MapPage() {
             {SKILLS.filter((s) => s.track === t.id).map((s) => {
               const m = compositeMastery(stats[s.id] ?? emptyStats())
               return (
-                <div key={s.id} className="panel rounded-xl p-3">
+                <div key={s.id} className="panel rounded-sm p-3">
                   <div className="flex items-center justify-between">
                     <p className="font-semibold">{s.name}</p>
                     <p className="font-display text-xl font-semibold">{Math.round(m)}</p>
                   </div>
-                  <div className="mt-1 h-1 overflow-hidden rounded-full bg-mist">
+                  <div className="mt-1 h-1 overflow-hidden bg-mist">
                     <div
                       className={t.id === 'classroom' ? 'h-full bg-sky' : t.id === 'foundation' ? 'h-full bg-leaf' : 'h-full bg-violet'}
                       style={{ width: `${m}%` }}
@@ -129,7 +130,7 @@ export function CoachPage() {
         <TestReadinessCard />
       </div>
       {focus ? (
-        <div className="panel mt-4 rounded-2xl p-4">
+        <div className="panel mt-4 rounded-sm p-4">
           <p className="text-xs font-medium uppercase tracking-widest text-ink">Focus dimensions</p>
           {Object.entries(focus)
             .filter(([k]) => !['attempts', 'correct', 'lastSeen'].includes(k))
@@ -139,8 +140,8 @@ export function CoachPage() {
                   <span>{k}</span>
                   <span>{Math.round(Number(v))}</span>
                 </div>
-                <div className="h-1 rounded-full bg-mist">
-                  <div className="h-full rounded-full bg-sky" style={{ width: `${Number(v)}%` }} />
+                <div className="h-1 bg-mist">
+                  <div className="h-full bg-sky" style={{ width: `${Number(v)}%` }} />
                 </div>
               </div>
             ))}
