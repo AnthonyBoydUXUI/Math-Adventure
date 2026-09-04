@@ -1,10 +1,13 @@
 import { motion } from 'framer-motion'
 import { Link, useNavigate } from 'react-router-dom'
 import { Aero } from '../components/Aero.tsx'
+import { WorldScene } from '../components/WorldScene.tsx'
 import { MODULES, skillById } from '../data/curriculum.ts'
 import { questionById } from '../data/questions.ts'
+import { classroomChain, worldById, worldForModule } from '../data/worlds.ts'
 import { compositeMastery, emptyStats } from '../engine/mastery.ts'
 import { cn } from '../lib/cn.ts'
+import { resumeAudio } from '../lib/sfx.ts'
 import { usePlayerStore } from '../store.ts'
 import type { Phase } from '../types.ts'
 
@@ -26,25 +29,59 @@ export function HomePage() {
 
   const nodes = mission.phases.filter((p) => p.phase !== 'recap')
 
+  const world = worldForModule(parent.moduleId)
+  const prev = world.prevId ? worldById(world.prevId) : undefined
+  const next = world.nextId ? worldById(world.nextId) : undefined
+  const chain = classroomChain()
+
   return (
     <div className="px-4 pb-8">
-      <section className="relative overflow-hidden rounded-[28px] bg-pink px-5 py-4 text-white shadow-[0_8px_0_#9f1853]">
-        <p className="text-[11px] font-extrabold uppercase tracking-[0.22em] text-white/80">
-          Course 2 · Module {mod?.number} · {mod?.volume === 1 ? 'Vol 1' : 'Vol 2'}
+      <section
+        className="relative overflow-hidden rounded-[28px] px-5 py-4 text-white shadow-[0_8px_0_#141628]"
+        style={{ background: world.color }}
+      >
+        <WorldScene moduleId={parent.moduleId} />
+        <p className="relative text-[11px] font-extrabold uppercase tracking-[0.22em] text-white/80">
+          {world.district} · Module {mod?.number}
         </p>
-        <h1 className="font-display text-3xl font-extrabold leading-tight">{focus?.name}</h1>
-        <p className="text-sm font-bold text-white/85">{mod?.name}</p>
-        <div className="mt-2 flex gap-1">
+        <h1 className="relative font-display text-3xl font-extrabold leading-tight">{world.name}</h1>
+        <p className="relative text-sm font-bold text-white/85">{focus?.name}</p>
+        <p className="relative mt-1 text-xs font-bold text-white/75">{world.bridgeLine}</p>
+        <div className="relative mt-2 flex gap-1">
           {[1, 2, 3].map((n) => (
             <span key={n} className={cn('text-lg', n <= stars ? 'text-gold' : 'text-white/30')}>
               ★
             </span>
           ))}
         </div>
-        <div className="absolute -right-3 -top-2 w-24 opacity-90">
+        <div className="absolute -right-3 -top-2 w-24 opacity-90 aero-bob">
           <Aero goggles={cosmetics.goggles} hoodie={cosmetics.hoodie} kicks={cosmetics.kicks} mood="lockin" />
         </div>
       </section>
+
+      <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+        {chain.map((w) => (
+          <button
+            key={w.id}
+            type="button"
+            className={cn(
+              'shrink-0 rounded-full border-2 border-navy px-3 py-1 text-xs font-extrabold',
+              w.id === world.id ? 'text-white' : 'bg-white text-navy/60',
+            )}
+            style={w.id === world.id ? { background: w.color } : undefined}
+            onClick={() => usePlayerStore.getState().setParent({ moduleId: w.moduleId ?? parent.moduleId, topicId: MODULES.find((m) => m.id === w.moduleId)?.topics[0]?.id ?? parent.topicId })}
+          >
+            {w.icon} {w.name}
+          </button>
+        ))}
+      </div>
+      {prev || next ? (
+        <p className="mt-2 text-center text-[11px] font-bold text-navy/50">
+          {prev ? `${prev.name} → ` : ''}
+          <span className="font-extrabold text-navy">{world.name}</span>
+          {next ? ` → ${next.name}` : ''}
+        </p>
+      ) : null}
 
       <div className="relative mx-auto mt-2 max-w-xs py-4">
         <div className="absolute left-1/2 top-4 bottom-4 w-1.5 -translate-x-1/2 rounded-full bg-navy/10" />
@@ -72,6 +109,7 @@ export function HomePage() {
                   done && 'opacity-80',
                 )}
                 onClick={() => {
+                  resumeAudio()
                   startFlight(false)
                   navigate('/train')
                 }}
@@ -87,9 +125,9 @@ export function HomePage() {
         })}
         <div className="mx-auto flex w-28 flex-col items-center">
           <div className="flex h-16 w-16 items-center justify-center rounded-full border-4 border-dashed border-navy/20 bg-white text-2xl text-navy/25">
-            ♛
+            {next?.icon ?? '♛'}
           </div>
-          <p className="mt-2 text-[11px] font-extrabold uppercase text-navy/35">Next peak</p>
+          <p className="mt-2 text-[11px] font-extrabold uppercase text-navy/35">{next?.name ?? 'Next peak'}</p>
         </div>
       </div>
 
@@ -108,6 +146,7 @@ export function HomePage() {
         type="button"
         className="press mt-4 w-full rounded-[28px] border-2 border-navy bg-leaf py-4 font-display text-xl font-extrabold text-white"
         onClick={() => {
+          resumeAudio()
           startFlight(false)
           navigate('/train')
         }}

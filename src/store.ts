@@ -6,6 +6,7 @@ import { diagnose, familyAccuracy, seenFormats } from './engine/diagnosis.ts'
 import { applyAttempt, seedSkillStats } from './engine/mastery.ts'
 import { evaluateAchievements, xpForAttempt } from './engine/scoring.ts'
 import { generateDailyMission } from './engine/session.ts'
+import { resumeAudio, sfx } from './lib/sfx.ts'
 import { checkAnswer } from './lib/answers.ts'
 import { dayKey } from './lib/hash.ts'
 import type {
@@ -145,6 +146,8 @@ export const usePlayerStore = create<PlayerStore>()(
       mission: generateDailyMission(seedSkillStats(), defaultParent),
       session: freshSession(),
       startFlight: (extra = false) => {
+        resumeAudio()
+        sfx.start()
         const s = get()
         const mission = generateDailyMission(s.stats, s.parent, new Date(), extra)
         const qid = mission.phases[0]?.questionIds[0]
@@ -201,6 +204,7 @@ export const usePlayerStore = create<PlayerStore>()(
             awaitingLock: true,
           },
         })
+        sfx.lock()
       },
       lockIn: (_keep) => {
         const s = get()
@@ -297,6 +301,9 @@ export const usePlayerStore = create<PlayerStore>()(
           },
           toast: newAch[0] ? `Achievement unlocked` : undefined,
         })
+        if (finalCorrect) sfx.correct()
+        else sfx.miss()
+        if (newAch[0]) sfx.xp()
       },
       nextItem: () => {
         const s = get()

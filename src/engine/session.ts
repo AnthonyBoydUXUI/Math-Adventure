@@ -1,9 +1,9 @@
 import { SKILLS, skillsForTopic } from '../data/curriculum.ts'
 import { familiesForSkill, questionById, QUESTIONS, questionsForFamily } from '../data/questions.ts'
+import { worldForModule } from '../data/worlds.ts'
 import { dayKey, hashString, mulberry32, pick, shuffle } from '../lib/hash.ts'
-import type { DailyMission, MissionPhase, ParentSettings, Question } from '../types.ts'
+import type { DailyMission, DimensionStats, MissionPhase, ParentSettings, Question } from '../types.ts'
 import { compositeMastery, emptyStats, weakestSkills } from './mastery.ts'
-import type { DimensionStats } from '../types.ts'
 
 const PHASE_MINUTES = { warmup: 3, builder: 4, lab: 4, boss: 3, recap: 1 } as const
 
@@ -34,6 +34,13 @@ export function generateDailyMission(
 
   const families = familiesForSkill(classroomSkill)
   const familyId = families.length ? pick(rng, families) : 'hoodie-equation'
+  const world = worldForModule(parent.moduleId)
+  const prevSkills = world.prevId
+    ? (worldForModule(
+        parent.moduleId === 'm1' ? 'm1' : `m${Math.max(1, Number(parent.moduleId.slice(1)) - 1)}`,
+      ).skillIds ?? [])
+    : []
+  const prevSkill = prevSkills[0]
 
   const warmup = pickN(
     rng,
@@ -41,7 +48,10 @@ export function generateDailyMission(
       (q) =>
         !q.id.startsWith('boss') &&
         q.difficulty <= 2 &&
-        (q.skillId === foundationSkill || q.skillId === classroomSkill || q.track === 'foundation'),
+        (q.skillId === foundationSkill ||
+          q.skillId === classroomSkill ||
+          q.skillId === prevSkill ||
+          q.track === 'foundation'),
     ),
     4,
   )
@@ -68,14 +78,14 @@ export function generateDailyMission(
       minutes: PHASE_MINUTES.warmup,
       questionIds: warmup.map((q) => q.id),
       label: 'Warm-Up',
-      coachLine: 'Easy ignition. Get a couple right and feel the board.',
+      coachLine: `${world.name}: easy ignition, including a bridge from the last district.`,
     },
     {
       phase: 'builder',
       minutes: PHASE_MINUTES.builder,
       questionIds: builder.map((q) => q.id),
       label: 'Skill Builder',
-      coachLine: 'Paper nearby. This is today’s classroom move, visually.',
+      coachLine: `${world.bridgeLine} Paper nearby.`,
     },
     {
       phase: 'lab',

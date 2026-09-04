@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { MODULES, SKILLS } from '../data/curriculum.ts'
+import { WORLDS } from '../data/worlds.ts'
 import { compositeMastery, emptyStats } from '../engine/mastery.ts'
 import { usePlayerStore } from '../store.ts'
 
@@ -36,7 +37,19 @@ export function MapPage() {
   return (
     <div className="px-4 pb-8">
       <h1 className="font-display text-4xl font-extrabold">Skill tree</h1>
-      <p className="mt-1 font-bold text-navy/60">Three tracks at once. Unlock with mastery.</p>
+      <p className="mt-1 font-bold text-navy/60">
+        Each subject is its own adventure. Each one hands a tool to the next — Ratio Runway tickets into Tip Market, Balance Bridge into Boundary Beach, Sample Station into Sky Peak.
+      </p>
+      <div className="mt-3 space-y-2">
+        {WORLDS.filter((w) => w.track === 'classroom').map((w) => (
+          <div key={w.id} className="rounded-2xl border-2 border-navy p-3 text-white" style={{ background: w.color }}>
+            <p className="font-extrabold">
+              {w.icon} {w.name}
+            </p>
+            <p className="text-sm font-bold text-white/80">{w.bridgeLine}</p>
+          </div>
+        ))}
+      </div>
       {tracks.map((t) => (
         <section key={t.id} className="mt-5">
           <h2 className="font-display text-2xl font-extrabold">{t.title}</h2>

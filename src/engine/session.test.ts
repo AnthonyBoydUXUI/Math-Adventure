@@ -7,6 +7,7 @@ import { emptyStats, seedSkillStats } from './mastery.ts'
 import { evaluateAchievements } from './scoring.ts'
 import { generateDailyMission, labSequence, missionMinutes } from './session.ts'
 import { parseVoice } from './voice/index.ts'
+import { classroomChain } from '../data/worlds.ts'
 
 const parent: ParentSettings = {
   moduleId: 'm6',
@@ -148,5 +149,15 @@ describe('voice intents', () => {
     expect(parseVoice('Why did we divide?').intent).toBe('why')
     expect(parseVoice('I got 24').intent).toBe('answer')
     expect(parseVoice('I got 24').number).toBe(24)
+  })
+})
+
+describe('connected adventures', () => {
+  it('chains classroom worlds so each subject feeds the next', () => {
+    const chain = classroomChain()
+    for (let i = 0; i < chain.length - 1; i += 1) {
+      expect(chain[i]?.nextId).toBe(chain[i + 1]?.id)
+      expect(chain[i + 1]?.prevId).toBe(chain[i]?.id)
+    }
   })
 })

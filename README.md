@@ -29,6 +29,20 @@ npm run dev
 
 Then open the printed local URL. On a phone-sized viewport the path, HUD, and 15-minute flight are the core loop.
 
+## Adventures that connect
+
+Each Reveal module is a district (Ratio Runway, Tip Market, Balance Bridge…). Warm-ups pull a bridge skill from the previous district so the next subject is not a reset.
+
+## Vercel (hobby)
+
+This is a static Vite app. On a Vercel hobby account:
+
+```bash
+npx vercel
+```
+
+`vercel.json` already rewrites all routes to `index.html`. Connect the GitHub repo in the Vercel dashboard → Import → Framework Preset Vite → Deploy. No server needed.
+
 ## Parent desk
 
 Choose Reveal Math → Module → Topic. That week’s flight overweight that concept. Upload a class page photo to keep the coach pointed at the right room.
