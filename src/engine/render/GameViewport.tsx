@@ -4,6 +4,7 @@ import { ContactShadows, Grid } from '@react-three/drei'
 import type { PerspectiveCamera } from 'three'
 import { CastHero } from './cast/GlbCast.tsx'
 import type { CastMood } from './cast/canon.ts'
+import { StudioEnv } from './cast/studio.tsx'
 import { Chassis } from './Chassis.tsx'
 import { DistrictKit } from './DistrictKit.tsx'
 import { nightHex } from './palette.ts'
@@ -13,10 +14,10 @@ function CameraDrift() {
   useFrame((state, delta) => {
     t.current += delta
     const cam = state.camera as PerspectiveCamera
-    cam.position.x = 2.55 + Math.sin(t.current * 0.14) * 0.18
-    cam.position.y = 1.05 + Math.sin(t.current * 0.09) * 0.04
-    cam.position.z = 3.15
-    cam.lookAt(-0.15, 0.72, 0.12)
+    cam.position.x = 2.15 + Math.sin(t.current * 0.14) * 0.16
+    cam.position.y = 1.12 + Math.sin(t.current * 0.09) * 0.035
+    cam.position.z = 2.85
+    cam.lookAt(-0.28, 0.78, 0.14)
   })
   return null
 }
@@ -46,7 +47,7 @@ export function GameViewport({
   return (
     <SceneGuard>
       <Canvas
-        camera={{ position: [2.55, 1.05, 3.15], fov: 30, near: 0.08, far: 48 }}
+        camera={{ position: [2.15, 1.12, 2.85], fov: 28, near: 0.08, far: 48 }}
         dpr={[1, 1.5]}
         gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
         shadows="percentage"
@@ -54,18 +55,19 @@ export function GameViewport({
       >
         <color attach="background" args={['#05070b']} />
         <fog attach="fog" args={['#05070b', 7, 18]} />
-        <hemisphereLight args={['#c5d4e4', '#0a0c10', 0.26]} />
-        <ambientLight intensity={0.1} />
+        <StudioEnv intensity={0.4} />
+        <hemisphereLight args={['#c5d4e4', '#0a0c10', 0.24]} />
+        <ambientLight intensity={0.08} />
         <directionalLight
           position={[4.2, 6.2, 3.4]}
-          intensity={1.55}
+          intensity={1.45}
           color="#f2f6ff"
           castShadow
           shadow-mapSize-width={1024}
           shadow-mapSize-height={1024}
         />
-        <directionalLight position={[-3.8, 1.4, -2.2]} intensity={0.55} color={night} />
-        <directionalLight position={[0.4, 1.8, -2.6]} intensity={0.7} color="#e4c24a" />
+        <directionalLight position={[-3.8, 1.4, -2.2]} intensity={0.5} color={night} />
+        <directionalLight position={[0.4, 1.8, -2.6]} intensity={0.62} color="#e4c24a" />
         <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow>
           <planeGeometry args={[48, 48]} />
           <meshStandardMaterial color="#0a0d12" metalness={0.35} roughness={0.88} />
@@ -84,8 +86,8 @@ export function GameViewport({
           infiniteGrid
         />
         <DistrictKit id={districtId} color={night} />
-        <group position={[-0.62, 0, 0.28]}>
-          <CastHero mood={mood} visor={visor} suit={suit} kicks={kicks} />
+        <group position={[-0.7, 0, 0.32]}>
+          <CastHero mood={mood} visor={visor} suit={suit} kicks={kicks} quality="play" />
         </group>
         <Chassis paint={paint} wheels={wheels} wing={wing} />
         <ContactShadows position={[0, 0.01, 0]} opacity={0.5} scale={14} blur={2.1} far={3.2} />

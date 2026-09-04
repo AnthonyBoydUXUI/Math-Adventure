@@ -3,9 +3,10 @@ import { CastFigure } from './CastFigure.tsx'
 import type { CastLook } from './canon.ts'
 
 /**
- * Production slot. Drop a rigged, optimized .glb here later
- * (Blender cleanup → humanoid rig → Meshopt/Draco).
- * Until then the in-engine hero is the source of truth.
+ * Production slot. A sculpted, retopo'd, rigged .glb is still missing.
+ * Drop it at public/cast/player.glb (or VITE_CAST_PLAYER_GLB) after
+ * Blender cleanup → humanoid rig → Meshopt/Draco. Until then the
+ * in-engine 6.75-head sculpt is the stand-in — not a camera/CSS hide.
  */
 export function CastHero(props: CastLook) {
   const url = props.glbUrl || import.meta.env.VITE_CAST_PLAYER_GLB
