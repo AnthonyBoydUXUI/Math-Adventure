@@ -35,8 +35,8 @@ export function buildTestReport(attempts: AttemptRecord[]): TestReport {
       transfer: 0,
       paperHabit: 0,
       formats: [],
-      drillLine: 'Run Test Lab once. We split slips vs gaps vs format vs nerves — that is what the real test hits.',
-      testDayLine: 'Class strength does not automatically show up on a timed test. Same math, different look.',
+      drillLine: 'Run Test Lab once. We’ll sort slips, gaps, new looks, and nerves — that’s what the real test hits.',
+      testDayLine: 'Being strong in class doesn’t always show up on a timed test. Same math, different look.',
     }
   }
 
@@ -74,14 +74,14 @@ export function buildTestReport(attempts: AttemptRecord[]): TestReport {
   )
 
   const drillLine = !weakest
-    ? 'Keep rotating formats. Tests rarely ask the classroom version first.'
+    ? 'Keep rotating how the problem looks. Tests rarely ask the classroom version first.'
     : weakest.accuracy >= 80
-      ? `${labelFormat(weakest.format)} is holding (${Math.round(weakest.accuracy)}%). Rotate the wrapper before the real test.`
+      ? `${labelFormat(weakest.format)} is holding (${Math.round(weakest.accuracy)}%). Switch the wrapper before the real test.`
       : `${labelFormat(weakest.format)} is the wrapper that still beats you (${Math.round(weakest.accuracy)}%). Same math, different look.`
 
   const testDayLine = loudestDiagnosis
     ? `${DIAGNOSIS_COPY[loudestDiagnosis].title}: ${DIAGNOSIS_COPY[loudestDiagnosis].line}`
-    : 'Lock the first correct answer. That is the test skill hiding under the game.'
+    : 'Keep the first answer that already works. That’s the test skill hiding under the game.'
 
   return {
     sampleSize,

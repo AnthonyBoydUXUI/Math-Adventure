@@ -41,9 +41,9 @@ export function diagnose(ctx: DiagnosisContext): Diagnosis {
 }
 
 export const DIAGNOSIS_COPY: Record<Diagnosis, { title: string; line: string }> = {
-  solid: { title: 'Locked in', line: 'The math and the format both landed.' },
+  solid: { title: 'Locked in', line: 'That one landed. The math and the wrapper both worked.' },
   knowledge_gap: {
-    title: 'Concept still forming',
+    title: 'Still getting the idea',
     line: 'This one needs another look at the idea — not a verdict on you.',
   },
   arithmetic_slip: {
@@ -52,15 +52,15 @@ export const DIAGNOSIS_COPY: Record<Diagnosis, { title: string; line: string }> 
   },
   format_confusion: {
     title: 'Same math, different look',
-    line: 'The skill is there. The wrapper was unfamiliar.',
+    line: 'You’ve got the skill. This wrapper just looked new.',
   },
   pacing: {
-    title: 'Time squeeze',
+    title: 'Clock got loud',
     line: 'You were still thinking when the clock got loud. That’s trainable.',
   },
   confidence: {
     title: 'You knew more than you trusted',
-    line: 'Low confidence with a known skill. Trust Yourself practice.',
+    line: 'You know this one. Trust the first answer that already made sense.',
   },
   second_guessing: {
     title: 'First answer was right',
@@ -68,15 +68,15 @@ export const DIAGNOSIS_COPY: Record<Diagnosis, { title: string; line: string }> 
   },
   test_anxiety: {
     title: 'Pressure fog',
-    line: 'Slow + unsure often means nerves, not missing knowledge.',
+    line: 'Slow and unsure often means nerves, not missing knowledge.',
   },
   skipped_writing: {
-    title: 'Head math on a paper problem',
+    title: 'This one wanted paper',
     line: 'This one wanted steps on paper. That’s a habit, not a talent gap.',
   },
   transfer_difficulty: {
-    title: 'Transfer miss',
-    line: 'Known in one format, stuck in another. Test Lab was built for this.',
+    title: 'New look, same math',
+    line: 'You know it in one look, stuck in another. Test Lab is built for that.',
   },
 }
 

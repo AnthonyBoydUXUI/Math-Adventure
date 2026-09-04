@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { MIC_PREAMBLE } from '../content/legal.ts'
 import { createVoiceProvider, parseVoice } from '../engine/voice/index.ts'
+import { talkAnother, talkHeard, talkHint, talkWhy } from '../engine/voice/talk.ts'
 import { cn } from '../lib/cn.ts'
 import { usePlayerStore } from '../store.ts'
 import type { Question } from '../types.ts'
@@ -20,38 +21,40 @@ export function VoiceTutor({
   const [open, setOpen] = useState(false)
   const [hearing, setHearing] = useState(false)
   const [askMic, setAskMic] = useState(false)
-  const [line, setLine] = useState('Say “I don’t get this” or “I got 24.”')
+  const [line, setLine] = useState('You can say “I don’t get this,” or “I got 24.” I’ll follow you.')
   const support = useMemo(() => provider.supported(), [])
 
   function respond(transcript: string) {
     const parsed = parseVoice(transcript)
     if (!question) {
-      setLine('Start a flight and I’ll coach live.')
+      setLine('Start today’s 15 and I’ll talk you through it.')
       return
     }
     if (parsed.intent === 'confused') {
-      void provider.speak(question.hints[0] ?? 'Grab paper. What’s the question asking?')
-      setLine(question.hints[0] ?? 'What’s the question asking?')
+      const hint = question.hints[0] ?? 'Grab paper. What is this actually asking you?'
+      void provider.speak(talkHint(hint))
+      setLine(hint)
     } else if (parsed.intent === 'another_way') {
       markVoice()
-      void provider.speak(question.anotherWay)
+      void provider.speak(talkAnother(question.anotherWay))
       setLine(question.anotherWay)
     } else if (parsed.intent === 'why') {
-      void provider.speak(question.why)
+      void provider.speak(talkWhy(question.why))
       setLine(question.why)
     } else if (parsed.intent === 'example') {
-      void provider.speak('Same structure, friendlier numbers. Try the visual first.')
-      setLine('Same structure, smaller numbers. Use the picture.')
+      void provider.speak('Same idea, smaller numbers. Start with the picture.')
+      setLine('Same idea, smaller numbers. Start with the picture.')
     } else if (parsed.intent === 'hint') {
-      void provider.speak(question.hints[1] ?? question.hints[0] ?? 'Write KNOW and FIND.')
-      setLine(question.hints[1] ?? question.hints[0] ?? '')
+      const hint = question.hints[1] ?? question.hints[0] ?? 'Write what you know, and what you need to find.'
+      void provider.speak(talkHint(hint))
+      setLine(hint)
     } else if (parsed.intent === 'answer' && parsed.number !== undefined) {
       onAnswer?.(String(parsed.number))
-      void provider.speak(`Locking in ${parsed.number}.`)
-      setLine(`Heard ${parsed.number}. Lock it if that’s your answer.`)
+      void provider.speak(talkHeard(parsed.number))
+      setLine(`I heard ${parsed.number}. Lock it if that’s the one you want.`)
     } else {
-      void provider.speak('Try: I don’t get this, explain another way, or I got a number.')
-      setLine('Try: “I don’t get this,” “another way,” or “I got 24.”')
+      void provider.speak('I missed that. You can say I don’t get this, another way, or I got a number.')
+      setLine('I missed that. Try “I don’t get this,” “another way,” or “I got 24.”')
     }
   }
 
@@ -81,7 +84,7 @@ export function VoiceTutor({
         className="flex w-full items-center justify-between font-semibold"
         onClick={() => setOpen((o) => !o)}
       >
-        <span>Voice tutor</span>
+        <span>Talk it out</span>
         <span className="text-xs uppercase tracking-widest text-navy/40">{open ? 'hide' : 'talk'}</span>
       </button>
       {open ? (
@@ -96,7 +99,7 @@ export function VoiceTutor({
               )}
               onClick={listen}
             >
-              {hearing ? 'Listening…' : 'Hold to talk'}
+              {hearing ? 'Listening…' : 'Talk'}
             </button>
             <button
               type="button"

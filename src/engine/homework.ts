@@ -129,11 +129,11 @@ export function buildHomeworkPlan(raw: string): HomeworkPlan {
     concept: skill?.name ?? 'Multi-step thinking',
     skillId,
     skill,
-    asking: 'What is the question actually asking you to find?',
+    asking: 'What is this actually asking you to find?',
     known: [
       'Name the numbers that matter.',
       'Cross out extra story details.',
-      'Label units.',
+      'Label the units.',
     ],
     move:
       skillId === 'percent-of'
@@ -145,14 +145,14 @@ export function buildHomeworkPlan(raw: string): HomeworkPlan {
             : 'Pick the math move, then write it before you compute.',
     scoreboard,
     hints: [
-      'Don’t solve in your head yet.',
-      'Write KNOW / FIND / MOVE.',
-      'Estimate whether the answer should be bigger or smaller than a nearby number.',
+      'Don’t solve it in your head yet.',
+      'Write what you know, what you need to find, and the move.',
+      'Guess whether the answer should be bigger or smaller than a nearby number.',
     ],
     check,
     checkKind,
-    why: 'Homework help here is a coach, not an answer key. You do the work.',
-    anotherWay: 'Try a simpler number in the same structure, then return.',
+    why: 'This is a coach, not an answer key. You still do the work.',
+    anotherWay: 'Try a simpler number in the same setup, then come back.',
     relatedIds,
   }
 }
@@ -161,7 +161,7 @@ export function homeworkFeedback(plan: HomeworkPlan, attempt: string) {
   if (plan.checkKind === 'none' || plan.check === undefined) {
     return {
       verdict: 'recorded' as const,
-      line: 'Logged. Compare it to your paper. Does it pass CHECK?',
+      line: 'Got it. Check it against your paper. Does it pass?',
     }
   }
   const n = Number(attempt.replace(/[,$%]/g, ''))
@@ -170,9 +170,9 @@ export function homeworkFeedback(plan: HomeworkPlan, attempt: string) {
     return {
       verdict: ok ? ('correct' as const) : ('retry' as const),
       line: ok
-        ? 'That checks out. Now write one sentence on why it makes sense.'
-        : 'Not yet — don’t peek. Revisit MOVE, then try once more.',
+        ? 'That checks out. Write one sentence on why it makes sense.'
+        : 'Not yet — don’t peek. Look at the move again, then try once more.',
     }
   }
-  return { verdict: 'recorded' as const, line: 'Got it. Walk CHECK on paper.' }
+  return { verdict: 'recorded' as const, line: 'Got it. Walk the check on paper.' }
 }
