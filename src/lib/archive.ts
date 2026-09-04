@@ -1,7 +1,7 @@
 export const PERSIST_KEY = 'aero-math-adventure'
 
 export interface ArchiveFile {
-  app: 'Aero'
+  app: 'Math Adventure'
   exportedAt: string
   storageKey: string
   data: unknown
@@ -18,7 +18,7 @@ export function serializeLocalArchive(now = new Date()): string {
     }
   }
   const file: ArchiveFile = {
-    app: 'Aero',
+    app: 'Math Adventure',
     exportedAt: now.toISOString(),
     storageKey: PERSIST_KEY,
     data,

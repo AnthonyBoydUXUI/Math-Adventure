@@ -1,22 +1,10 @@
 import { useEffect } from 'react'
 import { DayClock } from './DayClock.tsx'
-import {
-  Cloud,
-  Crosshair,
-  FlaskConical,
-  Gauge,
-  Home,
-  LifeBuoy,
-  MoreHorizontal,
-  Trophy,
-  Volume2,
-  VolumeX,
-  Zap,
-} from 'lucide-react'
+import { Cloud, FlaskConical, Gauge, Home, LifeBuoy, MoreHorizontal, Trophy, Volume2, VolumeX } from 'lucide-react'
+import { CastMark } from './Aero.tsx'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useCloud } from '../cloud/CloudProvider.tsx'
 import { worldForModule } from '../data/worlds.ts'
-import { compositeMastery, emptyStats } from '../engine/mastery.ts'
 import { buildTestReport } from '../engine/testReady.ts'
 import { useDeviceSurface } from '../hooks/useDeviceSurface.ts'
 import { cn } from '../lib/cn.ts'
@@ -26,27 +14,25 @@ import { ComplianceGate } from './ComplianceGate.tsx'
 
 const NAV = [
   { to: '/', label: 'Home', icon: Home },
-  { to: '/train', label: 'Session', icon: Gauge },
+  { to: '/train', label: 'Run', icon: Gauge },
   { to: '/lab', label: 'Lab', icon: FlaskConical },
-  { to: '/help', label: 'Assist', icon: LifeBuoy },
-  { to: '/locker', label: 'Garage', icon: Trophy },
-  { to: '/more', label: 'System', icon: MoreHorizontal },
+  { to: '/help', label: 'Help', icon: LifeBuoy },
+  { to: '/locker', label: 'Gear', icon: Trophy },
+  { to: '/more', label: 'More', icon: MoreHorizontal },
 ]
 
 const UNGATED = new Set(['/privacy', '/terms', '/support', '/privacy-center'])
 
 export function Shell() {
-  const { sparks, streak, toast, setToast, studentName, soundOn, toggleSound, parent, compliance, attempts, stats, mission } =
+  const { sparks, streak, toast, setToast, soundOn, toggleSound, parent, compliance, attempts } =
     usePlayerStore()
   const cloud = useCloud()
   const surface = useDeviceSurface()
   const readiness = buildTestReport(attempts).readiness
-  const mastery = Math.round(compositeMastery(stats[mission.focusSkillId] ?? emptyStats()))
   const audioEnabled = soundOn !== false
   const loc = useLocation()
   const world = worldForModule(parent.moduleId)
   const gated = !compliance.acknowledgedAt && !UNGATED.has(loc.pathname)
-  const displayName = studentName.trim() || 'Student'
   const compact = loc.pathname === '/watch' || surface === 'watch'
 
   useEffect(() => {
@@ -82,23 +68,15 @@ export function Shell() {
         Skip to content
       </a>
       <header className="sticky top-0 z-30 flex items-center gap-1.5 px-4 py-3 pt-[max(0.75rem,env(safe-area-inset-top))] backdrop-blur-xl">
-        <div className="flex h-11 w-11 items-center justify-center border-2 border-[#f3efe6] bg-[#0e1a3a]" aria-hidden>
-          <Crosshair className="h-4 w-4 text-gold" />
+        <div className="flex h-11 w-11 items-center justify-center overflow-hidden border-2 border-[#f3efe6]" aria-hidden>
+          <CastMark className="h-11 w-11" />
         </div>
         <div className="hud-chip flex min-h-11 items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold tracking-[0.12em]">
           <span className="sr-only">Test readiness</span>
-          <span className="text-ink">RDY</span>
           {readiness || '—'}
         </div>
         <div className="hud-chip flex min-h-11 items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold tracking-[0.12em]">
-          <span className="sr-only">Focus mastery</span>
-          <span className="text-ink">MST</span>
-          {mastery}
-        </div>
-        <div className="hud-chip flex min-h-11 items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold tracking-[0.12em]">
-          <Zap className="h-3.5 w-3.5 text-gold" aria-hidden />
           <span className="sr-only">Finished-day streak</span>
-          <span className="text-ink">STR</span>
           {streak}
         </div>
         <button
@@ -126,21 +104,27 @@ export function Shell() {
         ) : null}
         <div className="hud-chip ml-auto flex min-h-11 items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold tracking-[0.12em]">
           <span className="sr-only">Sparks for extra hints</span>
-          <span className="text-ink">SPK</span>
           {sparks}
         </div>
       </header>
 
       <div className="flex items-center justify-between gap-3 px-5 pb-2">
-        <p className="stamp text-ink">
-          {displayName} · {world.district}
-        </p>
-        <DayClock compact />
+        {loc.pathname === '/train' ? null : (
+          <>
+            <p className="stamp text-ink">{world.name}</p>
+            <DayClock compact />
+          </>
+        )}
       </div>
 
       <main id="main">
         <Outlet />
-        <footer className={cn('px-4 pb-2 pt-8 text-center text-[11px] font-medium text-ink', compact && 'hidden')}>
+        <footer
+          className={cn(
+            'px-4 pb-2 pt-8 text-center text-[11px] font-medium text-ink',
+            (compact || loc.pathname === '/' || loc.pathname === '/train') && 'hidden',
+          )}
+        >
           <Link to="/privacy" className="inline-flex min-h-11 items-center text-sky">
             Privacy
           </Link>

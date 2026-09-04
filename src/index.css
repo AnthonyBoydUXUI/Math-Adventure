@@ -229,8 +229,46 @@ option {
   backdrop-filter: blur(22px);
 }
 
+.twinkle,
+.twinkle-2 {
+  animation: twinkle 2.4s ease-in-out infinite;
+}
+
+.twinkle-2 {
+  animation-delay: 0.7s;
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
+.cast-bob {
+  animation: cast-bob 3.8s ease-in-out infinite;
+}
+
+@keyframes cast-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .press {
     transition: none;
+  }
+  .cast-bob,
+  .twinkle,
+  .twinkle-2 {
+    animation: none;
   }
 }

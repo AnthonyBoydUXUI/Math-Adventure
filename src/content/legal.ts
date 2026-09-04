@@ -1,7 +1,7 @@
 export const SUPPORT_ISSUES_URL = 'https://github.com/AnthonyBoydUXUI/Math-Adventure/issues'
 export const REPO_URL = 'https://github.com/AnthonyBoydUXUI/Math-Adventure'
-export const APP_NAME = 'Aero'
-export const PUBLISHER = 'Aero (Math Adventure)'
+export const APP_NAME = 'Math Adventure'
+export const PUBLISHER = 'Math Adventure'
 export const LAST_UPDATED = 'September 4, 2026'
 
 export interface LegalSection {
@@ -10,13 +10,13 @@ export interface LegalSection {
 }
 
 export const PRIVACY_INTRO =
-  'Aero is a math practice app for students 12 and older. Practice works without an account. An optional email login backs up one profile so phone, tablet, laptop, and the watch glance stay in sync. We do not run ads or analytics, and we do not sell data.'
+  'Math Adventure is a math practice app for students 12 and older. Practice works without an account. An optional email login backs up one profile so phone, tablet, laptop, and the watch glance stay in sync. We do not run ads or analytics, and we do not sell data.'
 
 export const PRIVACY_SECTIONS: LegalSection[] = [
   {
     heading: 'Who this app is for',
     paragraphs: [
-      'Aero is designed for seventh- and eighth-grade students (typically ages 12–14). It is not directed at children under 13 and is not submitted in Apple’s Kids Category.',
+      'Math Adventure is designed for seventh- and eighth-grade students (typically ages 12–14). It is not directed at children under 13 and is not submitted in Apple’s Kids Category.',
       'We do not ask for a birthdate. A parent or a student 12 or older must acknowledge the first-launch notice before practice begins.',
     ],
   },
@@ -26,7 +26,7 @@ export const PRIVACY_SECTIONS: LegalSection[] = [
       'Without an account, progress is stored only in this device’s browser or app storage (localStorage key aero-math-adventure).',
       'If you create an account, we store your email (via Supabase Auth) and one profile row: XP, streak, mastery, attempt history, bookmark, and settings. That row is how phone and laptop share a save, and how a site-data clear can be recovered.',
       'Homework or paper photos stay on the device that took them. They are stripped from the cloud profile.',
-      'Optional voice tutoring uses the operating system’s speech APIs on this device. Aero does not record, upload, or keep audio.',
+      'Optional voice tutoring uses the operating system’s speech APIs on this device. Math Adventure does not record, upload, or keep audio.',
     ],
   },
   {
@@ -41,7 +41,7 @@ export const PRIVACY_SECTIONS: LegalSection[] = [
     heading: 'Permissions',
     paragraphs: [
       'Camera or photo library: used only when you choose to photograph homework or written work so the on-device coach can name the concept. Photos stay on this device.',
-      'Microphone and speech recognition: used only when you tap Talk so the on-device voice tutor can hear a short phrase. Speech is not stored by Aero.',
+      'Microphone and speech recognition: used only when you tap Talk so the on-device voice tutor can hear a short phrase. Speech is not stored by Math Adventure.',
       'Haptics: a brief vibration on supported devices when you lock in an answer. You can ignore this; it is not required.',
     ],
   },
@@ -56,7 +56,7 @@ export const PRIVACY_SECTIONS: LegalSection[] = [
   {
     heading: 'Children’s privacy',
     paragraphs: [
-      'Aero is not intended for children under 13. If you believe a child under 13 has used the app, delete the local data, delete the cloud profile if one exists, and stop use.',
+      'Math Adventure is not intended for children under 13. If you believe a child under 13 has used the app, delete the local data, delete the cloud profile if one exists, and stop use.',
       'A parent can delete the cloud profile from Account. That removes the synced row. Contact support if you also need the Auth user removed.',
     ],
   },
@@ -71,7 +71,7 @@ export const PRIVACY_SECTIONS: LegalSection[] = [
   {
     heading: 'Not a medical or official school diagnosis',
     paragraphs: [
-      'Aero’s “Lab snapshot,” coaching lines, and readiness scores are practice feedback from your recent plays. They are not a medical diagnosis, psychological evaluation, IEP assessment, or official school or state test result.',
+      "Math Adventure's Lab snapshot, coaching lines, and readiness scores are practice feedback from your recent plays. They are not a medical diagnosis, psychological evaluation, IEP assessment, or official school or state test result.",
     ],
   },
   {
@@ -83,47 +83,47 @@ export const PRIVACY_SECTIONS: LegalSection[] = [
 ]
 
 export const TERMS_INTRO =
-  'These Terms of Use govern your use of Aero. By tapping Continue on the first-launch notice, you agree to these terms.'
+  'These Terms of Use govern your use of Math Adventure. By tapping Continue on the first-launch notice, you agree to these terms.'
 
 export const TERMS_SECTIONS: LegalSection[] = [
   {
     heading: 'License',
     paragraphs: [
-      'We grant you a personal, non-exclusive, non-transferable license to use Aero for educational practice on devices you own or control.',
-      'You may not copy the practice items into a competing product, scrape the item bank, or imply that Aero is an official school or publisher product.',
+      'We grant you a personal, non-exclusive, non-transferable license to use Math Adventure for educational practice on devices you own or control.',
+      'You may not copy the practice items into a competing product, scrape the item bank, or imply that Math Adventure is an official school or publisher product.',
     ],
   },
   {
     heading: 'Age',
     paragraphs: [
-      'You must be 12 or older, or a parent or guardian approving use for a student 12 or older. Aero is not for children under 13.',
+      'You must be 12 or older, or a parent or guardian approving use for a student 12 or older. Math Adventure is not for children under 13.',
     ],
   },
   {
-    heading: 'What Aero is — and is not',
+    heading: 'What Math Adventure is — and is not',
     paragraphs: [
-      'Aero is original practice software. Items are written to typical Grade 7 and Grade 8 course topics (ratios, percent, integers, equations, geometry, probability). They are not copied from any publisher’s textbook, homework, or item bank.',
-      'Aero is not affiliated with, endorsed by, or sponsored by any textbook publisher or school district. Names of commercial courses are not used as a claim of partnership.',
-      'Aero is not a medical device, therapy, or official diagnostic test. Scores are for practice only.',
+      'Math Adventure is original practice software. Items are written to typical Grade 7 and Grade 8 course topics (ratios, percent, integers, equations, geometry, probability). They are not copied from any publisher’s textbook, homework, or item bank.',
+      'Math Adventure is not affiliated with, endorsed by, or sponsored by any textbook publisher or school district. Names of commercial courses are not used as a claim of partnership.',
+      'Math Adventure is not a medical device, therapy, or official diagnostic test. Scores are for practice only.',
     ],
   },
   {
     heading: 'Your content',
     paragraphs: [
       'Photos and notes you add stay on this device. Only photograph work you have a right to use. Do not photograph other students’ identifiable records to share them.',
-      'Nothing you add is posted publicly by Aero. There is no social feed.',
+      'Nothing you add is posted publicly by Math Adventure. There is no social feed.',
     ],
   },
   {
     heading: 'Acceptable use',
     paragraphs: [
-      'Do not attempt to break, reverse engineer, or overload the app. Do not use Aero to cheat on a live test or to generate an answer key for a restricted exam.',
+      'Do not attempt to break, reverse engineer, or overload the app. Do not use Math Adventure to cheat on a live test or to generate an answer key for a restricted exam.',
     ],
   },
   {
     heading: 'Disclaimer',
     paragraphs: [
-      'Aero is provided “as is.” Practice feedback can be wrong. You are responsible for school work and test performance. We disclaim implied warranties of merchantability, fitness for a particular purpose, and non-infringement to the fullest extent allowed by law.',
+      'Math Adventure is provided “as is.” Practice feedback can be wrong. You are responsible for school work and test performance. We disclaim implied warranties of merchantability, fitness for a particular purpose, and non-infringement to the fullest extent allowed by law.',
     ],
   },
   {
@@ -142,7 +142,7 @@ export const TERMS_SECTIONS: LegalSection[] = [
 ]
 
 export const SUPPORT_INTRO =
-  'Aero is a 15-minute math practice app. This page is the support contact Apple requires — you can read it in a browser without opening the app.'
+  'Math Adventure is a 15-minute math practice app. This page is the support contact Apple requires — you can read it in a browser without opening the app.'
 
 export const SUPPORT_SECTIONS: LegalSection[] = [
   {
@@ -170,7 +170,7 @@ export const SUPPORT_SECTIONS: LegalSection[] = [
   {
     heading: 'Progress and data',
     paragraphs: [
-      'Progress lives on this device first. Sign in under System → Account + sync to back it up to one profile.',
+      'Progress lives on this device first. Sign in under More → Account to back it up to one profile.',
       'Clearing browser data wipes the local flight log. Sign in again to restore the cloud copy.',
     ],
   },
@@ -185,10 +185,10 @@ export const SUPPORT_SECTIONS: LegalSection[] = [
 ]
 
 export const CAMERA_PREAMBLE =
-  'Aero uses the camera or photo library only when you choose to photograph homework or written work. The image stays on this device and is never uploaded. You can skip photos and type the problem instead.'
+  'Math Adventure uses the camera or photo library only when you choose to photograph homework or written work. The image stays on this device and is never uploaded. You can skip photos and type the problem instead.'
 
 export const MIC_PREAMBLE =
-  'Aero uses the microphone only while you tap Talk so the on-device voice tutor can hear a short phrase. Aero does not record or upload audio. You can type instead.'
+  'Math Adventure uses the microphone only while you tap Talk so the on-device voice tutor can hear a short phrase. Math Adventure does not record or upload audio. You can type instead.'
 
 export function flattenLegal(sections: LegalSection[]): string {
   return sections.map((s) => `${s.heading}\n${s.paragraphs.join('\n')}`).join('\n\n')

@@ -1,6 +1,6 @@
 # App Store submission notes
 
-Aero is Education software for seventh- and eighth-grade students (typically 12–14). Treat this file as the review checklist. Native iOS still has to be built on a Mac (`native/ios/README.md`).
+Math Adventure is Education software for seventh- and eighth-grade students (typically 12–14). Treat this file as the review checklist. Native iOS still has to be built on a Mac (`native/ios/README.md`).
 
 ## Category and age
 
@@ -28,7 +28,7 @@ In-app copies live at `/privacy`, `/terms`, `/support`, and Privacy Center at `/
 
 ## Guidelines this build is written for
 
-| Guideline | How Aero meets it |
+| Guideline | How Math Adventure meets it |
 | --- | --- |
 | 1.1.6 / 1.4.1 | Coaching is practice feedback, not a medical or official school diagnosis |
 | 1.2 | No public UGC; photos never leave the device |
@@ -45,7 +45,7 @@ In-app copies live at `/privacy`, `/terms`, `/support`, and Privacy Center at `/
 
 ## Review notes (paste into App Store Connect)
 
-Aero is a 15-minute math practice app. There is no account. On first launch, acknowledge the age/privacy gate as a parent or a student 12+. All practice items are original. Test Lab and readiness scores are practice feedback, not a medical or official school diagnosis. Camera and microphone are optional and explained before the system prompt; photos and speech stay on device. Export and delete are in System → Privacy Center.
+Math Adventure is a 15-minute math practice app. There is no account. On first launch, acknowledge the age/privacy gate as a parent or a student 12+. All practice items are original. Test Lab and readiness scores are practice feedback, not a medical or official school diagnosis. Camera and microphone are optional and explained before the system prompt; photos and speech stay on device. Export and delete are in System → Privacy Center.
 
 ## Still required on a Mac before submit
 

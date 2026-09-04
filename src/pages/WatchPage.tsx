@@ -13,16 +13,15 @@ export function WatchPage() {
         <DayClock compact />
       </div>
       <p className="mt-4 font-display text-5xl font-semibold leading-none">{streak}</p>
-      <p className="mt-1 text-[11px] font-medium uppercase tracking-[0.18em] text-ink">Finished 15s</p>
       <p className="mt-4 text-sm font-semibold leading-snug text-navy">{bookmark.label}</p>
       <Link
         to="/train"
         className="press mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-sm bg-sky text-sm font-semibold text-chrome"
       >
-        {session.active ? 'Resume' : 'Today’s 15'}
+        {session.active ? 'Continue' : 'Start'}
       </Link>
       <Link to="/" className="mt-2 inline-flex min-h-11 items-center text-xs font-medium text-ink">
-        Full app
+        Home
       </Link>
     </div>
   )

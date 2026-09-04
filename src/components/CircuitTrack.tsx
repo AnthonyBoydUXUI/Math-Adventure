@@ -30,9 +30,8 @@ export function CircuitTrack({ compact }: { compact?: boolean }) {
     <div className="panel overflow-hidden rounded-sm bg-[#05070b]">
       <div className="flex items-center justify-between px-4 py-2">
         <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-ink">
-          {compact ? 'Nearby sectors' : 'Subject circuit'}
+          {compact ? 'Near' : 'Map'}
         </p>
-        <p className="text-[11px] font-medium text-sky">Select a sector</p>
       </div>
       <div className="relative">
         <svg
@@ -97,9 +96,7 @@ export function CircuitTrack({ compact }: { compact?: boolean }) {
           ) : null}
         </svg>
       </div>
-      <p className="px-4 pb-3 text-center text-xs font-medium text-ink">
-        Carry: {current.carry} → {current.handoff}
-      </p>
+      <p className="px-4 pb-3 text-center text-xs font-medium text-ink">{current.carry}</p>
     </div>
   )
 }
@@ -144,8 +141,7 @@ export function HandoffCard() {
 
   return (
     <div className="panel rounded-sm p-4">
-      <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-ink">Sector link</p>
-      <p className="mt-1 font-display text-xl font-semibold">{current.adventure}</p>
+      <p className="font-display text-xl font-semibold">{current.name}</p>
       <div className="mt-3 grid grid-cols-3 gap-2 text-center text-[11px] font-semibold">
         <div className={cn('rounded-sm border border-white/10 bg-mist/60 p-2', !prev && 'opacity-40')}>
           <p className="text-ink">Previous</p>
@@ -160,9 +156,6 @@ export function HandoffCard() {
           <p>{next?.name ?? 'Peak'}</p>
         </div>
       </div>
-      <p className="mt-3 text-sm font-medium text-ink">
-        Carry: {current.carry}. {current.handoff}
-      </p>
     </div>
   )
 }

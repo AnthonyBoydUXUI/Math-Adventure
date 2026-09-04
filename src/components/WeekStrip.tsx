@@ -16,10 +16,7 @@ export function WeekStrip({
   return (
     <section aria-label={`Week of ${clock.year}`}>
       <div className="flex items-end justify-between">
-        <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-ink">This week · {clock.year}</p>
-        <p className="text-[11px] font-medium text-ink">
-          {days[0]?.weekdayShort} {days[0]?.day}–{days[6]?.weekdayShort} {days[6]?.day}
-        </p>
+        <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-ink">{clock.year}</p>
       </div>
       <ol className="mt-2 grid grid-cols-7 gap-1">
         {days.map((d) => {

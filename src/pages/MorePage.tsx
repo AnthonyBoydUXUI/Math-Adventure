@@ -1,40 +1,32 @@
 import { Link } from 'react-router-dom'
 import { CircuitTrack, HandoffCard } from '../components/CircuitTrack.tsx'
-import { nightHex } from '../engine/render/palette.ts'
 import { TestReadinessCard } from '../components/TestReadinessCard.tsx'
-import { MODULES, SKILLS } from '../data/curriculum.ts'
-import { WORLDS } from '../data/worlds.ts'
+import { SKILLS } from '../data/curriculum.ts'
 import { compositeMastery, emptyStats } from '../engine/mastery.ts'
 import { usePlayerStore } from '../store.ts'
 
 export function MorePage() {
   return (
     <div className="px-4 pb-8">
-      <h1 className="type-pack text-5xl">System</h1>
+      <h1 className="type-pack text-5xl">More</h1>
       <div className="mt-4 grid gap-3">
         <Link to="/coach" className="panel press rounded-sm p-5">
-          <p className="text-xs font-medium uppercase tracking-widest text-ink">Telemetry</p>
-          <p className="font-display text-2xl font-semibold">Dimension desk</p>
+          <p className="font-display text-2xl font-semibold">Scores</p>
         </Link>
         <Link to="/map" className="panel press rounded-sm p-5">
-          <p className="text-xs font-medium uppercase tracking-widest text-ink">Worlds</p>
-          <p className="font-display text-2xl font-semibold">Subject circuit</p>
+          <p className="font-display text-2xl font-semibold">Map</p>
         </Link>
         <Link to="/parent" className="panel press rounded-sm p-5">
-          <p className="text-xs font-medium uppercase tracking-widest text-ink">Adults</p>
-          <p className="font-display text-2xl font-semibold">Parent desk</p>
+          <p className="font-display text-2xl font-semibold">Parent</p>
         </Link>
         <Link to="/account" className="panel press rounded-sm p-5">
-          <p className="text-xs font-medium uppercase tracking-widest text-ink">Backup</p>
-          <p className="font-display text-2xl font-semibold">Account + sync</p>
+          <p className="font-display text-2xl font-semibold">Account</p>
         </Link>
         <Link to="/watch" className="panel press rounded-sm p-5">
-          <p className="text-xs font-medium uppercase tracking-widest text-ink">Wearable</p>
-          <p className="font-display text-2xl font-semibold">Watch glance</p>
+          <p className="font-display text-2xl font-semibold">Watch</p>
         </Link>
         <Link to="/privacy-center" className="panel press rounded-sm p-5">
-          <p className="text-xs font-medium uppercase tracking-widest text-ink">Data rights</p>
-          <p className="font-display text-2xl font-semibold">Privacy Center</p>
+          <p className="font-display text-2xl font-semibold">Privacy</p>
         </Link>
       </div>
       <nav className="mt-5 flex flex-wrap gap-x-4 gap-y-2 text-sm font-semibold text-sky" aria-label="Legal">
@@ -49,39 +41,23 @@ export function MorePage() {
 export function MapPage() {
   const stats = usePlayerStore((s) => s.stats)
   const tracks = [
-    { id: 'classroom', title: 'Classroom', sub: 'Grade 7 course topics' },
-    { id: 'foundation', title: 'Foundation', sub: 'Precision, not remediation theater' },
-    { id: 'next', title: 'Next Level', sub: '8th + Algebra I peek' },
+    { id: 'classroom', title: 'Classroom' },
+    { id: 'foundation', title: 'Foundation' },
+    { id: 'next', title: 'Next' },
   ] as const
 
   return (
     <div className="px-4 pb-8">
-      <h1 className="type-pack text-5xl">Subject circuit</h1>
-      <p className="mt-1 font-medium text-ink">
-        Each subject is its own world. The Harbor RS carries one idea into the next so the math actually connects.
-      </p>
+      <h1 className="type-pack text-5xl">Map</h1>
       <div className="mt-3">
         <HandoffCard />
       </div>
       <div className="mt-3">
         <CircuitTrack />
       </div>
-      <div className="mt-3 space-y-2">
-        {WORLDS.filter((w) => w.track === 'classroom').map((w) => (
-          <div key={w.id} className="overflow-hidden rounded-sm p-3 text-white" style={{ background: nightHex(w.color, 0.5, 0.2) }}>
-            <p className="font-semibold">{w.name}</p>
-            <p className="text-sm font-medium text-white/90">{w.adventure}</p>
-            <p className="mt-1 text-sm font-medium text-white/80">{w.bridgeLine}</p>
-            <p className="mt-1 text-xs font-medium text-white/70">
-              Carry: {w.carry} → {w.handoff}
-            </p>
-          </div>
-        ))}
-      </div>
       {tracks.map((t) => (
         <section key={t.id} className="mt-5">
           <h2 className="font-display text-2xl font-semibold">{t.title}</h2>
-          <p className="text-sm font-medium text-ink">{t.sub}</p>
           <div className="mt-2 grid gap-2">
             {SKILLS.filter((s) => s.track === t.id).map((s) => {
               const m = compositeMastery(stats[s.id] ?? emptyStats())
@@ -97,17 +73,12 @@ export function MapPage() {
                       style={{ width: `${m}%` }}
                     />
                   </div>
-                  <p className="mt-1 text-xs font-medium text-ink">{s.blurb}</p>
                 </div>
               )
             })}
           </div>
         </section>
       ))}
-      <p className="mt-6 text-xs font-medium text-ink">
-        Classroom items are original practice on typical Grade 7 topics — not copied pages or publisher banks, and not an official course partnership.
-      </p>
-      <p className="text-xs font-medium text-ink">{MODULES.length} modules on the classroom spine.</p>
     </div>
   )
 }
@@ -122,16 +93,13 @@ export function CoachPage() {
 
   return (
     <div className="px-4 pb-8">
-      <h1 className="type-pack text-5xl">Telemetry</h1>
-      <p className="mt-1 font-medium text-ink">
-        A 440 overall is a prior, not a personality. Geometry can be strong while stats is noisy. Test Lab is where that split becomes a plan.
-      </p>
+      <h1 className="type-pack text-5xl">Scores</h1>
       <div className="mt-4">
         <TestReadinessCard />
       </div>
       {focus ? (
         <div className="panel mt-4 rounded-sm p-4">
-          <p className="text-xs font-medium uppercase tracking-widest text-ink">Focus dimensions</p>
+          <p className="text-xs font-medium uppercase tracking-widest text-ink">Focus</p>
           {Object.entries(focus)
             .filter(([k]) => !['attempts', 'correct', 'lastSeen'].includes(k))
             .map(([k, v]) => (
@@ -147,10 +115,10 @@ export function CoachPage() {
             ))}
         </div>
       ) : null}
-      <h2 className="mt-5 font-display text-2xl font-semibold">What the misses actually were</h2>
+      <h2 className="mt-5 font-display text-2xl font-semibold">Misses</h2>
       <div className="mt-2 space-y-2">
         {Object.keys(mix).length === 0 ? (
-          <p className="font-medium text-ink">Run a session and this fills in — slips vs gaps vs format vs nerves.</p>
+          <p className="font-medium text-ink">Play first.</p>
         ) : (
           Object.entries(mix).map(([k, n]) => (
             <p key={k} className="panel rounded-xl px-3 py-2 font-semibold">

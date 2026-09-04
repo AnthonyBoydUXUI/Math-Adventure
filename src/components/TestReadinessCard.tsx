@@ -10,11 +10,11 @@ export function TestReadinessCard({ compact }: { compact?: boolean }) {
     <div className="panel rounded-sm p-4">
       <div className="flex items-end justify-between gap-3">
         <div>
-          <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-ink">Test readiness</p>
+          <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-ink">Ready</p>
           <p className="font-display text-2xl font-semibold">{report.sampleSize ? report.readiness : '—'}</p>
         </div>
         <p className="text-right text-xs font-medium text-ink">
-          {report.sampleSize ? `${report.sampleSize} test-style plays` : 'No lab sample yet — not a score'}
+          {report.sampleSize ? report.sampleSize : '—'}
         </p>
       </div>
       <div className="mt-2 h-1 overflow-hidden bg-mist">
@@ -49,14 +49,11 @@ export function TestReadinessCard({ compact }: { compact?: boolean }) {
             </div>
           ) : null}
           <p className="mt-3 text-sm font-medium text-navy">{report.drillLine}</p>
-          <p className="mt-1 text-sm font-medium text-ink">{report.testDayLine}</p>
         </>
-      ) : (
-        <p className="mt-3 text-sm font-medium text-ink">{report.drillLine}</p>
-      )}
+      ) : null}
       {compact ? (
         <Link to="/lab" className="mt-3 inline-block text-xs font-semibold uppercase tracking-[0.16em] text-sky">
-          Open Test Lab
+          Lab
         </Link>
       ) : null}
     </div>

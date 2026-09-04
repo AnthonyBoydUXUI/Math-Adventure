@@ -1,8 +1,8 @@
-# Aero · Math Adventure
+# Math Adventure
 
 Fifteen focused minutes a day for a seventh-grader who already thinks mathematically in class and needs that same mind on timed tests, transfer, and paper.
 
-Aero is a personal coach, a game, a visual lab, and a paper companion — not a remediation worksheet, not an answer key, and not a medical or official school diagnosis.
+Math Adventure is a personal coach, a game, a visual lab, and a paper companion — not a remediation worksheet, not an answer key, and not a medical or official school diagnosis.
 
 ## Daily flight
 
@@ -37,7 +37,7 @@ Each classroom module is a district (Ratio Runway, Tip Market, Balance Bridge…
 
 ## App Store readiness
 
-Aero is written to ship as an iOS Education app for students 12+ (not Kids Category). First launch is a parent / student-12+ gate. Privacy, Terms, and Support exist in-app and as static pages (`/privacy.html`, `/terms.html`, `/support.html`) so App Store Connect URLs work without JavaScript. Privacy Center exports or deletes the on-device save. See `APP_STORE.md` and `native/ios/README.md`.
+Math Adventure is written to ship as an iOS Education app for students 12+ (not Kids Category). First launch is a parent / student-12+ gate. Privacy, Terms, and Support exist in-app and as static pages (`/privacy.html`, `/terms.html`, `/support.html`) so App Store Connect URLs work without JavaScript. Privacy Center exports or deletes the on-device save. See `APP_STORE.md` and `native/ios/README.md`.
 
 ## Vercel
 
@@ -51,7 +51,7 @@ Tap the speaker in the app HUD to start moving world sound. Browsers block audio
 
 ## Architecture — local first, optional cloud
 
-Aero is a **static Vite app**. Math still runs in the browser. Optional **Supabase Auth + one `profiles` table** backs up the same JSON blob so phone, tablet, laptop, and the `/watch` glance share a save.
+Math Adventure is a **static Vite app**. Math still runs in the browser. Optional **Supabase Auth + one `profiles` table** backs up the same JSON blob so phone, tablet, laptop, and the `/watch` glance share a save.
 
 | What | Where it lives |
 | --- | --- |

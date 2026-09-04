@@ -1,40 +1,30 @@
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { DayClock } from '../components/DayClock.tsx'
+import { Aero } from '../components/Aero.tsx'
 import { ProblemStage } from '../components/ProblemStage.tsx'
-import { TestReadinessCard } from '../components/TestReadinessCard.tsx'
-import { WorldScene } from '../components/WorldScene.tsx'
-import { firstTopicId, skillById } from '../data/curriculum.ts'
-import { DIAGNOSIS_COPY } from '../engine/diagnosis.ts'
-import { compositeMastery, emptyStats } from '../engine/mastery.ts'
-import { ADVANCE_MASTERY, nextCurriculumStep } from '../engine/progress.ts'
-import { buildTestReport } from '../engine/testReady.ts'
+import { firstTopicId } from '../data/curriculum.ts'
 import { questionById } from '../data/questions.ts'
+import { compositeMastery, emptyStats } from '../engine/mastery.ts'
+import { nextCurriculumStep } from '../engine/progress.ts'
+import { buildTestReport } from '../engine/testReady.ts'
 import { linkedWorld, worldForModule } from '../data/worlds.ts'
 import { usePlayerStore } from '../store.ts'
-import { DIMENSIONS } from '../types.ts'
 
 export function TrainPage() {
   const navigate = useNavigate()
-  const { mission, session, resumeOrStart, bookmark } = usePlayerStore()
+  const { mission, session, resumeOrStart } = usePlayerStore()
 
   if (!session.active && !session.completed) {
     return (
-      <div className="px-5 py-8">
-        <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-ink">Session</p>
-        <h1 className="type-pack mt-2 text-5xl">15-minute run</h1>
-        <p className="mt-2 font-medium text-ink">{mission.title}</p>
-        <p className="mt-1 text-sm font-medium text-ink">Ignition 3 · Build 4 · Lab 4 · Boss 3 · Debrief 1</p>
-        <p className="mt-3 text-sm font-medium text-navy">{bookmark.label}</p>
-        <p className="mt-2">
-          <DayClock />
-        </p>
+      <div className="px-5 py-8 text-center">
+        <Aero className="cast-bob mx-auto h-40" />
+        <h1 className="type-pack mt-2 text-5xl">15</h1>
         <button
           type="button"
           className="press mt-6 min-h-11 w-full bg-[#0e1a3a] py-4 font-semibold uppercase tracking-[0.12em] text-bone"
           onClick={() => resumeOrStart(false)}
         >
-          Start today’s 15
+          Start
         </button>
       </div>
     )
@@ -51,99 +41,55 @@ export function TrainPage() {
   }
 
   const totalQ = mission.phases.reduce((n, p) => n + p.questionIds.length, 0)
-  const doneQ = mission.phases.slice(0, session.phaseIndex).reduce((n, p) => n + p.questionIds.length, 0) + session.itemIndex
-  const minutesLeft = mission.phases.slice(session.phaseIndex).reduce((n, p) => n + p.minutes, 0)
+  const doneQ =
+    mission.phases.slice(0, session.phaseIndex).reduce((n, p) => n + p.questionIds.length, 0) + session.itemIndex
 
   return (
     <div className="pb-6">
-      <div className="mx-4 mb-3 flex items-center justify-between rounded-sm border border-white/10 bg-paper px-3 py-2 text-xs font-semibold">
-        <span>{phase.label}</span>
-        <span className="text-ink">
-          {doneQ + 1}/{totalQ} · ~{minutesLeft} min remaining
-        </span>
+      <div className="mx-4 mb-3 h-1.5 overflow-hidden bg-mist">
+        <div className="h-full bg-gold" style={{ width: `${((doneQ + 1) / Math.max(1, totalQ)) * 100}%` }} />
       </div>
-      <div className="mx-4 mb-3">
-        <DayClock compact />
-      </div>
-      <p className="mx-4 mb-3 font-medium text-ink">{phase.coachLine}</p>
-      <ProblemStage question={q} phaseLabel={`${phase.label} · ${skillById(q.skillId)?.name}`} />
+      <ProblemStage question={q} phaseLabel={phase.label} />
     </div>
   )
 }
 
 function Recap({ onLeave, onKeep }: { onLeave: () => void; onKeep: () => void }) {
-  const { attempts, mission, stats, cosmetics, session, parent, driveTo, completeRecap } = usePlayerStore()
+  const { attempts, mission, stats, session, parent, driveTo, completeRecap, cosmetics } = usePlayerStore()
   const today = useMemo(
     () => attempts.filter((a) => a.at >= (session.startedAt || 0)),
     [attempts, session.startedAt],
   )
   const correct = today.filter((a) => a.correct).length
-  const diagnoses = today.reduce<Record<string, number>>((acc, a) => {
-    acc[a.diagnosis] = (acc[a.diagnosis] ?? 0) + 1
-    return acc
-  }, {})
   const focus = stats[mission.focusSkillId] ?? emptyStats()
   const world = worldForModule(parent.moduleId)
   const next = linkedWorld(world, 'next')
   const report = buildTestReport(attempts)
-  const delta = (session.readinessAtStart ?? report.readiness) === report.readiness
-    ? 0
-    : report.readiness - (session.readinessAtStart ?? report.readiness)
   const step = nextCurriculumStep(parent.moduleId, parent.topicId, compositeMastery(focus))
-  const cameBack = today.some((a) => a.correct && !a.firstDraftCorrect)
   function finish(choice?: 'advance' | 'deepen') {
     completeRecap(choice)
     onLeave()
   }
 
   return (
-    <div className="px-4 pb-8">
-      <p className="text-center text-[11px] font-medium uppercase tracking-[0.22em] text-ink">Debrief</p>
-      <h1 className="type-pack text-center text-5xl">Session complete</h1>
-      <p className="mt-2 text-center">
-        <DayClock compact />
-      </p>
-      <p className="mt-1 text-center font-medium text-ink">
-        {correct} correct · {today.length} plays · streak counts when you finish
-      </p>
-      {cameBack ? (
-        <p className="mt-2 text-center text-sm font-medium text-gold">Comeback counted — you recovered a miss.</p>
-      ) : null}
-      <div className="mt-4 grid grid-cols-2 gap-2">
-        {DIMENSIONS.map((d) => (
-          <div key={d} className="panel rounded-sm p-3">
-            <p className="text-[10px] font-medium uppercase tracking-widest text-ink">{d}</p>
-            <p className="font-display text-2xl font-semibold">{Math.round(focus[d])}</p>
-            <div className="mt-1 h-1 overflow-hidden bg-mist">
-              <div className="h-full bg-sky" style={{ width: `${focus[d]}%` }} />
-            </div>
-          </div>
-        ))}
-      </div>
-      <div className="mt-4 space-y-2">
-        {Object.entries(diagnoses).map(([k, n]) => (
-          <p key={k} className="rounded-sm bg-paper px-3 py-2 text-sm font-medium">
-            <span className="font-semibold">{DIAGNOSIS_COPY[k as keyof typeof DIAGNOSIS_COPY]?.title}</span>
-            <span className="text-ink"> · {n}</span>
-          </p>
-        ))}
-      </div>
-      <p className="mt-4 text-center text-sm font-medium text-ink">
-        Next: {skillById(mission.foundationSkillId)?.name} under the hood, {skillById(mission.nextSkillId)?.name} on the peak.
-      </p>
-      <p className="mt-1 text-center text-xs font-medium text-ink">
-        Classroom mastery {Math.round(compositeMastery(focus))}
-        {compositeMastery(focus) >= ADVANCE_MASTERY ? ' · ready to move' : ' · stay and deepen'}
+    <div className="px-4 pb-8 text-center">
+      <Aero
+        mood="cheer"
+        goggles={cosmetics.goggles}
+        hoodie={cosmetics.hoodie}
+        kicks={cosmetics.kicks}
+        className="cast-bob mx-auto h-36"
+      />
+      <h1 className="type-pack text-5xl">Done</h1>
+      <p className="mt-2 font-display text-4xl font-semibold">
+        {correct}
+        <span className="text-lg text-ink"> / {today.length}</span>
       </p>
       {session.readinessAtStart != null && report.sampleSize ? (
-        <p className="mt-2 text-center text-sm font-semibold">
-          Readiness {session.readinessAtStart} → {report.readiness}
-          {delta > 0 ? ` · +${delta}` : delta < 0 ? ` · ${delta}` : ' · held'}
+        <p className="mt-1 text-sm font-semibold">
+          {session.readinessAtStart} → {report.readiness}
         </p>
       ) : null}
-      <div className="mt-4">
-        <TestReadinessCard />
-      </div>
       {step.reason === 'advance' ? (
         <div className="mt-4 grid grid-cols-2 gap-2">
           <button
@@ -158,51 +104,32 @@ function Recap({ onLeave, onKeep }: { onLeave: () => void; onKeep: () => void })
             className="press border border-white/15 py-3 text-sm font-semibold uppercase tracking-[0.1em]"
             onClick={() => finish('deepen')}
           >
-            Stay and deepen
+            Stay
           </button>
         </div>
       ) : null}
-      {next ? (
-        <div className="panel mt-4 overflow-hidden rounded-sm">
-          <WorldScene
-            embed
-            moduleId={next.moduleId ?? parent.moduleId}
-            paint={cosmetics.paint}
-            wheels={cosmetics.wheels}
-            wing={cosmetics.wing}
-            className="h-40"
-          />
-          <div className="p-4">
-            <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-ink">Next sector</p>
-            <p className="font-display text-xl font-semibold">{next.name}</p>
-            <p className="text-sm font-medium text-ink">{world.handoff}</p>
-          {next.moduleId ? (
-            <button
-              type="button"
-              className="press mt-3 w-full bg-[#0e1a3a] py-3 font-semibold uppercase tracking-[0.12em] text-bone"
-              onClick={() => {
-                completeRecap()
-                driveTo(next.moduleId!, firstTopicId(next.moduleId!) ?? parent.topicId)
-                onLeave()
-              }}
-            >
-              Drive to {next.name}
-            </button>
-          ) : (
-            <p className="mt-3 text-center text-sm font-medium text-gold">{next.adventure}</p>
-          )}
-          </div>
-        </div>
+      {next?.moduleId ? (
+        <button
+          type="button"
+          className="press mt-3 w-full bg-[#0e1a3a] py-3 font-semibold uppercase tracking-[0.12em] text-bone"
+          onClick={() => {
+            completeRecap()
+            driveTo(next.moduleId!, firstTopicId(next.moduleId!) ?? parent.topicId)
+            onLeave()
+          }}
+        >
+          {next.name}
+        </button>
       ) : null}
       <button
         type="button"
-        className="press mt-5 w-full rounded-sm border border-white/15 py-4 font-semibold"
+        className="press mt-3 w-full rounded-sm border border-white/15 py-4 font-semibold"
         onClick={() => finish()}
       >
-        End session
+        Home
       </button>
       <button type="button" className="mt-2 w-full py-3 text-sm font-medium text-ink" onClick={onKeep}>
-        Continue (optional)
+        Keep going
       </button>
     </div>
   )

@@ -21,10 +21,7 @@ export function AccountPage() {
   return (
     <div className="px-4 pb-8">
       <h1 className="type-pack text-5xl">Account</h1>
-      <p className="mt-2 text-sm font-medium text-ink">
-        One email, one profile. Phone, tablet, laptop, and the watch glance all read the same row. Clearing Safari on
-        one device does not wipe the cloud copy.
-      </p>
+      <p className="mt-2 text-sm font-medium text-ink">One email. Same save on every device.</p>
 
       {cloud.configured ? (
         <p className="mt-3 text-xs font-medium text-ink">
@@ -128,12 +125,8 @@ export function AccountPage() {
 
       {message ? <p className="mt-3 text-sm font-medium text-navy">{message}</p> : null}
 
-      <p className="mt-6 text-xs font-medium text-ink">
-        Email is the only login. No ads, no tracking. Homework photos stay on the device that took them — the cloud
-        profile holds progress, streak, and the left-off bookmark.
-      </p>
       <Link to="/watch" className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-sky">
-        Open watch glance
+        Watch
       </Link>
     </div>
   )

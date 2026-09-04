@@ -1,3 +1,4 @@
+import { Aero } from '../components/Aero.tsx'
 import { WindowBox } from '../components/WindowBox.tsx'
 import { WorldScene } from '../components/WorldScene.tsx'
 import { ACHIEVEMENTS, COSMETICS } from '../data/meta.ts'
@@ -9,23 +10,30 @@ export function LockerPage() {
 
   return (
     <div className="px-4 pb-8">
-      <h1 className="type-pack text-5xl">Garage</h1>
-      <p className="mt-1 font-medium text-ink">Loadout for the Harbor RS. Unlocks track habits, not grind.</p>
+      <h1 className="type-pack text-5xl">Gear</h1>
 
-      <WindowBox className="mt-4" stamp="Harbor RS" series="Flight series" title="Vehicle loadout">
-        <WorldScene
-          embed
-          moduleId={parent.moduleId}
-          paint={cosmetics.paint}
-          wheels={cosmetics.wheels}
-          wing={cosmetics.wing}
-          className="h-64"
-        />
+      <WindowBox className="mt-4" stamp="Harbor RS" series="Form 01">
+        <div className="relative">
+          <WorldScene
+            embed
+            moduleId={parent.moduleId}
+            paint={cosmetics.paint}
+            wheels={cosmetics.wheels}
+            wing={cosmetics.wing}
+            className="h-64"
+          />
+          <Aero
+            goggles={cosmetics.goggles}
+            hoodie={cosmetics.hoodie}
+            kicks={cosmetics.kicks}
+            className="pointer-events-none absolute bottom-0 right-2 h-48 w-40"
+          />
+        </div>
       </WindowBox>
 
-      {(['paint', 'wheels', 'wing'] as const).map((slot) => (
+      {(['goggles', 'hoodie', 'kicks', 'paint', 'wheels', 'wing'] as const).map((slot) => (
         <section key={slot} className="mt-4">
-          <h2 className="text-xs font-medium uppercase tracking-[0.18em] text-ink">{slot}</h2>
+          <h2 className="text-xs font-medium uppercase tracking-[0.18em] text-ink">{slot === 'goggles' ? 'visor' : slot}</h2>
           <div className="mt-2 grid grid-cols-2 gap-2">
             {COSMETICS.filter((c) => c.slot === slot).map((c) => {
               const on = cosmetics.unlocked.includes(c.id)
@@ -42,7 +50,6 @@ export function LockerPage() {
                   )}
                 >
                   <p className="font-semibold">{c.name}</p>
-                  <p className="text-xs font-medium text-ink">{on ? c.subtitle : 'Locked'}</p>
                 </button>
               )
             })}
@@ -50,7 +57,7 @@ export function LockerPage() {
         </section>
       ))}
 
-      <h2 className="mt-6 font-display text-2xl font-semibold">Habits unlocked</h2>
+      <h2 className="mt-6 font-display text-2xl font-semibold">Habits</h2>
       <div className="mt-2 grid gap-2">
         {ACHIEVEMENTS.map((a) => (
           <div
@@ -61,9 +68,6 @@ export function LockerPage() {
             )}
           >
             <p className="font-semibold">{a.name}</p>
-            <p className={cn('text-sm font-medium', achievements.includes(a.id) ? 'text-gold' : 'text-ink')}>
-              {a.description}
-            </p>
           </div>
         ))}
       </div>
