@@ -50,7 +50,7 @@ export function LockerPage() {
         </section>
       ))}
 
-      <h2 className="mt-6 font-display text-2xl font-semibold">Trophies</h2>
+      <h2 className="mt-6 font-display text-2xl font-semibold">Habits unlocked</h2>
       <div className="mt-2 grid gap-2">
         {ACHIEVEMENTS.map((a) => (
           <div
