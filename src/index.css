@@ -262,13 +262,61 @@ option {
   }
 }
 
+@keyframes signal-stride {
+  0%,
+  100% {
+    transform: rotate(-20deg);
+  }
+  50% {
+    transform: rotate(20deg);
+  }
+}
+
+@keyframes signal-bob {
+  50% {
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes signal-cheer {
+  50% {
+    transform: translateY(-7px);
+  }
+}
+
+.signal-walk .signal-leg-l,
+.signal-walk .signal-arm-r {
+  transform-origin: top center;
+  animation: signal-stride 0.36s ease-in-out infinite;
+}
+
+.signal-walk .signal-leg-r,
+.signal-walk .signal-arm-l {
+  transform-origin: top center;
+  animation: signal-stride 0.36s ease-in-out infinite reverse;
+}
+
+.signal-idle {
+  animation: signal-bob 1.7s ease-in-out infinite;
+}
+
+.signal-cheer {
+  animation: signal-cheer 0.42s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .press {
     transition: none;
   }
   .cast-bob,
   .twinkle,
-  .twinkle-2 {
+  .twinkle-2,
+  .signal-walk .signal-leg-l,
+  .signal-walk .signal-leg-r,
+  .signal-walk .signal-arm-l,
+  .signal-walk .signal-arm-r,
+  .signal-idle,
+  .signal-cheer {
     animation: none;
   }
 }
