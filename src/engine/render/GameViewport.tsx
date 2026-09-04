@@ -1,6 +1,6 @@
 import { Component, type ReactNode } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { ContactShadows, Grid, MeshReflectorMaterial } from '@react-three/drei'
+import { ContactShadows, Grid } from '@react-three/drei'
 import { useRef } from 'react'
 import type { PerspectiveCamera } from 'three'
 import { Chassis } from './Chassis.tsx'
@@ -40,7 +40,7 @@ export function GameViewport({
         camera={{ position: [4.9, 2.15, 5.35], fov: 32, near: 0.1, far: 48 }}
         dpr={[1, 1.5]}
         gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
-        shadows
+        shadows="percentage"
         style={{ width: '100%', height: '100%' }}
       >
         <color attach="background" args={['#05070b']} />
@@ -56,21 +56,9 @@ export function GameViewport({
           shadow-mapSize-height={1024}
         />
         <directionalLight position={[-6, 1.6, -3]} intensity={0.62} color={night} />
-        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow>
           <planeGeometry args={[48, 48]} />
-          <MeshReflectorMaterial
-            blur={[200, 80]}
-            resolution={256}
-            mixBlur={0.85}
-            mixStrength={18}
-            roughness={0.92}
-            depthScale={0.8}
-            minDepthThreshold={0.35}
-            maxDepthThreshold={1.25}
-            color="#0a0d12"
-            metalness={0.55}
-            mirror={0.15}
-          />
+          <meshStandardMaterial color="#0a0d12" metalness={0.35} roughness={0.88} />
         </mesh>
         <Grid
           args={[24, 24]}
