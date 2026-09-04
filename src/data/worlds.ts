@@ -172,7 +172,7 @@ export const WORLDS: AdventureWorld[] = [
       warmup: 'Both sides feel every move — left and right stay even.',
       builder: 'Undo. Keep the span honest — just reverse the last step.',
       lab: 'Same equation, just a new wrapper.',
-      boss: 'Write it out, then Balance the span.',
+      boss: 'Write it. Balance the span — on paper.',
       recap: 'Shoreline next — same undos, open circle.',
     },
   },
