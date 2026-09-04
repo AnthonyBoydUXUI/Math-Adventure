@@ -1,0 +1,152 @@
+import { describe, expect, it } from 'vitest'
+import { checkAnswer } from '../lib/answers.ts'
+import type { ParentSettings } from '../types.ts'
+import { diagnose } from './diagnosis.ts'
+import { buildHomeworkPlan, homeworkFeedback } from './homework.ts'
+import { emptyStats, seedSkillStats } from './mastery.ts'
+import { evaluateAchievements } from './scoring.ts'
+import { generateDailyMission, labSequence, missionMinutes } from './session.ts'
+import { parseVoice } from './voice/index.ts'
+
+const parent: ParentSettings = {
+  moduleId: 'm6',
+  topicId: 'm6-t1',
+  themes: ['basketball'],
+  pressureLab: false,
+  studentName: 'Test',
+}
+
+describe('daily mission', () => {
+  it('builds a 15-minute five-phase flight', () => {
+    const mission = generateDailyMission(seedSkillStats(), parent, new Date('2026-09-04'))
+    expect(mission.phases.map((p) => p.phase)).toEqual(['warmup', 'builder', 'lab', 'boss', 'recap'])
+    expect(missionMinutes(mission)).toBe(15)
+    expect(mission.phases.find((p) => p.phase === 'warmup')?.questionIds.length).toBeGreaterThan(0)
+    expect(mission.phases.find((p) => p.phase === 'boss')?.questionIds.length).toBe(1)
+  })
+
+  it('keeps Test Lab on one family with multiple formats', () => {
+    const seq = labSequence('hoodie-equation', () => 0.2)
+    expect(seq.length).toBeGreaterThanOrEqual(3)
+    expect(new Set(seq.map((q) => q.familyId)).size).toBe(1)
+    expect(new Set(seq.map((q) => q.format)).size).toBeGreaterThan(1)
+  })
+
+  it('overweights the parent-selected classroom skill', () => {
+    const mission = generateDailyMission(seedSkillStats(), parent, new Date('2026-09-04'))
+    expect(mission.focusSkillId).toBe('two-step-eq')
+  })
+})
+
+describe('diagnosis', () => {
+  const base = {
+    usedPaper: true,
+    paperExpected: true,
+    usedHint: false,
+    confidence: 3,
+    timeMs: 20000,
+    targetMs: 40,
+    format: 'word' as const,
+    seenFormats: ['word'] as const,
+    familyAccuracy: 0.8,
+    skill: { ...emptyStats(), knowledge: 70, accuracy: 70, transfer: 40, responseTime: 60 },
+  }
+
+  it('flags second-guessing when a correct first draft is changed', () => {
+    expect(
+      diagnose({
+        ...base,
+        correct: false,
+        firstDraftCorrect: true,
+        changed: true,
+      }),
+    ).toBe('second_guessing')
+  })
+
+  it('flags transfer when a known skill fails a new format', () => {
+    expect(
+      diagnose({
+        ...base,
+        correct: false,
+        firstDraftCorrect: false,
+        changed: false,
+        format: 'graph',
+        seenFormats: ['word'],
+      }),
+    ).toBe('transfer_difficulty')
+  })
+
+  it('flags skipped writing on paper-first misses', () => {
+    expect(
+      diagnose({
+        ...base,
+        correct: false,
+        firstDraftCorrect: false,
+        changed: false,
+        usedPaper: false,
+        paperExpected: true,
+      }),
+    ).toBe('skipped_writing')
+  })
+})
+
+describe('answers and homework', () => {
+  it('accepts equivalent fractions', () => {
+    expect(checkAnswer({ type: 'fraction', n: 3, d: 10 }, '3/10')).toBe(true)
+    expect(checkAnswer({ type: 'fraction', n: 3, d: 10 }, '0.3')).toBe(true)
+  })
+
+  it('parses percent-of homework without revealing first', () => {
+    const plan = buildHomeworkPlan('What is 15% of 40?')
+    expect(plan.skillId).toBe('percent-of')
+    expect(plan.check).toBe(6)
+    const first = homeworkFeedback(plan, '9')
+    expect(first.verdict).toBe('retry')
+    const second = homeworkFeedback(plan, '6')
+    expect(second.verdict).toBe('correct')
+  })
+})
+
+describe('achievements', () => {
+  it('grants Trust Yourself for a locked correct first answer', () => {
+    const earned = evaluateAchievements({
+      unlocked: [],
+      attempts: [
+        {
+          id: '1',
+          at: 1,
+          questionId: 'eq-eq',
+          skillId: 'two-step-eq',
+          familyId: 'hoodie-equation',
+          format: 'equation',
+          phase: 'lab',
+          correct: true,
+          firstDraftCorrect: true,
+          changed: false,
+          lockedIn: true,
+          usedHint: false,
+          usedPaper: true,
+          confidence: 4,
+          timeMs: 8000,
+          diagnosis: 'solid',
+          answerGiven: '42',
+        },
+      ],
+      streak: 1,
+      labStreakCorrect: 1,
+      usedVoiceAnotherWay: false,
+      completedFlight: false,
+    })
+    expect(earned).toContain('trust-yourself')
+  })
+})
+
+describe('voice intents', () => {
+  it('parses coach phrases and spoken answers', () => {
+    expect(parseVoice("I don't get this").intent).toBe('confused')
+    expect(parseVoice('Explain it another way').intent).toBe('another_way')
+    expect(parseVoice('Why did we divide?').intent).toBe('why')
+    expect(parseVoice('I got 24').intent).toBe('answer')
+    expect(parseVoice('I got 24').number).toBe(24)
+  })
+})

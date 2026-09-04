@@ -1,0 +1,79 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-display: 'Outfit', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Nunito', ui-sans-serif, system-ui, sans-serif;
+  --color-navy: #141628;
+  --color-ink: #1c2038;
+  --color-cream: #fff6ec;
+  --color-paper: #ffffff;
+  --color-orange: #ff6a2b;
+  --color-sky: #3d9bff;
+  --color-leaf: #22a36b;
+  --color-gold: #ffc53d;
+  --color-pink: #ff4d8d;
+  --color-violet: #7b61ff;
+  --color-goggle: #e11d48;
+  --color-mist: #e8eefc;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: radial-gradient(1200px 600px at 10% -10%, #ffe3c4 0%, transparent 50%),
+    radial-gradient(900px 500px at 100% 0%, #cfe4ff 0%, transparent 46%),
+    #fff6ec;
+  color: var(--color-navy);
+}
+
+#root {
+  min-height: 100dvh;
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.path-dot {
+  box-shadow: 0 10px 0 rgba(20, 22, 40, 0.18), 0 0 0 6px rgba(255, 255, 255, 0.9);
+}
+
+.path-dot-active {
+  box-shadow: 0 12px 0 rgba(20, 22, 40, 0.2), 0 0 0 8px rgba(255, 77, 141, 0.18);
+}
+
+.paper-card {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 248, 240, 0.95)),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 27px,
+      rgba(61, 155, 255, 0.08) 28px
+    );
+}
+
+.hud-pill {
+  background: white;
+  border: 2px solid #141628;
+  box-shadow: 0 3px 0 #141628;
+}
+
+.press {
+  box-shadow: 0 4px 0 #141628;
+}
+
+.press:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #141628;
+}
+
+.figure-window {
+  background: linear-gradient(180deg, #f4fbff, #d7ecff);
+}
