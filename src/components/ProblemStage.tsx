@@ -6,6 +6,7 @@ import { formatAnswer } from '../lib/answers.ts'
 import { cn } from '../lib/cn.ts'
 import { usePlayerStore } from '../store.ts'
 import type { Question } from '../types.ts'
+import { HINT_SPARK_COST } from '../engine/scoring.ts'
 import { Scoreboard } from './Scoreboard.tsx'
 import { VisualMath } from './VisualMath.tsx'
 import { VoiceTutor } from './VoiceTutor.tsx'
@@ -188,7 +189,7 @@ export function ProblemStage({ question, phaseLabel }: { question: Question; pha
             className="rounded-sm border border-white/15 px-3 py-1 text-xs font-medium"
             onClick={useHint}
           >
-            Hint {session.hints ? `(${session.hints})` : ''}
+            {session.hints ? `Another look · ${HINT_SPARK_COST} SPK` : 'Hint (free)'}
           </button>
           <button
             type="button"

@@ -16,7 +16,8 @@ import {
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useCloud } from '../cloud/CloudProvider.tsx'
 import { worldForModule } from '../data/worlds.ts'
-import { levelFromXp, xpIntoLevel } from '../engine/scoring.ts'
+import { compositeMastery, emptyStats } from '../engine/mastery.ts'
+import { buildTestReport } from '../engine/testReady.ts'
 import { useDeviceSurface } from '../hooks/useDeviceSurface.ts'
 import { cn } from '../lib/cn.ts'
 import { resumeAudio, setMuted, startAmbient } from '../lib/sfx.ts'
@@ -35,12 +36,12 @@ const NAV = [
 const UNGATED = new Set(['/privacy', '/terms', '/support', '/privacy-center'])
 
 export function Shell() {
-  const { xp, sparks, streak, toast, setToast, studentName, soundOn, toggleSound, parent, compliance } =
+  const { sparks, streak, toast, setToast, studentName, soundOn, toggleSound, parent, compliance, attempts, stats, mission } =
     usePlayerStore()
   const cloud = useCloud()
   const surface = useDeviceSurface()
-  const level = levelFromXp(xp)
-  const into = xpIntoLevel(xp)
+  const readiness = buildTestReport(attempts).readiness
+  const mastery = Math.round(compositeMastery(stats[mission.focusSkillId] ?? emptyStats()))
   const audioEnabled = soundOn !== false
   const loc = useLocation()
   const world = worldForModule(parent.moduleId)
@@ -85,16 +86,20 @@ export function Shell() {
           <Crosshair className="h-4 w-4 text-gold" />
         </div>
         <div className="hud-chip flex min-h-11 items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold tracking-[0.12em]">
-          <Zap className="h-3.5 w-3.5 text-gold" aria-hidden />
-          <span className="sr-only">Streak</span>
-          <span className="text-ink">STR</span>
-          {streak}
+          <span className="sr-only">Test readiness</span>
+          <span className="text-ink">RDY</span>
+          {readiness || '—'}
         </div>
         <div className="hud-chip flex min-h-11 items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold tracking-[0.12em]">
-          <span className="h-1.5 w-1.5 bg-sky" aria-hidden />
-          <span className="sr-only">Sparks</span>
-          <span className="text-ink">SPK</span>
-          {sparks}
+          <span className="sr-only">Focus mastery</span>
+          <span className="text-ink">MST</span>
+          {mastery}
+        </div>
+        <div className="hud-chip flex min-h-11 items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold tracking-[0.12em]">
+          <Zap className="h-3.5 w-3.5 text-gold" aria-hidden />
+          <span className="sr-only">Finished-day streak</span>
+          <span className="text-ink">STR</span>
+          {streak}
         </div>
         <button
           type="button"
@@ -119,12 +124,10 @@ export function Shell() {
             <Cloud className={cn('h-4 w-4', cloud.status === 'synced' ? 'text-leaf' : 'text-gold')} />
           </Link>
         ) : null}
-        <div className="hud-chip ml-auto flex min-h-11 items-center gap-2 px-2.5 py-1 text-[11px] font-semibold tracking-[0.12em]">
-          <span className="text-ink">LV</span>
-          {level}
-          <span className="h-1 w-16 overflow-hidden bg-mist" aria-hidden>
-            <span className="block h-full bg-sky" style={{ width: `${(into / 120) * 100}%` }} />
-          </span>
+        <div className="hud-chip ml-auto flex min-h-11 items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold tracking-[0.12em]">
+          <span className="sr-only">Sparks for extra hints</span>
+          <span className="text-ink">SPK</span>
+          {sparks}
         </div>
       </header>
 

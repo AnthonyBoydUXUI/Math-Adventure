@@ -101,6 +101,7 @@ export function LabPage() {
               awaitingLock: false,
               paperGate: Boolean(questionById(lab[0]?.id ?? '')?.paperFirst),
               labCorrectRun: 0,
+              labCorrectCount: 0,
               usedVoiceAnotherWay: false,
               completed: false,
             },

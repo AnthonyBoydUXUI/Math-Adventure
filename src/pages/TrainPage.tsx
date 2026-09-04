@@ -7,6 +7,8 @@ import { WorldScene } from '../components/WorldScene.tsx'
 import { firstTopicId, skillById } from '../data/curriculum.ts'
 import { DIAGNOSIS_COPY } from '../engine/diagnosis.ts'
 import { compositeMastery, emptyStats } from '../engine/mastery.ts'
+import { ADVANCE_MASTERY, nextCurriculumStep } from '../engine/progress.ts'
+import { buildTestReport } from '../engine/testReady.ts'
 import { questionById } from '../data/questions.ts'
 import { linkedWorld, worldForModule } from '../data/worlds.ts'
 import { usePlayerStore } from '../store.ts'
@@ -14,7 +16,7 @@ import { DIMENSIONS } from '../types.ts'
 
 export function TrainPage() {
   const navigate = useNavigate()
-  const { mission, session, resumeOrStart, completeRecap, bookmark } = usePlayerStore()
+  const { mission, session, resumeOrStart, bookmark } = usePlayerStore()
 
   if (!session.active && !session.completed) {
     return (
@@ -40,12 +42,12 @@ export function TrainPage() {
 
   const phase = mission.phases[session.phaseIndex]
   if (!phase || phase.phase === 'recap') {
-    return <Recap onDone={() => { completeRecap(); navigate('/') }} onKeep={() => resumeOrStart(true)} />
+    return <Recap onLeave={() => navigate('/')} onKeep={() => resumeOrStart(true)} />
   }
 
   const q = questionById(phase.questionIds[session.itemIndex])
   if (!q) {
-    return <Recap onDone={() => { completeRecap(); navigate('/') }} onKeep={() => resumeOrStart(true)} />
+    return <Recap onLeave={() => navigate('/')} onKeep={() => resumeOrStart(true)} />
   }
 
   const totalQ = mission.phases.reduce((n, p) => n + p.questionIds.length, 0)
@@ -69,8 +71,8 @@ export function TrainPage() {
   )
 }
 
-function Recap({ onDone, onKeep }: { onDone: () => void; onKeep: () => void }) {
-  const { attempts, mission, stats, cosmetics, session, parent, driveTo } = usePlayerStore()
+function Recap({ onLeave, onKeep }: { onLeave: () => void; onKeep: () => void }) {
+  const { attempts, mission, stats, cosmetics, session, parent, driveTo, completeRecap } = usePlayerStore()
   const today = useMemo(
     () => attempts.filter((a) => a.at >= (session.startedAt || 0)),
     [attempts, session.startedAt],
@@ -83,6 +85,16 @@ function Recap({ onDone, onKeep }: { onDone: () => void; onKeep: () => void }) {
   const focus = stats[mission.focusSkillId] ?? emptyStats()
   const world = worldForModule(parent.moduleId)
   const next = linkedWorld(world, 'next')
+  const report = buildTestReport(attempts)
+  const delta = (session.readinessAtStart ?? report.readiness) === report.readiness
+    ? 0
+    : report.readiness - (session.readinessAtStart ?? report.readiness)
+  const step = nextCurriculumStep(parent.moduleId, parent.topicId, compositeMastery(focus))
+  const cameBack = today.some((a) => a.correct && !a.firstDraftCorrect)
+  function finish(choice?: 'advance' | 'deepen') {
+    completeRecap(choice)
+    onLeave()
+  }
 
   return (
     <div className="px-4 pb-8">
@@ -92,8 +104,11 @@ function Recap({ onDone, onKeep }: { onDone: () => void; onKeep: () => void }) {
         <DayClock compact />
       </p>
       <p className="mt-1 text-center font-medium text-ink">
-        {correct} locked in · {today.length} plays
+        {correct} correct · {today.length} plays · streak counts when you finish
       </p>
+      {cameBack ? (
+        <p className="mt-2 text-center text-sm font-medium text-gold">Comeback counted — you recovered a miss.</p>
+      ) : null}
       <div className="mt-4 grid grid-cols-2 gap-2">
         {DIMENSIONS.map((d) => (
           <div key={d} className="panel rounded-sm p-3">
@@ -118,10 +133,35 @@ function Recap({ onDone, onKeep }: { onDone: () => void; onKeep: () => void }) {
       </p>
       <p className="mt-1 text-center text-xs font-medium text-ink">
         Classroom mastery {Math.round(compositeMastery(focus))}
+        {compositeMastery(focus) >= ADVANCE_MASTERY ? ' · ready to move' : ' · stay and deepen'}
       </p>
+      {session.readinessAtStart != null && report.sampleSize ? (
+        <p className="mt-2 text-center text-sm font-semibold">
+          Readiness {session.readinessAtStart} → {report.readiness}
+          {delta > 0 ? ` · +${delta}` : delta < 0 ? ` · ${delta}` : ' · held'}
+        </p>
+      ) : null}
       <div className="mt-4">
         <TestReadinessCard />
       </div>
+      {step.reason === 'advance' ? (
+        <div className="mt-4 grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            className="press bg-[#0e1a3a] py-3 text-sm font-semibold uppercase tracking-[0.1em] text-bone"
+            onClick={() => finish('advance')}
+          >
+            Advance
+          </button>
+          <button
+            type="button"
+            className="press border border-white/15 py-3 text-sm font-semibold uppercase tracking-[0.1em]"
+            onClick={() => finish('deepen')}
+          >
+            Stay and deepen
+          </button>
+        </div>
+      ) : null}
       {next ? (
         <div className="panel mt-4 overflow-hidden rounded-sm">
           <WorldScene
@@ -141,8 +181,9 @@ function Recap({ onDone, onKeep }: { onDone: () => void; onKeep: () => void }) {
               type="button"
               className="press mt-3 w-full bg-[#0e1a3a] py-3 font-semibold uppercase tracking-[0.12em] text-bone"
               onClick={() => {
+                completeRecap()
                 driveTo(next.moduleId!, firstTopicId(next.moduleId!) ?? parent.topicId)
-                onDone()
+                onLeave()
               }}
             >
               Drive to {next.name}
@@ -156,7 +197,7 @@ function Recap({ onDone, onKeep }: { onDone: () => void; onKeep: () => void }) {
       <button
         type="button"
         className="press mt-5 w-full rounded-sm border border-white/15 py-4 font-semibold"
-        onClick={onDone}
+        onClick={() => finish()}
       >
         End session
       </button>

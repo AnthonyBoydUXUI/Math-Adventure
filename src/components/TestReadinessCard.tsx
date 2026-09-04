@@ -11,10 +11,10 @@ export function TestReadinessCard({ compact }: { compact?: boolean }) {
       <div className="flex items-end justify-between gap-3">
         <div>
           <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-ink">Test readiness</p>
-          <p className="font-display text-2xl font-semibold">{report.readiness}</p>
+          <p className="font-display text-2xl font-semibold">{report.sampleSize ? report.readiness : '—'}</p>
         </div>
         <p className="text-right text-xs font-medium text-ink">
-          {report.sampleSize ? `${report.sampleSize} test-style plays` : 'No lab sample yet'}
+          {report.sampleSize ? `${report.sampleSize} test-style plays` : 'No lab sample yet — not a score'}
         </p>
       </div>
       <div className="mt-2 h-1 overflow-hidden bg-mist">

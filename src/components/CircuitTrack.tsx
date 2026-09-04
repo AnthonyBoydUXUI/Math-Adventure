@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { firstTopicId } from '../data/curriculum.ts'
 import { circuitPits, linkedWorld, worldForModule, type AdventureWorld } from '../data/worlds.ts'
+import { compositeMastery, emptyStats } from '../engine/mastery.ts'
 import { nightHex, sectorCode } from '../engine/render/palette.ts'
 import { cn } from '../lib/cn.ts'
 import { resumeAudio } from '../lib/sfx.ts'
@@ -45,7 +46,7 @@ export function CircuitTrack({ compact }: { compact?: boolean }) {
           {layout.pits.map((pit) => {
             const active = pit.world.id === current.id
             const mastery =
-              pit.world.skillIds.reduce((n, id) => n + (stats[id]?.accuracy ?? 50), 0) /
+              pit.world.skillIds.reduce((n, id) => n + compositeMastery(stats[id] ?? emptyStats()), 0) /
               Math.max(1, pit.world.skillIds.length)
             const r = active ? 18 : 14
             return (

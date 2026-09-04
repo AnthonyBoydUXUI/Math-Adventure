@@ -27,7 +27,7 @@ const PHASE_META: Record<Phase, { tone: string }> = {
 
 export function HomePage() {
   const navigate = useNavigate()
-  const { mission, parent, stats, cosmetics, resumeOrStart, achievements, session, bookmark, practiceDays } =
+  const { mission, parent, stats, cosmetics, resumeOrStart, session, bookmark, practiceDays } =
     usePlayerStore()
   const mod = moduleById(parent.moduleId)
   const focus = skillById(mission.focusSkillId)
@@ -178,7 +178,7 @@ export function HomePage() {
         {cta}
       </button>
       <p className="mt-2 text-center text-xs font-medium text-ink">
-        {achievements.length} trophies · 7th–8th grade track
+        Finish the 15 to move the streak · mastery {Math.round(mastery)} · 7th–8th
       </p>
     </div>
   )

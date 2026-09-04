@@ -63,4 +63,18 @@ describe('left-off bookmark', () => {
     expect(mark.nextTopicId).toBe('m7-t1')
     expect(mark.label).toMatch(/Next:/)
   })
+
+  it('lets a ready student stay and deepen instead of auto-advancing', () => {
+    const mission = generateDailyMission(seedSkillStats(), parent, new Date(2026, 8, 4))
+    const mark = buildBookmark({
+      now: new Date(2026, 8, 4, 16, 5),
+      parent,
+      mission,
+      session: { active: false, completed: true, phaseIndex: 4, itemIndex: 0 },
+      mastery: 80,
+      path: 'deepen',
+    })
+    expect(mark.kind).toBe('today-done')
+    expect(mark.nextTopicId).toBe('m6-t1')
+  })
 })

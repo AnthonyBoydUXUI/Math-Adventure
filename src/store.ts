@@ -5,7 +5,8 @@ import { questionById } from './data/questions.ts'
 import { diagnose, familyAccuracy, seenFormats } from './engine/diagnosis.ts'
 import { applyAttempt, emptyStats, seedSkillStats, compositeMastery } from './engine/mastery.ts'
 import { buildBookmark, defaultBookmark, markPracticeDay, type ProgressBookmark } from './engine/progress.ts'
-import { evaluateAchievements, xpForAttempt } from './engine/scoring.ts'
+import { evaluateAchievements, HINT_SPARK_COST, xpForAttempt } from './engine/scoring.ts'
+import { buildTestReport } from './engine/testReady.ts'
 import { generateDailyMission } from './engine/session.ts'
 import { resumeAudio, setMuted, sfx, startAmbient, stopAmbient } from './lib/sfx.ts'
 import { worldForModule } from './data/worlds.ts'
@@ -47,6 +48,8 @@ export interface SessionSlice {
     firstDraftCorrect: boolean
   }
   labCorrectRun: number
+  labCorrectCount: number
+  readinessAtStart?: number
   usedVoiceAnotherWay: boolean
   completed: boolean
 }
@@ -91,7 +94,7 @@ interface PlayerStore {
   nextItem: () => void
   skipPaperGate: () => void
   acceptPaperGate: () => void
-  completeRecap: () => void
+  completeRecap: (choice?: 'advance' | 'deepen') => void
   markVoice: () => void
   setParent: (patch: Partial<ParentSettings>) => void
   driveTo: (moduleId: string, topicId: string) => void
@@ -137,6 +140,7 @@ function freshSession(): SessionSlice {
     awaitingLock: false,
     paperGate: false,
     labCorrectRun: 0,
+    labCorrectCount: 0,
     usedVoiceAnotherWay: false,
     completed: false,
   }
@@ -313,6 +317,7 @@ export const usePlayerStore = create<PlayerStore>()(
             startedAt: Date.now(),
             questionStartedAt: Date.now(),
             paperGate: Boolean(q?.paperFirst),
+            readinessAtStart: buildTestReport(s.attempts).readiness,
           },
           practiceDays: markPracticeDay(s.practiceDays, dayKey(now)),
         })
@@ -326,7 +331,17 @@ export const usePlayerStore = create<PlayerStore>()(
             changed: s.session.firstDraft ? value !== s.session.firstDraft : s.session.changed,
           },
         })),
-      useHint: () => set((s) => ({ session: { ...s.session, hints: s.session.hints + 1 } })),
+      useHint: () => {
+        const s = get()
+        if (s.session.hints >= 1 && s.sparks < HINT_SPARK_COST) {
+          set({ toast: `Need ${HINT_SPARK_COST} sparks for another look` })
+          return
+        }
+        set({
+          sparks: s.session.hints >= 1 ? s.sparks - HINT_SPARK_COST : s.sparks,
+          session: { ...s.session, hints: s.session.hints + 1 },
+        })
+      },
       markPaper: () => set((s) => ({ session: { ...s.session, paper: true } })),
       setPhoto: (dataUrl) => set((s) => ({ session: { ...s.session, photo: dataUrl, paper: true } })),
       setConfidence: (n) => set((s) => ({ session: { ...s.session, confidence: n } })),
@@ -461,23 +476,23 @@ export const usePlayerStore = create<PlayerStore>()(
 
         const labCorrectRun =
           phase.phase === 'lab' ? (finalCorrect ? s.session.labCorrectRun + 1 : 0) : s.session.labCorrectRun
-        const streakState = ensureStreak({ streak: s.streak, lastDay: s.lastDay })
+        const labCorrectCount =
+          phase.phase === 'lab' && finalCorrect ? (s.session.labCorrectCount ?? 0) + 1 : (s.session.labCorrectCount ?? 0)
         const newAch = evaluateAchievements({
           unlocked: s.achievements,
           attempts: [...s.attempts, attempt],
-          streak: streakState.streak,
-          labStreakCorrect: labCorrectRun,
+          streak: s.streak,
+          labCorrectCount,
           usedVoiceAnotherWay: s.session.usedVoiceAnotherWay,
           completedFlight: false,
         }).filter((id) => !s.achievements.includes(id))
+        const unlockedName = ACHIEVEMENTS.find((a) => a.id === newAch[0])?.name
 
         set({
           stats,
           attempts: [...s.attempts, attempt],
           xp: s.xp + xpForAttempt(finalCorrect, phase.phase, s.session.paper),
-          sparks: s.sparks + (finalCorrect ? 4 : 1),
-          streak: streakState.streak,
-          lastDay: streakState.lastDay,
+          sparks: s.sparks + (finalCorrect ? 4 : 0),
           achievements: [...s.achievements, ...newAch],
           cosmetics: unlockCosmetics(s.cosmetics, [...s.achievements, ...newAch]),
           session: {
@@ -485,8 +500,9 @@ export const usePlayerStore = create<PlayerStore>()(
             awaitingLock: false,
             lastResult: { correct: finalCorrect, diagnosis, firstDraftCorrect: firstCorrect },
             labCorrectRun,
+            labCorrectCount,
           },
-          toast: newAch[0] ? `Achievement unlocked` : undefined,
+          toast: unlockedName ? `Unlocked · ${unlockedName}` : undefined,
         })
         if (finalCorrect) {
           sfx.correct()
@@ -553,29 +569,32 @@ export const usePlayerStore = create<PlayerStore>()(
         })
         refreshBookmark(set, get)
       },
-      completeRecap: () => {
+      completeRecap: (choice) => {
         const s = get()
         const streakState = ensureStreak({ streak: s.streak, lastDay: s.lastDay })
         const newAch = evaluateAchievements({
           unlocked: s.achievements,
           attempts: s.attempts,
           streak: streakState.streak,
-          labStreakCorrect: s.session.labCorrectRun,
+          labCorrectCount: s.session.labCorrectCount ?? s.session.labCorrectRun,
           usedVoiceAnotherWay: s.session.usedVoiceAnotherWay,
           completedFlight: true,
         }).filter((id) => !s.achievements.includes(id))
         const session = { ...s.session, active: false, completed: true }
         const mastery = compositeMastery(s.stats[s.mission.focusSkillId] ?? emptyStats())
+        const path = choice === 'advance' || choice === 'deepen' ? choice : undefined
         const bookmark = buildBookmark({
           parent: s.parent,
           mission: s.mission,
           session,
           mastery,
+          path,
         })
         const parent =
-          bookmark.kind === 'next-topic' && bookmark.nextModuleId && bookmark.nextTopicId
+          choice === 'advance' && bookmark.kind === 'next-topic' && bookmark.nextModuleId && bookmark.nextTopicId
             ? { ...s.parent, moduleId: bookmark.nextModuleId, topicId: bookmark.nextTopicId }
             : s.parent
+        const unlockedName = ACHIEVEMENTS.find((a) => a.id === newAch[0])?.name
         set({
           streak: streakState.streak,
           lastDay: streakState.lastDay,
@@ -588,6 +607,7 @@ export const usePlayerStore = create<PlayerStore>()(
           lastActiveAt: Date.now(),
           xp: s.xp + 30,
           sparks: s.sparks + 12,
+          toast: unlockedName ? `Unlocked · ${unlockedName}` : s.toast,
         })
         if (s.soundOn) sfx.xp()
       },

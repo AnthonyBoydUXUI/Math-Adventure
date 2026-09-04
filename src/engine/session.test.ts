@@ -173,12 +173,12 @@ describe('connected adventures', () => {
     expect(new Set(names).size).toBe(names.length)
   })
 
-  it('lays pits in a connected circuit and names the tank in coach copy', () => {
+  it('lays pits in a connected circuit and names the carry in coach copy', () => {
     const pits = circuitPits()
     expect(pits.length).toBe(classroomChain().length)
     expect(pits.every((p, i) => i === 0 || p.y > pits[i - 1]!.y)).toBe(true)
     const mission = generateDailyMission(seedSkillStats(), parent, new Date('2026-09-04'))
-    expect(mission.phases[0]?.coachLine).toMatch(/tank/i)
+    expect(mission.phases[0]?.coachLine).toMatch(/carrying|launch/i)
     expect(mission.phases[1]?.coachLine).toMatch(/Next pit/)
   })
 

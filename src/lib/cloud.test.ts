@@ -56,6 +56,7 @@ function snap(patch: Partial<CloudSnapshot>): CloudSnapshot {
       awaitingLock: false,
       paperGate: false,
       labCorrectRun: 0,
+      labCorrectCount: 0,
       usedVoiceAnotherWay: false,
       completed: false,
     },

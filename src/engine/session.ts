@@ -78,8 +78,8 @@ export function generateDailyMission(
       questionIds: warmup.map((q) => q.id),
       label: 'Warm-Up',
       coachLine: prevWorld
-        ? `${world.adventure} You rolled in from ${prevWorld.name} with ${world.carry} in the tank.`
-        : `${world.adventure} Ground Lab packed the tank. Easy ignition.`,
+        ? `${world.adventure} You rolled in from ${prevWorld.name} carrying ${world.carry}.`
+        : `${world.adventure} Ground Lab packed the launch. Easy ignition.`,
     },
     {
       phase: 'builder',

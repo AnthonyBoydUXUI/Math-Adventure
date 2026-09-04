@@ -13,7 +13,7 @@ export function WatchPage() {
         <DayClock compact />
       </div>
       <p className="mt-4 font-display text-5xl font-semibold leading-none">{streak}</p>
-      <p className="mt-1 text-[11px] font-medium uppercase tracking-[0.18em] text-ink">Day streak</p>
+      <p className="mt-1 text-[11px] font-medium uppercase tracking-[0.18em] text-ink">Finished 15s</p>
       <p className="mt-4 text-sm font-semibold leading-snug text-navy">{bookmark.label}</p>
       <Link
         to="/train"

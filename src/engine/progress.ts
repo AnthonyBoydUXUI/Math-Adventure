@@ -89,12 +89,17 @@ export function buildBookmark(input: {
   mission: DailyMission
   session: SessionLike
   mastery: number
+  path?: 'advance' | 'deepen'
 }): ProgressBookmark {
   const now = input.now ?? new Date()
   const today = dayKey(now)
   const step = currentTopicStep(input.parent.moduleId, input.parent.topicId)
   const progress = phaseProgress(input.mission, input.session.phaseIndex, input.session.itemIndex)
-  const next = nextCurriculumStep(input.parent.moduleId, input.parent.topicId, input.mastery)
+  const next = nextCurriculumStep(
+    input.parent.moduleId,
+    input.parent.topicId,
+    input.path === 'deepen' ? Math.min(input.mastery, ADVANCE_MASTERY - 1) : input.mastery,
+  )
   const skill = skillById(input.mission.focusSkillId)?.name ?? step.name
   const qid = progress.phase?.questionIds[input.session.itemIndex]
 

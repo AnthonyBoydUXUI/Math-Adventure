@@ -30,7 +30,7 @@ export function buildTestReport(attempts: AttemptRecord[]): TestReport {
   if (!sampleSize) {
     return {
       sampleSize: 0,
-      readiness: 48,
+      readiness: 0,
       lockInRate: 0,
       transfer: 0,
       paperHabit: 0,
