@@ -207,6 +207,15 @@ describe('test readiness', () => {
     expect(preferFormats('graph')[0]).toBe('graph')
   })
 
+  it('does not call a 100% wrapper a miss', () => {
+    const report = buildTestReport([
+      attempt({ format: 'word', correct: true, diagnosis: 'solid' }),
+      attempt({ format: 'word', correct: true, diagnosis: 'solid' }),
+    ])
+    expect(report.drillLine).toMatch(/holding/)
+    expect(report.drillLine).not.toMatch(/beats you/)
+  })
+
   it('puts the weak test wrapper first in Test Lab', () => {
     const seq = labSequence('hoodie-equation', () => 0.2, 'mcq')
     expect(seq[0]?.format).toBe('mcq')

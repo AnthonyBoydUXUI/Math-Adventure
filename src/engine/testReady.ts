@@ -73,9 +73,11 @@ export function buildTestReport(attempts: AttemptRecord[]): TestReport {
     Math.round(transfer * 0.35 + lockInRate * 0.25 + accuracy * 0.2 + paperHabit * 0.1 + (1 - pressure) * 100 * 0.1),
   )
 
-  const drillLine = weakest
-    ? `${labelFormat(weakest.format)} is the wrapper that still beats you (${Math.round(weakest.accuracy)}%). Same math, different look.`
-    : 'Keep rotating formats. Tests rarely ask the classroom version first.'
+  const drillLine = !weakest
+    ? 'Keep rotating formats. Tests rarely ask the classroom version first.'
+    : weakest.accuracy >= 80
+      ? `${labelFormat(weakest.format)} is holding (${Math.round(weakest.accuracy)}%). Rotate the wrapper before the real test.`
+      : `${labelFormat(weakest.format)} is the wrapper that still beats you (${Math.round(weakest.accuracy)}%). Same math, different look.`
 
   const testDayLine = loudestDiagnosis
     ? `${DIAGNOSIS_COPY[loudestDiagnosis].title}: ${DIAGNOSIS_COPY[loudestDiagnosis].line}`
