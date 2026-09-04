@@ -1,7 +1,10 @@
-import { Flame, Hexagon, MoreHorizontal, Sparkles } from 'lucide-react'
+import { useEffect } from 'react'
+import { Flame, Hexagon, MoreHorizontal, Sparkles, Volume2, VolumeX } from 'lucide-react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
+import { worldForModule } from '../data/worlds.ts'
 import { levelFromXp, xpIntoLevel } from '../engine/scoring.ts'
 import { cn } from '../lib/cn.ts'
+import { resumeAudio, setMuted, startAmbient } from '../lib/sfx.ts'
 import { usePlayerStore } from '../store.ts'
 import { Aero } from './Aero.tsx'
 
@@ -15,15 +18,29 @@ const NAV = [
 ]
 
 export function Shell() {
-  const { xp, sparks, streak, cosmetics, toast, setToast, studentName } = usePlayerStore()
+  const { xp, sparks, streak, cosmetics, toast, setToast, studentName, soundOn, toggleSound, parent } =
+    usePlayerStore()
   const level = levelFromXp(xp)
   const into = xpIntoLevel(xp)
+  const audioEnabled = soundOn !== false
   const loc = useLocation()
+
+  useEffect(() => {
+    const unlock = () => {
+      void resumeAudio()
+      setMuted(!usePlayerStore.getState().soundOn)
+      if (usePlayerStore.getState().soundOn) {
+        startAmbient(worldForModule(usePlayerStore.getState().parent.moduleId).id)
+      }
+    }
+    window.addEventListener('pointerdown', unlock, { once: true })
+    return () => window.removeEventListener('pointerdown', unlock)
+  }, [])
 
   return (
     <div className="mx-auto min-h-dvh max-w-lg pb-28">
       <header className="sticky top-0 z-30 flex items-center gap-2 px-4 py-3 backdrop-blur-md">
-        <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-2xl border-2 border-navy bg-white">
+        <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-2xl border-2 border-navy bg-white aero-bob">
           <Aero className="h-12 w-12" goggles={cosmetics.goggles} hoodie={cosmetics.hoodie} kicks={cosmetics.kicks} />
         </div>
         <div className="hud-pill flex items-center gap-1 rounded-full px-2.5 py-1 text-sm font-extrabold">
@@ -34,6 +51,17 @@ export function Shell() {
           <Hexagon className="h-4 w-4 fill-sky text-sky" />
           {sparks}
         </div>
+        <button
+          type="button"
+          className={cn('hud-pill flex items-center rounded-full px-2 py-1', !audioEnabled && 'opacity-50')}
+          aria-label={audioEnabled ? 'Mute sound' : 'Turn sound on'}
+          onClick={() => {
+            void resumeAudio()
+            toggleSound()
+          }}
+        >
+          {audioEnabled ? <Volume2 className="h-4 w-4 text-leaf" /> : <VolumeX className="h-4 w-4" />}
+        </button>
         <div className="hud-pill ml-auto flex items-center gap-2 rounded-full px-2.5 py-1 text-sm font-extrabold">
           <Sparkles className="h-4 w-4 text-violet" />
           Lv {level}
@@ -45,7 +73,7 @@ export function Shell() {
 
       {loc.pathname === '/' ? (
         <p className="px-5 pb-1 text-xs font-extrabold uppercase tracking-[0.18em] text-navy/45">
-          {studentName} · Harbor District
+          {studentName} · {worldForModule(parent.moduleId).district}
         </p>
       ) : null}
 

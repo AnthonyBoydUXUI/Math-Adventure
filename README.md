@@ -33,15 +33,19 @@ Then open the printed local URL. On a phone-sized viewport the path, HUD, and 15
 
 Each Reveal module is a district (Ratio Runway, Tip Market, Balance Bridge…). Warm-ups pull a bridge skill from the previous district so the next subject is not a reset.
 
-## Vercel (hobby)
+## Vercel Hobby
 
-This is a static Vite app. On a Vercel hobby account:
+Tap once to connect this GitHub repo to a free Vercel Hobby account and deploy:
 
-```bash
-npx vercel
-```
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/import?s=https://github.com/AnthonyBoydUXUI/Math-Adventure)
 
-`vercel.json` already rewrites all routes to `index.html`. Connect the GitHub repo in the Vercel dashboard → Import → Framework Preset Vite → Deploy. No server needed.
+In the import screen, set the production branch to `cursor/adaptive-math-trainer-64b2` until that PR is merged into `main`. Framework: Vite. Hobby is enough (static app, no server).
+
+Or in the Vercel dashboard: **Add New → Project → Import Git Repository → Math-Adventure → Deploy**. Framework: Vite. Hobby plan is enough (static app, no server).
+
+After the first import, later pushes to `main` can auto-deploy. Optional GitHub secrets for the included workflow: `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`.
+
+Tap the speaker in the app HUD to start moving world sound. Browsers block audio until a tap.
 
 ## Parent desk
 

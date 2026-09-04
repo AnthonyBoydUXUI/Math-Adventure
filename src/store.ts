@@ -6,7 +6,8 @@ import { diagnose, familyAccuracy, seenFormats } from './engine/diagnosis.ts'
 import { applyAttempt, seedSkillStats } from './engine/mastery.ts'
 import { evaluateAchievements, xpForAttempt } from './engine/scoring.ts'
 import { generateDailyMission } from './engine/session.ts'
-import { resumeAudio, sfx } from './lib/sfx.ts'
+import { resumeAudio, setMuted, sfx, startAmbient, stopAmbient } from './lib/sfx.ts'
+import { worldForModule } from './data/worlds.ts'
 import { checkAnswer } from './lib/answers.ts'
 import { dayKey } from './lib/hash.ts'
 import type {
@@ -59,6 +60,7 @@ interface PlayerStore {
   mission: DailyMission
   session: SessionSlice
   toast?: string
+  soundOn: boolean
   startFlight: (extra?: boolean) => void
   setDraft: (value: string) => void
   useHint: () => void
@@ -76,6 +78,7 @@ interface PlayerStore {
   equip: (slot: 'goggles' | 'hoodie' | 'kicks', id: string) => void
   setThemes: (themes: Theme[]) => void
   setToast: (msg?: string) => void
+  toggleSound: () => void
 }
 
 const defaultParent: ParentSettings = {
@@ -145,10 +148,16 @@ export const usePlayerStore = create<PlayerStore>()(
       parent: defaultParent,
       mission: generateDailyMission(seedSkillStats(), defaultParent),
       session: freshSession(),
+      toast: undefined,
+      soundOn: true,
       startFlight: (extra = false) => {
-        resumeAudio()
-        sfx.start()
         const s = get()
+        void resumeAudio()
+        setMuted(!s.soundOn)
+        if (s.soundOn) {
+          sfx.start()
+          startAmbient(worldForModule(s.parent.moduleId).id)
+        }
         const mission = generateDailyMission(s.stats, s.parent, new Date(), extra)
         const qid = mission.phases[0]?.questionIds[0]
         const q = qid ? questionById(qid) : undefined
@@ -181,6 +190,18 @@ export const usePlayerStore = create<PlayerStore>()(
         set((s) => ({ session: { ...s.session, paperGate: false, paper: true } })),
       markVoice: () => set((s) => ({ session: { ...s.session, usedVoiceAnotherWay: true } })),
       setToast: (msg) => set({ toast: msg }),
+      toggleSound: () => {
+        const next = !get().soundOn
+        setMuted(!next)
+        set({ soundOn: next })
+        if (next) {
+          void resumeAudio()
+          sfx.tap()
+          startAmbient(worldForModule(get().parent.moduleId).id)
+        } else {
+          stopAmbient()
+        }
+      },
       setThemes: (themes) => set((s) => ({ parent: { ...s.parent, themes } })),
       setParent: (patch) => {
         const parent = { ...get().parent, ...patch }
@@ -189,6 +210,7 @@ export const usePlayerStore = create<PlayerStore>()(
           mission: generateDailyMission(get().stats, parent),
           studentName: parent.studentName || get().studentName,
         })
+        if (get().soundOn) startAmbient(worldForModule(parent.moduleId).id)
       },
       equip: (slot, id) => {
         if (!get().cosmetics.unlocked.includes(id)) return
@@ -317,6 +339,7 @@ export const usePlayerStore = create<PlayerStore>()(
         }
         const nextPhase = phases[phaseIndex]
         if (!nextPhase || nextPhase.phase === 'recap') {
+          if (get().soundOn) sfx.whoosh()
           set({
             session: {
               ...s.session,
@@ -335,6 +358,7 @@ export const usePlayerStore = create<PlayerStore>()(
           })
           return
         }
+        if (s.soundOn) sfx.whoosh()
         const qid = nextPhase.questionIds[itemIndex]
         const q = qid ? questionById(qid) : undefined
         set({
@@ -376,6 +400,7 @@ export const usePlayerStore = create<PlayerStore>()(
           xp: s.xp + 30,
           sparks: s.sparks + 12,
         })
+        if (s.soundOn) sfx.xp()
       },
     }),
     { name: 'aero-math-adventure' },

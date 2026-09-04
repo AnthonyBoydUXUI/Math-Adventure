@@ -1,4 +1,7 @@
 let ctx: AudioContext | null = null
+let muted = false
+let bed: { osc: OscillatorNode; gain: GainNode }[] = []
+let bedTimer: ReturnType<typeof setInterval> | undefined
 
 function audio() {
   if (typeof window === 'undefined') return null
@@ -6,48 +9,122 @@ function audio() {
   return ctx
 }
 
-function beep(freq: number, duration: number, type: OscillatorType, gain = 0.05) {
+export function isMuted() {
+  return muted
+}
+
+export function setMuted(next: boolean) {
+  muted = next
+  if (muted) stopAmbient()
+}
+
+function tone(freq: number, duration: number, type: OscillatorType, gain = 0.06, delay = 0) {
+  if (muted) return
   const ac = audio()
   if (!ac) return
+  const start = ac.currentTime + delay
   const osc = ac.createOscillator()
   const g = ac.createGain()
   osc.type = type
-  osc.frequency.value = freq
-  g.gain.value = gain
-  g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + duration)
+  osc.frequency.setValueAtTime(freq, start)
+  g.gain.setValueAtTime(0.0001, start)
+  g.gain.exponentialRampToValueAtTime(gain, start + 0.02)
+  g.gain.exponentialRampToValueAtTime(0.0001, start + duration)
   osc.connect(g)
   g.connect(ac.destination)
-  osc.start()
-  osc.stop(ac.currentTime + duration)
+  osc.start(start)
+  osc.stop(start + duration + 0.02)
+}
+
+const WORLD_BED: Record<string, number[]> = {
+  harbor: [196, 247, 294],
+  market: [220, 277, 330],
+  belowzero: [165, 196, 247],
+  gallery: [247, 311, 370],
+  gearworks: [185, 220, 277],
+  bridge: [196, 247, 311],
+  boundary: [174, 220, 261],
+  plaza: [208, 262, 311],
+  courtcrate: [196, 233, 294],
+  arcade: [247, 311, 392],
+  station: [165, 220, 262],
+  groundlab: [185, 233, 277],
+  peak: [147, 196, 247],
 }
 
 export const sfx = {
   whoosh() {
-    beep(220, 0.18, 'sine', 0.04)
-    setTimeout(() => beep(330, 0.12, 'sine', 0.03), 80)
+    tone(240, 0.16, 'sine', 0.04)
+    tone(360, 0.14, 'sine', 0.03, 0.07)
   },
   correct() {
-    beep(523, 0.09, 'triangle', 0.05)
-    setTimeout(() => beep(784, 0.16, 'triangle', 0.05), 90)
+    tone(523, 0.12, 'triangle', 0.07)
+    tone(659, 0.14, 'triangle', 0.06, 0.08)
+    tone(784, 0.2, 'triangle', 0.05, 0.16)
   },
   miss() {
-    beep(196, 0.2, 'sine', 0.04)
+    tone(196, 0.22, 'sine', 0.05)
+    tone(155, 0.18, 'sine', 0.04, 0.08)
   },
   lock() {
-    beep(440, 0.08, 'square', 0.03)
-    setTimeout(() => beep(660, 0.12, 'square', 0.03), 70)
+    tone(440, 0.09, 'square', 0.035)
+    tone(660, 0.14, 'square', 0.03, 0.07)
   },
   xp() {
-    beep(880, 0.08, 'sine', 0.035)
-    setTimeout(() => beep(1174, 0.14, 'sine', 0.03), 100)
+    tone(784, 0.1, 'sine', 0.045)
+    tone(988, 0.12, 'sine', 0.04, 0.09)
+    tone(1174, 0.18, 'sine', 0.035, 0.18)
   },
   start() {
-    beep(392, 0.1, 'triangle', 0.04)
-    setTimeout(() => beep(523, 0.1, 'triangle', 0.04), 110)
-    setTimeout(() => beep(659, 0.18, 'triangle', 0.045), 220)
+    tone(392, 0.12, 'triangle', 0.05)
+    tone(523, 0.12, 'triangle', 0.05, 0.11)
+    tone(659, 0.2, 'triangle', 0.055, 0.22)
+  },
+  tap() {
+    tone(880, 0.06, 'sine', 0.03)
   },
 }
 
-export function resumeAudio() {
-  void audio()?.resume()
+export function startAmbient(worldId: string) {
+  stopAmbient()
+  if (muted) return
+  const ac = audio()
+  if (!ac) return
+  const notes = WORLD_BED[worldId] ?? WORLD_BED.harbor
+  notes.forEach((freq, i) => {
+    const osc = ac.createOscillator()
+    const g = ac.createGain()
+    osc.type = 'sine'
+    osc.frequency.value = freq
+    g.gain.value = 0.012 - i * 0.002
+    osc.connect(g)
+    g.connect(ac.destination)
+    osc.start()
+    bed.push({ osc, gain: g })
+  })
+  let step = 0
+  bedTimer = setInterval(() => {
+    if (muted) return
+    const n = notes[step % notes.length] ?? 220
+    tone(n * 2, 0.18, 'triangle', 0.018)
+    step += 1
+  }, 900)
+}
+
+export function stopAmbient() {
+  for (const node of bed) {
+    try {
+      node.osc.stop()
+    } catch {
+      /* already stopped */
+    }
+  }
+  bed = []
+  if (bedTimer) clearInterval(bedTimer)
+  bedTimer = undefined
+}
+
+export async function resumeAudio() {
+  const ac = audio()
+  if (ac && ac.state !== 'running') await ac.resume()
 }

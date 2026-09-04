@@ -55,8 +55,8 @@ export function Aero({
       <circle cx="94" cy="67" r="11" fill="#fff6ec" />
       <circle cx="66" cy="67" r="5" fill="#141628" />
       <circle cx="94" cy="67" r="5" fill="#141628" />
-      <circle cx="63.5" cy="64.5" r="1.8" fill="#fff" />
-      <circle cx="91.5" cy="64.5" r="1.8" fill="#fff" />
+      <circle cx="63.5" cy="64.5" r="1.8" fill="#fff" className="twinkle" />
+      <circle cx="91.5" cy="64.5" r="1.8" fill="#fff" className="twinkle-2" />
       {mood === 'cheer' ? (
         <path d="M70 82c4 6 16 6 20 0" stroke="#141628" strokeWidth="3" fill="none" strokeLinecap="round" />
       ) : mood === 'think' ? (
