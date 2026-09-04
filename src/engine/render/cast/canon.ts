@@ -33,7 +33,7 @@ export interface CastLook {
   visor?: string
   suit?: string
   kicks?: string
-  /** Optional production GLB. Empty = in-engine sculpt. */
+  /** Optional GLB swap. Empty = Signal, the locked in-engine player. */
   glbUrl?: string
   quality?: 'close' | 'play' | 'far'
 }
@@ -51,6 +51,7 @@ export const CAST_MOODS: CastMood[] = [
   'confident',
 ]
 
+/** Optional later GLB swap. Not required — Signal and the Harbor RS are the cast. */
 export const CAST_PIPELINE = [
   'brief',
   'concept',
@@ -66,16 +67,20 @@ export const CAST_PIPELINE = [
   'app',
 ] as const
 
-/** Locked player identity. Production GLB is still missing. */
+/** Signal is the player. The in-engine figure is the character. */
 export const CAST_APPROVED = 'signal' as const
 
-export const CAST_MISSING = {
-  productionGlb: true,
-  lodSet: true,
-  humanoidRig: true,
-  speechBlendshapes: true,
-  textures2k: true,
-  turnaroundApproved: true,
+/** Harbor RS in muted yellow is the vehicle. */
+export const VEHICLE_APPROVED = 'harbor-rs' as const
+export const VEHICLE_PAINT = 'paint-volt' as const
+
+export const CAST_LOCKED = {
+  player: CAST_APPROVED,
+  vehicle: VEHICLE_APPROVED,
+  paint: VEHICLE_PAINT,
+  visor: 'goggles-base',
+  suit: 'hoodie-base',
+  kicks: 'kicks-base',
 } as const
 
 export const SIGNAL = {

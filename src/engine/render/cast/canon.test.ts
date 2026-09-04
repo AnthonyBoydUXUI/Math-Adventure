@@ -4,13 +4,16 @@ import {
   CAST_HEAD,
   CAST_HEADS,
   CAST_HEIGHT,
-  CAST_MISSING,
+  CAST_LOCKED,
   CAST_MOODS,
   CAST_PIPELINE,
   CAST_ROLES,
   CAST_Y,
+  VEHICLE_APPROVED,
+  VEHICLE_PAINT,
 } from './canon.ts'
 import { FACE } from './expressions.ts'
+import { VINYL } from '../materials.ts'
 
 describe('Harbor cast canon', () => {
   it('uses 6.5–7 head teen proportion, not adult 8-head', () => {
@@ -33,13 +36,19 @@ describe('Harbor cast canon', () => {
     }
   })
 
-  it('keeps a provider-neutral GLB pipeline and names the missing production asset', () => {
-    expect(CAST_PIPELINE).toContain('glb')
-    expect(CAST_PIPELINE).toContain('rig')
-    expect(CAST_PIPELINE.at(-1)).toBe('app')
-    expect(CAST_MISSING.productionGlb).toBe(true)
-    expect(CAST_MISSING.humanoidRig).toBe(true)
+  it('locks Signal and the Harbor RS as the player and vehicle', () => {
     expect(CAST_APPROVED).toBe('signal')
-    expect(CAST_MISSING.turnaroundApproved).toBe(true)
+    expect(VEHICLE_APPROVED).toBe('harbor-rs')
+    expect(VEHICLE_PAINT).toBe('paint-volt')
+    expect(CAST_LOCKED).toEqual({
+      player: 'signal',
+      vehicle: 'harbor-rs',
+      paint: 'paint-volt',
+      visor: 'goggles-base',
+      suit: 'hoodie-base',
+      kicks: 'kicks-base',
+    })
+    expect(VINYL.volt).toBe('#c4a24a')
+    expect(CAST_PIPELINE.at(-1)).toBe('app')
   })
 })
