@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { DayClock } from '../components/DayClock.tsx'
 import { ProblemStage } from '../components/ProblemStage.tsx'
 import { TestReadinessCard } from '../components/TestReadinessCard.tsx'
 import { RaceCar } from '../components/RaceCar.tsx'
@@ -13,7 +14,7 @@ import { DIMENSIONS } from '../types.ts'
 
 export function TrainPage() {
   const navigate = useNavigate()
-  const { mission, session, startFlight, completeRecap } = usePlayerStore()
+  const { mission, session, resumeOrStart, completeRecap, bookmark } = usePlayerStore()
 
   if (!session.active && !session.completed) {
     return (
@@ -22,12 +23,16 @@ export function TrainPage() {
         <h1 className="mt-2 font-display text-4xl font-semibold tracking-tight">15-minute run</h1>
         <p className="mt-2 font-medium text-ink">{mission.title}</p>
         <p className="mt-1 text-sm font-medium text-ink">Ignition 3 · Build 4 · Lab 4 · Boss 3 · Debrief 1</p>
+        <p className="mt-3 text-sm font-medium text-navy">{bookmark.label}</p>
+        <p className="mt-2">
+          <DayClock />
+        </p>
         <button
           type="button"
-          className="press mt-6 w-full rounded-xl bg-sky py-4 font-semibold text-chrome"
-          onClick={() => startFlight(false)}
+          className="press mt-6 min-h-11 w-full rounded-xl bg-sky py-4 font-semibold text-chrome"
+          onClick={() => resumeOrStart(false)}
         >
-          Start session
+          Start today’s 15
         </button>
       </div>
     )
@@ -35,12 +40,12 @@ export function TrainPage() {
 
   const phase = mission.phases[session.phaseIndex]
   if (!phase || phase.phase === 'recap') {
-    return <Recap onDone={() => { completeRecap(); navigate('/') }} onKeep={() => startFlight(true)} />
+    return <Recap onDone={() => { completeRecap(); navigate('/') }} onKeep={() => resumeOrStart(true)} />
   }
 
   const q = questionById(phase.questionIds[session.itemIndex])
   if (!q) {
-    return <Recap onDone={() => { completeRecap(); navigate('/') }} onKeep={() => startFlight(true)} />
+    return <Recap onDone={() => { completeRecap(); navigate('/') }} onKeep={() => resumeOrStart(true)} />
   }
 
   const totalQ = mission.phases.reduce((n, p) => n + p.questionIds.length, 0)
@@ -54,6 +59,9 @@ export function TrainPage() {
         <span className="text-ink">
           {doneQ + 1}/{totalQ} · ~{minutesLeft} min remaining
         </span>
+      </div>
+      <div className="mx-4 mb-3">
+        <DayClock compact />
       </div>
       <p className="mx-4 mb-3 font-medium text-ink">{phase.coachLine}</p>
       <ProblemStage question={q} phaseLabel={`${phase.label} · ${skillById(q.skillId)?.name}`} />
@@ -80,6 +88,9 @@ function Recap({ onDone, onKeep }: { onDone: () => void; onKeep: () => void }) {
     <div className="px-4 pb-8">
       <p className="text-center text-[11px] font-medium uppercase tracking-[0.22em] text-ink">Debrief</p>
       <h1 className="text-center font-display text-4xl font-semibold tracking-tight">Session complete</h1>
+      <p className="mt-2 text-center">
+        <DayClock compact />
+      </p>
       <p className="mt-1 text-center font-medium text-ink">
         {correct} locked in · {today.length} plays
       </p>

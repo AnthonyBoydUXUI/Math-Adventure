@@ -237,6 +237,13 @@ export interface CosmeticDef {
   unlock: string
 }
 
+export interface SessionLike {
+  active: boolean
+  completed: boolean
+  phaseIndex: number
+  itemIndex: number
+}
+
 export interface DailyMission {
   dateKey: string
   title: string

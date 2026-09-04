@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { DayClock } from './DayClock.tsx'
 import {
   Crosshair,
   FlaskConical,
@@ -42,6 +43,8 @@ export function Shell() {
   const displayName = studentName.trim() || 'Student'
 
   useEffect(() => {
+    usePlayerStore.getState().ensureToday()
+    const rollover = window.setInterval(() => usePlayerStore.getState().ensureToday(), 60_000)
     const unlock = () => {
       void resumeAudio()
       setMuted(!usePlayerStore.getState().soundOn)
@@ -50,7 +53,10 @@ export function Shell() {
       }
     }
     window.addEventListener('pointerdown', unlock, { once: true })
-    return () => window.removeEventListener('pointerdown', unlock)
+    return () => {
+      window.clearInterval(rollover)
+      window.removeEventListener('pointerdown', unlock)
+    }
   }, [])
 
   if (gated) return <ComplianceGate />
@@ -97,11 +103,12 @@ export function Shell() {
         </div>
       </header>
 
-      {loc.pathname === '/' ? (
-        <p className="px-5 pb-1 text-[11px] font-medium uppercase tracking-[0.22em] text-ink">
+      <div className="flex items-center justify-between gap-3 px-5 pb-2">
+        <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-ink">
           {displayName} · {world.district}
         </p>
-      ) : null}
+        <DayClock compact />
+      </div>
 
       <main id="main">
         <Outlet />

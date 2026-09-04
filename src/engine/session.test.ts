@@ -226,6 +226,48 @@ describe('test readiness', () => {
   })
 })
 
+describe('daily resume and rollover', () => {
+  it('resumeOrStart does not wipe an active session', () => {
+    usePlayerStore.setState({
+      session: {
+        ...usePlayerStore.getState().session,
+        active: true,
+        completed: false,
+        phaseIndex: 2,
+        itemIndex: 1,
+      },
+    })
+    const mode = usePlayerStore.getState().resumeOrStart()
+    expect(mode).toBe('resume')
+    expect(usePlayerStore.getState().session.phaseIndex).toBe(2)
+    expect(usePlayerStore.getState().session.itemIndex).toBe(1)
+    expect(usePlayerStore.getState().bookmark.kind).toBe('mid-session')
+    usePlayerStore.setState({
+      session: { ...usePlayerStore.getState().session, active: false, phaseIndex: 0, itemIndex: 0 },
+    })
+  })
+
+  it('rolls an unfinished yesterday session into today’s mission on the same topic', () => {
+    usePlayerStore.setState({
+      parent: { ...usePlayerStore.getState().parent, moduleId: 'm6', topicId: 'm6-t1' },
+      mission: { ...usePlayerStore.getState().mission, dateKey: '2026-09-03' },
+      session: {
+        ...usePlayerStore.getState().session,
+        active: true,
+        completed: false,
+        phaseIndex: 1,
+        itemIndex: 0,
+      },
+    })
+    usePlayerStore.getState().ensureToday(new Date(2026, 8, 4, 7, 30))
+    const s = usePlayerStore.getState()
+    expect(s.session.active).toBe(false)
+    expect(s.mission.dateKey).toBe('2026-09-04')
+    expect(s.parent.topicId).toBe('m6-t1')
+    expect(s.bookmark.kind).toBe('paused-yesterday')
+  })
+})
+
 describe('App Store compliance store', () => {
   it('does not ship a Copilot placeholder name', () => {
     expect(usePlayerStore.getState().studentName).not.toBe('Copilot')

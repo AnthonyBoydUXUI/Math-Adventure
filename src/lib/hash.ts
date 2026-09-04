@@ -35,6 +35,4 @@ export function clamp(n: number, min: number, max: number) {
   return Math.min(max, Math.max(min, n))
 }
 
-export function dayKey(date = new Date()) {
-  return date.toISOString().slice(0, 10)
-}
+export { dayKey } from './clock.ts'

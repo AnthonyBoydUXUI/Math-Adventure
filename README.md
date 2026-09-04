@@ -29,6 +29,8 @@ npm run dev
 
 Then open the printed local URL. On a phone-sized viewport the library covers, HUD, and 15-minute session are the core loop.
 
+The HUD clock always shows the local weekday, calendar date, current year, and time. The week strip marks practiced days. If you quit mid-session, Home says **Continue where you left off** and does not regenerate the flight. A new calendar day keeps the same topic (or advances it after a strong finish) so learning moves forward, not sideways.
+
 ## Adventures that connect
 
 Each classroom module is a district (Ratio Runway, Tip Market, Balance Bridge…). Warm-ups pull a bridge skill from the previous district so the next subject is not a reset.

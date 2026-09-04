@@ -2,13 +2,16 @@ import { motion } from 'framer-motion'
 import { Play } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { CircuitTrack, HandoffCard } from '../components/CircuitTrack.tsx'
+import { DayClock } from '../components/DayClock.tsx'
 import { TestReadinessCard } from '../components/TestReadinessCard.tsx'
+import { WeekStrip } from '../components/WeekStrip.tsx'
 import { RaceCar } from '../components/RaceCar.tsx'
 import { WorldScene } from '../components/WorldScene.tsx'
 import { firstTopicId, moduleById, skillById } from '../data/curriculum.ts'
 import { classroomChain, linkedWorld, worldForModule } from '../data/worlds.ts'
 import { compositeMastery, emptyStats } from '../engine/mastery.ts'
 import { cn } from '../lib/cn.ts'
+import { dayKey } from '../lib/clock.ts'
 import { resumeAudio } from '../lib/sfx.ts'
 import { usePlayerStore } from '../store.ts'
 import type { Phase } from '../types.ts'
@@ -23,7 +26,8 @@ const PHASE_META: Record<Phase, { tone: string }> = {
 
 export function HomePage() {
   const navigate = useNavigate()
-  const { mission, parent, stats, cosmetics, startFlight, achievements } = usePlayerStore()
+  const { mission, parent, stats, cosmetics, resumeOrStart, achievements, session, bookmark, practiceDays } =
+    usePlayerStore()
   const mod = moduleById(parent.moduleId)
   const focus = skillById(mission.focusSkillId)
   const mastery = compositeMastery(stats[mission.focusSkillId] ?? emptyStats())
@@ -34,9 +38,15 @@ export function HomePage() {
 
   function startSession() {
     resumeAudio()
-    startFlight(false)
+    resumeOrStart(false)
     navigate('/train')
   }
+
+  const cta = session.active
+    ? 'Continue where you left off'
+    : session.completed
+      ? 'Open today’s next step'
+      : 'Start today’s 15'
 
   return (
     <div className="px-4 pb-8">
@@ -51,7 +61,7 @@ export function HomePage() {
         <div className="cover-shine pointer-events-none absolute inset-0" />
         <div className="relative flex min-h-[240px] flex-col justify-end px-5 pb-5 pt-8">
           <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-white/70">
-            Now playing · Module {mod?.number}
+            Now playing · Module {mod?.number} · {new Date().getFullYear()}
           </p>
           <h1 className="mt-1 font-display text-[32px] font-semibold leading-none tracking-tight">{world.name}</h1>
           <p className="mt-2 max-w-[16rem] text-sm font-medium text-white/80">{focus?.name}</p>
@@ -67,13 +77,26 @@ export function HomePage() {
             onClick={startSession}
           >
             <Play className="h-4 w-4 fill-chrome" />
-            Start session
+            {cta}
           </button>
         </div>
         <div className="absolute right-3 top-6 w-14 opacity-90">
           <RaceCar paint={cosmetics.paint} wheels={cosmetics.wheels} wing={cosmetics.wing} />
         </div>
       </section>
+
+      <div className="mt-5">
+        <WeekStrip practiced={practiceDays} inProgressKey={session.active ? dayKey() : undefined} />
+      </div>
+
+      <div className="panel mt-4 rounded-2xl p-4">
+        <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-ink">Where you left off</p>
+        <p className="mt-1 font-display text-xl font-semibold">{bookmark.label}</p>
+        {bookmark.nextLabel ? <p className="mt-1 text-sm font-medium text-ink">Forward: {bookmark.nextLabel}</p> : null}
+        <p className="mt-2">
+          <DayClock />
+        </p>
+      </div>
 
       <p className="mt-5 text-[11px] font-medium uppercase tracking-[0.22em] text-ink">Library</p>
       <div className="mt-2 flex gap-2 overflow-x-auto pb-2">
@@ -113,7 +136,11 @@ export function HomePage() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05 }}
-            className="panel relative h-[118px] w-[132px] shrink-0 rounded-xl p-3 text-left"
+            className={cn(
+              'panel relative h-[118px] w-[132px] shrink-0 rounded-xl p-3 text-left',
+              session.active && session.phaseIndex === i && 'ring-1 ring-sky',
+              session.active && session.phaseIndex > i && 'opacity-60',
+            )}
             onClick={startSession}
           >
             <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-sky">
@@ -153,7 +180,7 @@ export function HomePage() {
         className="press mt-4 w-full rounded-xl bg-sky py-3.5 font-display text-lg font-semibold text-chrome"
         onClick={startSession}
       >
-        Start 15-minute session
+        {cta}
       </button>
       <p className="mt-2 text-center text-xs font-medium text-ink">
         {achievements.length} trophies · 7th–8th grade track
