@@ -13,10 +13,7 @@ export function PrivacyCenter() {
   return (
     <div className="px-4 pb-8">
       <h1 className="type-pack text-5xl">Privacy Center</h1>
-      <p className="mt-2 text-sm font-medium text-ink">
-        Progress starts on this device. Sign in under Account to copy it to one cloud profile so phone, tablet, laptop,
-        and the watch glance stay in sync — and so a site-data clear is not the end of the streak.
-      </p>
+      <p className="mt-2 text-sm font-medium text-ink">On this device first. Account copies it to the cloud.</p>
 
       <div className="panel mt-4 rounded-sm p-4">
         <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-ink">On this device</p>

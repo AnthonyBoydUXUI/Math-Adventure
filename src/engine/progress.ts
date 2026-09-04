@@ -1,5 +1,5 @@
 import { MODULES, skillById } from '../data/curriculum.ts'
-import { dayKey, isSameCalendarDay, missionDay } from '../lib/clock.ts'
+import { dayKey, isSameCalendarDay } from '../lib/clock.ts'
 import type { DailyMission, Phase, SessionLike } from '../types.ts'
 
 export const ADVANCE_MASTERY = 70
@@ -117,11 +117,11 @@ export function buildBookmark(input: {
       questionId: qid,
       kind: sameDay ? 'mid-session' : 'paused-yesterday',
       label: sameDay
-        ? `Left off ${progress.label} ${progress.item}/${progress.count || 1} · ${skill}`
-        : `Paused ${progress.label} on ${missionDay(input.mission.dateKey)} · ${skill} continues today`,
+        ? `${progress.label} ${progress.item}/${progress.count || 1} · ${skill}`
+        : `${progress.label} ${progress.item}/${progress.count || 1} · ${skill}`,
       nextModuleId: next.moduleId,
       nextTopicId: next.topicId,
-      nextLabel: next.reason === 'advance' ? `Next up: Module ${next.number} · ${next.name}` : `Keep building ${skill}`,
+      nextLabel: next.reason === 'advance' ? next.name : skill,
     }
   }
 
@@ -136,18 +136,10 @@ export function buildBookmark(input: {
       phaseIndex: input.session.phaseIndex,
       itemIndex: input.session.itemIndex,
       kind: next.reason === 'advance' ? 'next-topic' : 'today-done',
-      label:
-        next.reason === 'advance'
-          ? `Today’s 15 is parked. Next: Module ${next.number} · ${next.name}`
-          : `Today’s 15 is parked. Tomorrow deepens ${skill}`,
+      label: next.reason === 'advance' ? `Next: ${next.name}` : `Done · ${skill}`,
       nextModuleId: next.moduleId,
       nextTopicId: next.topicId,
-      nextLabel:
-        next.reason === 'advance'
-          ? `Module ${next.number} · ${next.name}`
-          : next.reason === 'cap'
-            ? 'Course spine complete — keep sharpening the last topic'
-            : skill,
+      nextLabel: next.reason === 'advance' ? next.name : skill,
     }
   }
 
@@ -161,7 +153,7 @@ export function buildBookmark(input: {
     phaseIndex: 0,
     itemIndex: 0,
     kind: 'fresh',
-    label: `Today’s 15 · ${skill}`,
+    label: skill,
     nextModuleId: next.moduleId,
     nextTopicId: next.topicId,
     nextLabel: skill,
@@ -184,7 +176,7 @@ export function defaultBookmark(): ProgressBookmark {
     phaseIndex: 0,
     itemIndex: 0,
     kind: 'fresh',
-    label: `Today’s 15 · ${step.name}`,
+    label: step.name,
     nextLabel: step.name,
   }
 }

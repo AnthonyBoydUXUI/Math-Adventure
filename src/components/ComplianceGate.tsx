@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { APP_NAME } from '../content/legal.ts'
 import { usePlayerStore } from '../store.ts'
+import { Aero } from './Aero.tsx'
 
 export function ComplianceGate() {
   const acknowledgeCompliance = usePlayerStore((s) => s.acknowledgeCompliance)
@@ -13,12 +14,10 @@ export function ComplianceGate() {
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-xl flex-col px-5 pb-10 pt-[max(1.5rem,env(safe-area-inset-top))]">
+      <Aero className="mx-auto h-28" />
       <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-ink">{APP_NAME}</p>
       <h1 className="mt-2 font-display text-4xl font-semibold tracking-tight">Before you fly</h1>
-      <p className="mt-3 text-sm font-medium text-ink">
-        Practice for seventh- and eighth-grade students, typically 12–14. A parent or a student 12 or older has to
-        agree once on this device.
-      </p>
+      <p className="mt-3 text-sm font-medium text-ink">Parent or student 12+ — once on this device.</p>
 
       <fieldset className="mt-6 space-y-2">
         <legend className="text-xs font-semibold uppercase tracking-widest text-ink">I am</legend>

@@ -19,10 +19,7 @@ export function HelpPage() {
 
   return (
     <div className="px-4 pb-8">
-      <h1 className="type-pack text-5xl">Assist</h1>
-      <p className="mt-1 font-bold text-navy/65">
-        Type, paste, or photograph a worksheet. We name the concept and coach — we don’t dump the answer.
-      </p>
+      <h1 className="type-pack text-5xl">Help</h1>
       <textarea
         value={raw}
         onChange={(e) => setRaw(e.target.value)}
@@ -52,7 +49,7 @@ export function HelpPage() {
           setParent({ pageNote: raw })
         }}
       >
-        Coach me
+        Coach
       </button>
 
       {plan ? (

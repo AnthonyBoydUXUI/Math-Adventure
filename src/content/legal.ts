@@ -170,7 +170,7 @@ export const SUPPORT_SECTIONS: LegalSection[] = [
   {
     heading: 'Progress and data',
     paragraphs: [
-      'Progress lives on this device first. Sign in under System → Account + sync to back it up to one profile.',
+      'Progress lives on this device first. Sign in under More → Account to back it up to one profile.',
       'Clearing browser data wipes the local flight log. Sign in again to restore the cloud copy.',
     ],
   },

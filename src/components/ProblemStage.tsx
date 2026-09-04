@@ -31,8 +31,8 @@ export function ProblemStage({ question, phaseLabel }: { question: Question; pha
     return (
       <div className="paper-card mx-4 rounded-sm border border-white/10 p-6 text-center">
         <PenLine className="mx-auto mb-3 h-10 w-10 text-sky" />
-        <p className="font-display text-3xl font-semibold">Paper first.</p>
-        <p className="mt-2 font-medium text-ink">Write this one down first. The screen is the scoreboard, not the work.</p>
+        <p className="font-display text-3xl font-semibold">Paper</p>
+        <p className="mt-2 font-medium text-ink">Write it, then come back.</p>
         <div className="mt-5 flex flex-col gap-2">
           <button
             type="button"
@@ -52,9 +52,7 @@ export function ProblemStage({ question, phaseLabel }: { question: Question; pha
   if (session.awaitingLock) {
     return (
       <div className="panel mx-4 space-y-3 rounded-sm p-5">
-        <p className="text-xs font-medium uppercase tracking-[0.2em] text-ink">Lock it in?</p>
         <p className="font-display text-4xl font-semibold">{session.draft}</p>
-        <p className="font-medium text-ink">First instinct is often the math you actually know.</p>
         <div className="grid grid-cols-2 gap-2">
           <button
             type="button"
@@ -101,7 +99,7 @@ export function ProblemStage({ question, phaseLabel }: { question: Question; pha
         ) : (
           <p className="text-sm font-medium text-ink">{question.anotherWay}</p>
         )}
-        <p className="text-xs font-medium uppercase tracking-widest text-ink">How sure were you?</p>
+        <p className="text-xs font-medium uppercase tracking-widest text-ink">Sure?</p>
         <div className="flex gap-1">
           {[1, 2, 3, 4, 5].map((n) => (
             <button
@@ -139,9 +137,7 @@ export function ProblemStage({ question, phaseLabel }: { question: Question; pha
         ) : null}
       </div>
       {question.format !== 'word' ? (
-        <p className="rounded-xl bg-mist px-3 py-1 text-center text-xs font-medium uppercase tracking-widest text-sky">
-          Same math, different look · {question.format}
-        </p>
+        <p className="text-center text-[11px] font-semibold uppercase tracking-[0.16em] text-sky">{question.format}</p>
       ) : null}
       <div className="panel rounded-sm p-4">
         <p className="font-display text-2xl font-semibold leading-tight">{question.prompt}</p>

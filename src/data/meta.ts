@@ -15,12 +15,12 @@ export const ACHIEVEMENTS: AchievementDef[] = [
 ]
 
 export const COSMETICS: CosmeticDef[] = [
-  { id: 'goggles-base', name: 'Harbor Goggles', slot: 'goggles', subtitle: 'Starter lenses', unlock: 'start' },
-  { id: 'goggles-gold', name: 'Locked-In Lenses', slot: 'goggles', subtitle: 'Amber focus', unlock: 'locked-in' },
-  { id: 'goggles-paint', name: 'Gallery Lenses', slot: 'goggles', subtitle: 'Splatter rims', unlock: 'paper-work' },
-  { id: 'hoodie-base', name: 'Night Harbor Hoodie', slot: 'hoodie', subtitle: 'Navy flight layer', unlock: 'start' },
-  { id: 'hoodie-court', name: 'Court Hoodie', slot: 'hoodie', subtitle: 'Home-game orange', unlock: 'flight-complete' },
-  { id: 'hoodie-signal', name: 'Signal Hoodie', slot: 'hoodie', subtitle: 'Neon grid', unlock: 'different-look' },
+  { id: 'goggles-base', name: 'Harbor visor', slot: 'goggles', subtitle: 'Starter', unlock: 'start' },
+  { id: 'goggles-gold', name: 'Amber visor', slot: 'goggles', subtitle: 'Focus', unlock: 'locked-in' },
+  { id: 'goggles-paint', name: 'Gallery visor', slot: 'goggles', subtitle: 'Paint', unlock: 'paper-work' },
+  { id: 'hoodie-base', name: 'Night suit', slot: 'hoodie', subtitle: 'Navy', unlock: 'start' },
+  { id: 'hoodie-court', name: 'Court suit', slot: 'hoodie', subtitle: 'Orange', unlock: 'flight-complete' },
+  { id: 'hoodie-signal', name: 'Signal suit', slot: 'hoodie', subtitle: 'Teal', unlock: 'different-look' },
   { id: 'kicks-base', name: 'Runway High-Tops', slot: 'kicks', subtitle: 'White/orange', unlock: 'start' },
   { id: 'kicks-volt', name: 'Volt High-Tops', slot: 'kicks', subtitle: 'Boss-clear energy', unlock: 'boss-down' },
   { id: 'figure-base', name: 'Aero — Harbor Form', slot: 'figure', subtitle: 'Flight series · form 01', unlock: 'start' },
