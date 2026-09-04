@@ -1,6 +1,6 @@
 import type { CastMood } from './canon.ts'
 
-/** Procedural face targets until a production GLB ships blendshapes. */
+/** Signal face targets. */
 export interface FaceExpr {
   lid: number
   squint: number

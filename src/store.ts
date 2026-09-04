@@ -10,6 +10,7 @@ import { buildTestReport } from './engine/testReady.ts'
 import { generateDailyMission } from './engine/session.ts'
 import { resumeAudio, setMuted, sfx, startAmbient, stopAmbient, type AmbientPhase } from './lib/sfx.ts'
 import { worldForModule } from './data/worlds.ts'
+import { CAST_LOCKED } from './engine/render/cast/canon.ts'
 import { clearLocalArchive } from './lib/archive.ts'
 import { checkAnswer } from './lib/answers.ts'
 import { haptic } from './lib/haptics.ts'
@@ -165,10 +166,10 @@ function unlockCosmetics(cosmetics: PlayerCosmetics, achievements: string[]): Pl
 
 function normalizeCosmetics(cosmetics: Partial<PlayerCosmetics> & { unlocked?: string[] }): PlayerCosmetics {
   return {
-    goggles: cosmetics.goggles ?? 'goggles-base',
-    hoodie: cosmetics.hoodie ?? 'hoodie-base',
-    kicks: cosmetics.kicks ?? 'kicks-base',
-    paint: cosmetics.paint ?? 'paint-volt',
+    goggles: cosmetics.goggles ?? CAST_LOCKED.visor,
+    hoodie: cosmetics.hoodie ?? CAST_LOCKED.suit,
+    kicks: cosmetics.kicks ?? CAST_LOCKED.kicks,
+    paint: cosmetics.paint ?? CAST_LOCKED.paint,
     wheels: cosmetics.wheels ?? 'wheels-bronze',
     wing: cosmetics.wing ?? 'wing-black',
     unlocked: cosmetics.unlocked ?? [],
@@ -228,10 +229,10 @@ export const usePlayerStore = create<PlayerStore>()(
       attempts: [],
       achievements: [],
       cosmetics: {
-        goggles: 'goggles-base',
-        hoodie: 'hoodie-base',
-        kicks: 'kicks-base',
-        paint: 'paint-volt',
+        goggles: CAST_LOCKED.visor,
+        hoodie: CAST_LOCKED.suit,
+        kicks: CAST_LOCKED.kicks,
+        paint: CAST_LOCKED.paint,
         wheels: 'wheels-bronze',
         wing: 'wing-black',
         unlocked: COSMETICS.filter((c) => c.unlock === 'start').map((c) => c.id),
