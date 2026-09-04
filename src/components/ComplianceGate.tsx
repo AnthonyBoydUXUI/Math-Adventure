@@ -50,7 +50,7 @@ export function ComplianceGate() {
           checked={ageOk}
           onChange={(e) => setAgeOk(e.target.checked)}
         />
-        <span>This device will not be used by a child under 13. Aero is not in Apple’s Kids Category.</span>
+        <span>This device will not be used by a child under 13. Math Adventure is not in Apple’s Kids Category.</span>
       </label>
       <label className="mt-2 flex min-h-11 items-start gap-3 text-sm font-medium">
         <input

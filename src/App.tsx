@@ -41,7 +41,7 @@ function HydratedRoutes() {
   if (!ready) {
     return (
       <div className="grid min-h-dvh place-items-center text-sm font-medium text-ink" role="status">
-        Loading Aero…
+        Loading…
       </div>
     )
   }

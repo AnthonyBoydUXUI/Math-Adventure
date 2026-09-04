@@ -1,6 +1,6 @@
 {
-  "name": "Aero",
-  "short_name": "Aero",
+  "name": "Math Adventure",
+  "short_name": "Math Adventure",
   "description": "15-minute adaptive math practice for seventh- and eighth-grade students.",
   "start_url": "/",
   "display": "standalone",

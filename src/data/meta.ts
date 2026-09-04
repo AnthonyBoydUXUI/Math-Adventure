@@ -11,7 +11,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
   { id: 'streak-3', name: 'Three-Day Sky', description: 'Finished three daily 15s in a row.', icon: 'flame' },
   { id: 'streak-7', name: 'Week in the Air', description: 'Finished seven daily 15s in a row.', icon: 'flame' },
   { id: 'boss-down', name: 'Boss Down', description: 'Beat a boss problem on paper.', icon: 'crown' },
-  { id: 'voice-ask', name: 'Ask Aero', description: 'Used voice to ask for another way.', icon: 'mic' },
+  { id: 'voice-ask', name: 'Ask out loud', description: 'Used voice to ask for another way.', icon: 'mic' },
 ]
 
 export const COSMETICS: CosmeticDef[] = [
@@ -23,10 +23,10 @@ export const COSMETICS: CosmeticDef[] = [
   { id: 'hoodie-signal', name: 'Signal suit', slot: 'hoodie', subtitle: 'Teal', unlock: 'different-look' },
   { id: 'kicks-base', name: 'Runway High-Tops', slot: 'kicks', subtitle: 'White/orange', unlock: 'start' },
   { id: 'kicks-volt', name: 'Volt High-Tops', slot: 'kicks', subtitle: 'Boss-clear energy', unlock: 'boss-down' },
-  { id: 'figure-base', name: 'Aero — Harbor Form', slot: 'figure', subtitle: 'Flight series · form 01', unlock: 'start' },
-  { id: 'figure-lockin', name: 'Aero — Locked In', slot: 'figure', subtitle: 'KEEP THE FIRST ANSWER', unlock: 'trust-yourself' },
-  { id: 'figure-gallery', name: 'Aero — Gallery Mode', slot: 'figure', subtitle: 'SAME MATH, NEW FRAME', unlock: 'comeback' },
-  { id: 'figure-peak', name: 'Aero — Peak Form', slot: 'figure', subtitle: 'ALGEBRA I APPROACHING', unlock: 'streak-7' },
+  { id: 'figure-base', name: 'Harbor form', slot: 'figure', subtitle: 'Flight series · form 01', unlock: 'start' },
+  { id: 'figure-lockin', name: 'Locked in', slot: 'figure', subtitle: 'KEEP THE FIRST ANSWER', unlock: 'trust-yourself' },
+  { id: 'figure-gallery', name: 'Gallery form', slot: 'figure', subtitle: 'SAME MATH, NEW FRAME', unlock: 'comeback' },
+  { id: 'figure-peak', name: 'Peak form', slot: 'figure', subtitle: 'ALGEBRA I APPROACHING', unlock: 'streak-7' },
   { id: 'paint-volt', name: 'Volt Yellow', slot: 'paint', subtitle: 'Harbor RS body', unlock: 'start' },
   { id: 'paint-night', name: 'Night Harbor', slot: 'paint', subtitle: 'Deep navy wrap', unlock: 'flight-complete' },
   { id: 'paint-leaf', name: 'Locked-In Green', slot: 'paint', subtitle: 'Clean-flight wrap', unlock: 'streak-3' },

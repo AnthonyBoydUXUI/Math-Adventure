@@ -28,7 +28,7 @@ export class ErrorBoundary extends Component<Props, State> {
     return (
       <div className="mx-auto grid min-h-dvh max-w-xl place-items-center px-6 text-center">
         <div>
-          <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-ink">Aero</p>
+          <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-ink">Math Adventure</p>
           <h1 className="mt-2 font-display text-3xl font-semibold">Something broke on this screen</h1>
           <p className="mt-2 text-sm font-medium text-ink">
             Your progress is still on this device. Reload, or export data from Privacy Center if the screen stays blank.

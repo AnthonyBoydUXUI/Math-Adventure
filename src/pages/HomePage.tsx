@@ -28,7 +28,7 @@ export function HomePage() {
 
   return (
     <div className="px-4 pb-8">
-      <WindowBox stamp="Aero · 12+" series={`M${mod?.number ?? ''}`}>
+      <WindowBox stamp="12+" series={`M${mod?.number ?? ''}`}>
         <div className="relative min-h-[320px] text-white">
           <WorldScene
             moduleId={parent.moduleId}

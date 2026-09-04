@@ -1,6 +1,6 @@
 # Art direction — principal notes
 
-Aero is a 7th/8th-grade collector product, not a kids’ cartoon. Shipping Unity / Unreal / Godot would mean leaving this Vite app. The engine here is **Three.js** (scene graph, camera, lights, materials, frame loop).
+Math Adventure is a 7th/8th-grade collector product, not a kids’ cartoon. Shipping Unity / Unreal / Godot would mean leaving this Vite app. The engine here is **Three.js** (scene graph, camera, lights, materials, frame loop).
 
 Reference photos informed **language**, not characters or trademarks. Do not ship Super Saiyan hair, Bandai marks, four-petal pupils, balloon Flyboy, or copied paintings.
 

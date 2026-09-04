@@ -7,10 +7,10 @@ describe('local archive', () => {
     localStorage.removeItem(PERSIST_KEY)
   })
 
-  it('exports a dated Aero JSON envelope', () => {
+  it('exports a dated Math Adventure JSON envelope', () => {
     localStorage.setItem(PERSIST_KEY, JSON.stringify({ state: { xp: 12 } }))
     const file = JSON.parse(serializeLocalArchive(new Date('2026-09-04T12:00:00.000Z')))
-    expect(file.app).toBe('Aero')
+    expect(file.app).toBe('Math Adventure')
     expect(file.storageKey).toBe(PERSIST_KEY)
     expect(file.exportedAt).toBe('2026-09-04T12:00:00.000Z')
     expect(file.data).toEqual({ state: { xp: 12 } })
