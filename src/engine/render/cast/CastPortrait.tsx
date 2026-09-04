@@ -12,12 +12,12 @@ export function CastPortrait({
 }: CastLook & { className?: string; framing?: 'face' | 'waist' | 'full' | 'silhouette' }) {
   const cam =
     framing === 'face'
-      ? ([0.38, 1.32, 0.72] as const)
+      ? ([0.26, 1.28, 0.55] as const)
       : framing === 'full'
         ? ([1.05, 0.82, 2.05] as const)
-        : ([0.68, 1.08, 1.28] as const)
+        : ([0.62, 1.02, 1.2] as const)
   const target =
-    framing === 'face' ? ([0, 1.26, 0] as const) : framing === 'full' ? ([0, 0.68, 0] as const) : ([0, 0.98, 0] as const)
+    framing === 'face' ? ([0, 1.27, 0.12] as const) : framing === 'full' ? ([0, 0.68, 0] as const) : ([0, 0.95, 0] as const)
   const quality = framing === 'face' ? 'close' : look.quality ?? 'play'
 
   return (
