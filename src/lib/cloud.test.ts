@@ -6,7 +6,7 @@ import { seedSkillStats } from '../engine/mastery.ts'
 
 function snap(patch: Partial<CloudSnapshot>): CloudSnapshot {
   return {
-    version: 5,
+    version: 6,
     studentName: 'A',
     xp: 10,
     sparks: 4,
@@ -75,6 +75,29 @@ describe('cloud merge', () => {
     const cleaned = stripLocalOnly(snap({}))
     expect(cleaned.parent.pagePhoto).toBeUndefined()
     expect(cleaned.session.photo).toBeUndefined()
+  })
+
+  it('keeps school-week notes but drops page photos', () => {
+    const cleaned = stripLocalOnly(
+      snap({
+        parent: {
+          moduleId: 'm6',
+          topicId: 'm6-t1',
+          themes: ['art'],
+          pressureLab: false,
+          studentName: 'A',
+          schoolWeek: {
+            weekKey: '2026-09-14',
+            note: 'equations quiz Friday',
+            skillIds: ['two-step-eq'],
+            gradeBand: '7',
+            pages: [{ id: 'p1', kind: 'assignment', label: 'HW', dataUrl: 'data:image/png;base64,zzz', addedAt: 1 }],
+          },
+        },
+      }),
+    )
+    expect(cleaned.parent.schoolWeek?.note).toBe('equations quiz Friday')
+    expect(cleaned.parent.schoolWeek?.pages).toEqual([])
   })
 
   it('takes the remote copy after a local wipe', () => {

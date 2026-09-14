@@ -10,7 +10,7 @@ import type {
   PlayerCosmetics,
 } from '../types.ts'
 
-export const CLOUD_VERSION = 5
+export const CLOUD_VERSION = 6
 
 export interface CloudSnapshot {
   version: number
@@ -37,7 +37,13 @@ export interface CloudSnapshot {
 export function stripLocalOnly(snap: CloudSnapshot): CloudSnapshot {
   return {
     ...snap,
-    parent: { ...snap.parent, pagePhoto: undefined },
+    parent: {
+      ...snap.parent,
+      pagePhoto: undefined,
+      schoolWeek: snap.parent.schoolWeek
+        ? { ...snap.parent.schoolWeek, pages: [] }
+        : undefined,
+    },
     session: { ...snap.session, photo: undefined },
     attempts: snap.attempts.map((a) => ({ ...a, paperPhoto: undefined })),
   }

@@ -16,7 +16,7 @@ const NAV = [
   { to: '/', label: 'Home', icon: Home },
   { to: '/train', label: 'Run', icon: Gauge },
   { to: '/lab', label: 'Lab', icon: FlaskConical },
-  { to: '/help', label: 'Help', icon: LifeBuoy },
+  { to: '/help', label: 'Coach', icon: LifeBuoy },
   { to: '/locker', label: 'Gear', icon: Trophy },
   { to: '/more', label: 'More', icon: MoreHorizontal },
 ]

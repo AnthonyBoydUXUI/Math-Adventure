@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { MIC_PREAMBLE } from '../content/legal.ts'
 import { createVoiceProvider, parseVoice } from '../engine/voice/index.ts'
 import { talkAnother, talkHeard, talkHint, talkWhy } from '../engine/voice/talk.ts'
+import { simplestWalkthrough } from '../engine/homework.ts'
 import { cn } from '../lib/cn.ts'
 import { usePlayerStore } from '../store.ts'
 import type { Question } from '../types.ts'
@@ -31,9 +32,10 @@ export function VoiceTutor({
       return
     }
     if (parsed.intent === 'confused') {
-      const hint = question.hints[0] ?? 'Grab paper. What is this actually asking you?'
-      void provider.speak(talkHint(hint))
-      setLine(hint)
+      const tiny = simplestWalkthrough(question.skillId)[0]
+      const hint = tiny?.say ?? question.hints[0] ?? 'Grab paper. What is this actually asking you?'
+      void provider.speak(talkHint(tiny ? `${tiny.say} ${tiny.do}` : hint))
+      setLine(tiny ? `${tiny.say} ${tiny.do}` : hint)
     } else if (parsed.intent === 'another_way') {
       markVoice()
       void provider.speak(talkAnother(question.anotherWay))
@@ -42,8 +44,9 @@ export function VoiceTutor({
       void provider.speak(talkWhy(question.why))
       setLine(question.why)
     } else if (parsed.intent === 'example') {
-      void provider.speak('Same idea, smaller numbers. Start with the picture.')
-      setLine('Same idea, smaller numbers. Start with the picture.')
+      const tiny = simplestWalkthrough(question.skillId)[1]
+      void provider.speak(tiny ? `${tiny.say} ${tiny.example ?? tiny.do}` : 'Same idea, smaller numbers. Start with the picture.')
+      setLine(tiny ? `${tiny.say} ${tiny.example ?? tiny.do}` : 'Same idea, smaller numbers. Start with the picture.')
     } else if (parsed.intent === 'hint') {
       const hint = question.hints[1] ?? question.hints[0] ?? 'Write what you know, and what you need to find.'
       void provider.speak(talkHint(hint))

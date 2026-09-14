@@ -8,6 +8,7 @@ import { buildBookmark, defaultBookmark, markPracticeDay, type ProgressBookmark 
 import { evaluateAchievements, HINT_SPARK_COST, xpForAttempt } from './engine/scoring.ts'
 import { buildTestReport } from './engine/testReady.ts'
 import { generateDailyMission } from './engine/session.ts'
+import { weekKey } from './engine/schoolWeek.ts'
 import { resumeAudio, setMuted, sfx, startAmbient, stopAmbient, type AmbientPhase } from './lib/sfx.ts'
 import { worldForModule } from './data/worlds.ts'
 import { CAST_LOCKED } from './engine/render/cast/canon.ts'
@@ -111,6 +112,7 @@ const defaultParent: ParentSettings = {
   themes: ['basketball', 'art', 'sky', 'gaming'],
   pressureLab: false,
   studentName: '',
+  gradeBand: '7',
 }
 
 const defaultCompliance: ComplianceState = {
@@ -633,7 +635,7 @@ export const usePlayerStore = create<PlayerStore>()(
     }),
     {
       name: 'aero-math-adventure',
-      version: 5,
+      version: 6,
       migrate: (persisted, version) => {
         const s = { ...((persisted ?? {}) as Record<string, unknown>) }
         if (version < 4) {
@@ -648,6 +650,28 @@ export const usePlayerStore = create<PlayerStore>()(
           s.bookmark = defaultBookmark()
           s.practiceDays = Array.isArray(s.practiceDays) ? s.practiceDays : []
           s.lastActiveAt = typeof s.lastActiveAt === 'number' ? s.lastActiveAt : 0
+        }
+        if (version < 6) {
+          const parent = { ...((s.parent as ParentSettings | undefined) ?? defaultParent) }
+          parent.gradeBand = parent.gradeBand ?? '7'
+          if (parent.pagePhoto && !parent.schoolWeek?.pages?.length) {
+            parent.schoolWeek = {
+              weekKey: weekKey(),
+              note: parent.pageNote ?? '',
+              skillIds: [],
+              gradeBand: parent.gradeBand,
+              pages: [
+                {
+                  id: 'legacy-page',
+                  kind: 'assignment',
+                  label: 'Class page',
+                  dataUrl: parent.pagePhoto,
+                  addedAt: Date.now(),
+                },
+              ],
+            }
+          }
+          s.parent = parent
         }
         return s as unknown as PlayerStore
       },

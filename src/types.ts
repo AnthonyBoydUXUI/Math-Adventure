@@ -272,6 +272,25 @@ export interface PlayerCosmetics {
   unlocked: string[]
 }
 
+export type GradeBand = '7' | '8' | '9'
+export type SchoolPageKind = 'assignment' | 'study-guide' | 'work'
+
+export interface SchoolPage {
+  id: string
+  kind: SchoolPageKind
+  label: string
+  dataUrl: string
+  addedAt: number
+}
+
+export interface SchoolWeek {
+  weekKey: string
+  note: string
+  skillIds: string[]
+  gradeBand: GradeBand
+  pages: SchoolPage[]
+}
+
 export interface ParentSettings {
   moduleId: string
   topicId: string
@@ -280,6 +299,8 @@ export interface ParentSettings {
   studentName: string
   pagePhoto?: string
   pageNote?: string
+  gradeBand?: GradeBand
+  schoolWeek?: SchoolWeek
 }
 
 export interface ComplianceState {

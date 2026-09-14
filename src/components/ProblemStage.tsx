@@ -1,6 +1,7 @@
 import { Camera, PenLine } from 'lucide-react'
 import { MediaCapture } from './MediaCapture.tsx'
 import { DIAGNOSIS_COPY } from '../engine/diagnosis.ts'
+import { simplestWalkthrough } from '../engine/homework.ts'
 import { compositeMastery, emptyStats } from '../engine/mastery.ts'
 import { formatAnswer } from '../lib/answers.ts'
 import { cn } from '../lib/cn.ts'
@@ -10,6 +11,7 @@ import { HINT_SPARK_COST } from '../engine/scoring.ts'
 import { Scoreboard } from './Scoreboard.tsx'
 import { VisualMath } from './VisualMath.tsx'
 import { VoiceTutor } from './VoiceTutor.tsx'
+import { RivePlay } from './RivePlay.tsx'
 
 export function ProblemStage({ question, phaseLabel }: { question: Question; phaseLabel: string }) {
   const session = usePlayerStore((s) => s.session)
@@ -91,9 +93,11 @@ export function ProblemStage({ question, phaseLabel }: { question: Question; pha
         </p>
         <h2 className="font-display text-2xl font-semibold">{copy.title}</h2>
         <p className="font-medium text-ink">{copy.line}</p>
+        <RivePlay compact mood={session.lastResult.correct ? 'correct' : 'miss'} caption={session.lastResult.correct ? 'Locked' : 'Try the tiny step'} />
         {!session.lastResult.correct ? (
           <p className="rounded-xl bg-mist px-3 py-2 text-sm font-medium">
-            Target look: <span className="font-semibold">{formatAnswer(question.answer)}</span>
+            Tiny step: {simplestWalkthrough(question.skillId)[0]?.say}
+            <span className="mt-1 block text-ink">Target look: {formatAnswer(question.answer)}</span>
             <span className="block text-ink">{question.why}</span>
           </p>
         ) : (
