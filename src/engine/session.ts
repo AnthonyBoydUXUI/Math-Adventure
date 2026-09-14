@@ -4,6 +4,7 @@ import { linkedWorld, worldForModule } from '../data/worlds.ts'
 import { dayKey, hashString, mulberry32, pick, shuffle } from '../lib/hash.ts'
 import type { AttemptRecord, DailyMission, DimensionStats, Format, MissionPhase, ParentSettings, Question } from '../types.ts'
 import { compositeMastery, emptyStats, weakestSkills } from './mastery.ts'
+import { schoolDaySkill } from './schoolWeek.ts'
 import { buildTestReport, preferFormats } from './testReady.ts'
 
 const PHASE_MINUTES = { warmup: 3, builder: 4, lab: 4, boss: 3, recap: 1 } as const
@@ -16,10 +17,12 @@ export function generateDailyMission(
   attempts: AttemptRecord[] = [],
 ): DailyMission {
   const key = extra ? `${dayKey(date)}-plus` : dayKey(date)
-  const rng = mulberry32(hashString(`${key}:${parent.moduleId}:${parent.topicId}`))
+  const weekSkill = schoolDaySkill(parent, date)
+  const rng = mulberry32(hashString(`${key}:${parent.moduleId}:${parent.topicId}${weekSkill ? `:${weekSkill}` : ''}`))
 
   const classroomIds = skillsForTopic(parent.moduleId, parent.topicId)
   const classroomSkill =
+    weekSkill ??
     classroomIds[0] ??
     weakestSkills(stats, 'classroom', 1)[0]?.skill.id ??
     'two-step-eq'
@@ -29,8 +32,9 @@ export function generateDailyMission(
 
   const nextCandidates = SKILLS.filter((s) => s.track === 'next')
   const classroomMastery = compositeMastery(stats[classroomSkill] ?? emptyStats())
+  const stretchReady = classroomMastery >= 58 || parent.gradeBand === '8' || parent.gradeBand === '9'
   const nextSkill =
-    classroomMastery >= 58
+    stretchReady
       ? (pick(rng, nextCandidates).id as string)
       : weakestSkills(stats, 'next', 1)[0]?.skill.id ?? 'slope-linear'
 
@@ -113,7 +117,6 @@ export function generateDailyMission(
     },
   ]
 
-  const classroomName = SKILLS.find((s) => s.id === classroomSkill)?.name ?? 'today’s skill'
   return {
     dateKey: key,
     title: extra ? `Keep going · ${world.name}` : `${world.name} · 15`,

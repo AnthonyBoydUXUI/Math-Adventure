@@ -1,4 +1,5 @@
 import { MediaCapture } from '../components/MediaCapture.tsx'
+import { SchoolWeekDesk } from '../components/SchoolWeekDesk.tsx'
 import { MODULES } from '../data/curriculum.ts'
 import { THEMES } from '../types.ts'
 import { usePlayerStore } from '../store.ts'
@@ -12,7 +13,7 @@ export function ParentPage() {
   return (
     <div className="px-4 pb-8">
       <h1 className="type-pack text-5xl">Parent desk</h1>
-      <p className="mt-1 font-medium text-ink">This week’s topic.</p>
+      <p className="mt-1 font-medium text-ink">This week’s topic. He can also set it from Coach with class pages.</p>
 
       <label className="mt-4 block text-xs font-semibold uppercase tracking-widest text-navy/45">Student name</label>
       <input
@@ -98,6 +99,10 @@ export function ParentPage() {
           Expressions 430 often mixes format transfer + written process, not missing algebra talent.
         </li>
       </ul>
+
+      <div className="mt-5">
+        <SchoolWeekDesk />
+      </div>
 
       <MediaCapture
         className="press mt-5 inline-flex min-h-11 items-center rounded-sm border border-white/10 bg-paper px-3 text-sm font-semibold"

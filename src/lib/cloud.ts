@@ -1,4 +1,5 @@
 import type { ProgressBookmark } from '../engine/progress.ts'
+import { emptyRewards, mergeRewards, type RewardBook } from '../engine/rewards.ts'
 import { usePlayerStore, type SessionSlice } from '../store.ts'
 import type {
   AttemptRecord,
@@ -10,7 +11,7 @@ import type {
   PlayerCosmetics,
 } from '../types.ts'
 
-export const CLOUD_VERSION = 5
+export const CLOUD_VERSION = 6
 
 export interface CloudSnapshot {
   version: number
@@ -32,12 +33,19 @@ export interface CloudSnapshot {
   soundOn: boolean
   compliance: ComplianceState
   permissions: PermissionState
+  rewards: RewardBook
 }
 
 export function stripLocalOnly(snap: CloudSnapshot): CloudSnapshot {
   return {
     ...snap,
-    parent: { ...snap.parent, pagePhoto: undefined },
+    parent: {
+      ...snap.parent,
+      pagePhoto: undefined,
+      schoolWeek: snap.parent.schoolWeek
+        ? { ...snap.parent.schoolWeek, pages: [] }
+        : undefined,
+    },
     session: { ...snap.session, photo: undefined },
     attempts: snap.attempts.map((a) => ({ ...a, paperPhoto: undefined })),
   }
@@ -66,6 +74,7 @@ export function mergeSnapshots(local: CloudSnapshot, remote: CloudSnapshot): Clo
     attempts: [...attemptMap.values()].sort((a, b) => a.at - b.at).slice(-400),
     streak: Math.max(local.streak, remote.streak),
     xp: Math.max(local.xp, remote.xp),
+    rewards: mergeRewards(local.rewards ?? emptyRewards(), remote.rewards ?? emptyRewards()),
   })
 }
 
@@ -91,6 +100,7 @@ export function takeCloudSnapshot(): CloudSnapshot {
     soundOn: s.soundOn,
     compliance: s.compliance,
     permissions: s.permissions,
+    rewards: s.rewards ?? emptyRewards(),
   })
 }
 
@@ -115,5 +125,6 @@ export function applyCloudSnapshot(snap: CloudSnapshot) {
     soundOn: clean.soundOn,
     compliance: clean.compliance,
     permissions: clean.permissions,
+    rewards: clean.rewards ?? emptyRewards(),
   })
 }

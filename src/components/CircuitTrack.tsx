@@ -1,7 +1,9 @@
+import { LiveWorld } from './LiveWorld.tsx'
 import { firstTopicId } from '../data/curriculum.ts'
 import { worldThumb } from '../data/sheets.ts'
 import { circuitPits, linkedWorld, worldForModule, WORLDS, type AdventureWorld } from '../data/worlds.ts'
 import { compositeMastery, emptyStats } from '../engine/mastery.ts'
+import { emptyRewards, lessonCleared, worldStars } from '../engine/rewards.ts'
 import { cn } from '../lib/cn.ts'
 import { resumeAudio } from '../lib/sfx.ts'
 import { usePlayerStore } from '../store.ts'
@@ -10,10 +12,9 @@ import { SheetArt } from './SheetArt.tsx'
 export function CircuitTrack({ compact }: { compact?: boolean }) {
   const parent = usePlayerStore((s) => s.parent)
   const stats = usePlayerStore((s) => s.stats)
+  const rewards = usePlayerStore((s) => s.rewards) ?? emptyRewards()
   const current = worldForModule(parent.moduleId)
-  const worlds = compact
-    ? nearbyWorlds(current.id)
-    : WORLDS
+  const worlds = compact ? nearbyWorlds(current.id) : WORLDS
 
   function driveTo(world: AdventureWorld) {
     if (!world.moduleId) return
@@ -30,6 +31,8 @@ export function CircuitTrack({ compact }: { compact?: boolean }) {
           world.skillIds.reduce((n, id) => n + compositeMastery(stats[id] ?? emptyStats()), 0) /
           Math.max(1, world.skillIds.length)
         const canDrive = Boolean(world.moduleId)
+        const stars = worldStars(rewards, world.id)
+        const lessons = world.skillIds.filter((id) => lessonCleared(rewards, id)).length
         return (
           <button
             key={world.id}
@@ -42,11 +45,22 @@ export function CircuitTrack({ compact }: { compact?: boolean }) {
               !canDrive && 'opacity-80',
             )}
           >
-            <SheetArt src={worldThumb(world.id)} alt={`${world.district} map`} cover className="aspect-square" />
+            {active ? (
+              <LiveWorld worldId={world.id} compact className="h-44" />
+            ) : (
+              <SheetArt src={worldThumb(world.id)} alt={`${world.district} map`} cover className="aspect-square" />
+            )}
             <div className="px-3 py-2">
               <p className="font-semibold text-white">{world.name}</p>
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-white/55">{world.district}</p>
-              <p className="mt-1 text-xs font-medium text-ink">{Math.round(mastery)} mastery</p>
+              <p className="mt-1 text-xs font-medium text-gold">
+                {'★'.repeat(stars)}
+                {'☆'.repeat(Math.max(0, 4 - stars))}
+                {rewards.worlds.includes(world.id) ? ' · world clear' : ''}
+              </p>
+              <p className="mt-0.5 text-xs font-medium text-ink">
+                {Math.round(mastery)} mastery · {lessons}/{world.skillIds.length} lessons
+              </p>
             </div>
           </button>
         )

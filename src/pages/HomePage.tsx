@@ -1,6 +1,8 @@
 import { Play } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { LiveDay } from '../components/LiveWorld.tsx'
+import { RivePlay } from '../components/RivePlay.tsx'
+import { SchoolWeekDesk } from '../components/SchoolWeekDesk.tsx'
 import { SheetArt } from '../components/SheetArt.tsx'
 import { WeekStrip } from '../components/WeekStrip.tsx'
 import { WindowBox } from '../components/WindowBox.tsx'
@@ -44,6 +46,21 @@ export function HomePage() {
           </button>
         </div>
       </WindowBox>
+
+      <div className="mt-4">
+        <RivePlay compact caption="Tap to rev" />
+      </div>
+
+      <div className="mt-4">
+        <SchoolWeekDesk compact />
+        <button
+          type="button"
+          className="press mt-2 w-full border border-white/10 py-3 text-sm font-semibold uppercase tracking-[0.12em]"
+          onClick={() => navigate('/help')}
+        >
+          Add pages · tiny-step coach
+        </button>
+      </div>
 
       <WindowBox className="mt-4" stamp="Signal" series="Harbor RS">
         <SheetArt src={SIGNAL_SHEETS.hero} alt="Signal and the Harbor RS" />

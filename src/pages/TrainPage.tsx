@@ -11,6 +11,7 @@ import { buildTestReport } from '../engine/testReady.ts'
 import { SIGNAL_SHEETS } from '../data/sheets.ts'
 import { linkedWorld, worldForModule } from '../data/worlds.ts'
 import { usePlayerStore } from '../store.ts'
+import { cn } from '../lib/cn.ts'
 
 export function TrainPage() {
   const navigate = useNavigate()
@@ -55,6 +56,24 @@ export function TrainPage() {
       </div>
       <div className="mx-4 mb-3 h-1.5 overflow-hidden bg-mist">
         <div className="h-full bg-gold" style={{ width: `${((doneQ + 1) / Math.max(1, totalQ)) * 100}%` }} />
+      </div>
+      <div className="mx-4 mb-3 grid grid-cols-4 gap-1">
+        {(['warmup', 'builder', 'lab', 'boss'] as const).map((id, i) => {
+          const labels = ['1 Warm', '2 Build', '3 Lab', '4 Boss']
+          const order = ['warmup', 'builder', 'lab', 'boss']
+          const here = order.indexOf(phase.phase)
+          return (
+            <div
+              key={id}
+              className={cn(
+                'rounded-sm py-1 text-center text-[10px] font-semibold uppercase tracking-widest',
+                i < here ? 'bg-gold/30 text-gold' : i === here ? 'bg-[#0e1a3a] text-bone' : 'bg-mist text-ink',
+              )}
+            >
+              {labels[i]}
+            </div>
+          )
+        })}
       </div>
       <p className="mx-4 mb-2 text-center text-xs font-semibold uppercase tracking-[0.14em] text-ink">
         {world.name} · {phase.label}
