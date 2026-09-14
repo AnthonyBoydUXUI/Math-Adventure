@@ -9,6 +9,16 @@ import { evaluateAchievements, HINT_SPARK_COST, xpForAttempt } from './engine/sc
 import { buildTestReport } from './engine/testReady.ts'
 import { generateDailyMission } from './engine/session.ts'
 import { weekKey } from './engine/schoolWeek.ts'
+import {
+  applyLessonClear,
+  applyStageClear,
+  applyWorldClear,
+  emptyRewards,
+  mergeRewards,
+  worldReadyToClear,
+  type RewardBook,
+} from './engine/rewards.ts'
+import { skillById } from './data/curriculum.ts'
 import { resumeAudio, setMuted, sfx, startAmbient, stopAmbient, type AmbientPhase } from './lib/sfx.ts'
 import { worldForModule } from './data/worlds.ts'
 import { CAST_LOCKED } from './engine/render/cast/canon.ts'
@@ -78,6 +88,7 @@ interface PlayerStore {
   lastActiveAt: number
   toast?: string
   soundOn: boolean
+  rewards: RewardBook
   compliance: ComplianceState
   permissions: PermissionState
   acknowledgeCompliance: (role: NonNullable<ComplianceState['role']>) => void
@@ -247,6 +258,7 @@ export const usePlayerStore = create<PlayerStore>()(
       lastActiveAt: 0,
       toast: undefined,
       soundOn: true,
+      rewards: emptyRewards(),
       compliance: defaultCompliance,
       permissions: defaultPermissions,
       acknowledgeCompliance: (role) =>
@@ -505,14 +517,33 @@ export const usePlayerStore = create<PlayerStore>()(
           completedFlight: false,
         }).filter((id) => !s.achievements.includes(id))
         const unlockedName = ACHIEVEMENTS.find((a) => a.id === newAch[0])?.name
+        let rewards = s.rewards ?? emptyRewards()
+        let extraSparks = finalCorrect ? 4 : 0
+        let rewardToast: string | undefined
+        const before = compositeMastery(s.stats[q.skillId] ?? emptyStats())
+        const after = compositeMastery(stats[q.skillId] ?? emptyStats())
+        if (after >= 70 && before < 70) {
+          const lesson = applyLessonClear(rewards, q.skillId, skillById(q.skillId)?.name ?? q.skillId)
+          rewards = lesson.rewards
+          extraSparks += lesson.sparks
+          rewardToast = lesson.toast
+        }
+        const world = worldForModule(s.parent.moduleId)
+        if (worldReadyToClear(stats, world.id)) {
+          const cleared = applyWorldClear(rewards, world.id, world.name)
+          rewards = cleared.rewards
+          extraSparks += cleared.sparks
+          rewardToast = cleared.toast ?? rewardToast
+        }
 
         set({
           stats,
           attempts: [...s.attempts, attempt],
           xp: s.xp + xpForAttempt(finalCorrect, phase.phase, s.session.paper),
-          sparks: s.sparks + (finalCorrect ? 4 : 0),
+          sparks: s.sparks + extraSparks,
           achievements: [...s.achievements, ...newAch],
           cosmetics: unlockCosmetics(s.cosmetics, [...s.achievements, ...newAch]),
+          rewards,
           session: {
             ...s.session,
             awaitingLock: false,
@@ -520,7 +551,7 @@ export const usePlayerStore = create<PlayerStore>()(
             labCorrectRun,
             labCorrectCount,
           },
-          toast: unlockedName ? `Unlocked · ${unlockedName}` : undefined,
+          toast: rewardToast ?? (unlockedName ? `Unlocked · ${unlockedName}` : undefined),
         })
         if (finalCorrect) {
           sfx.correct()
@@ -538,6 +569,16 @@ export const usePlayerStore = create<PlayerStore>()(
         let phaseIndex = s.session.phaseIndex
         let itemIndex = s.session.itemIndex + 1
         const current = phases[phaseIndex]
+        let rewards = s.rewards ?? emptyRewards()
+        let sparkGain = 0
+        let stageToast: string | undefined
+        if (current && itemIndex >= current.questionIds.length && current.phase !== 'recap') {
+          const worldId = worldForModule(s.parent.moduleId).id
+          const cleared = applyStageClear(rewards, worldId, current.phase)
+          rewards = cleared.rewards
+          sparkGain = cleared.sparks
+          stageToast = cleared.toast
+        }
         if (current && itemIndex >= current.questionIds.length) {
           phaseIndex += 1
           itemIndex = 0
@@ -546,6 +587,9 @@ export const usePlayerStore = create<PlayerStore>()(
         if (!nextPhase || nextPhase.phase === 'recap') {
           if (get().soundOn) sfx.whoosh()
           set({
+            rewards,
+            sparks: s.sparks + sparkGain,
+            toast: stageToast,
             session: {
               ...s.session,
               phaseIndex: Math.max(0, phases.findIndex((p) => p.phase === 'recap')),
@@ -569,6 +613,9 @@ export const usePlayerStore = create<PlayerStore>()(
         const qid = nextPhase.questionIds[itemIndex]
         const q = qid ? questionById(qid) : undefined
         set({
+          rewards,
+          sparks: s.sparks + sparkGain,
+          toast: stageToast,
           session: {
             ...s.session,
             phaseIndex,
@@ -672,6 +719,7 @@ export const usePlayerStore = create<PlayerStore>()(
             }
           }
           s.parent = parent
+          s.rewards = emptyRewards()
         }
         return s as unknown as PlayerStore
       },
@@ -689,6 +737,7 @@ export const usePlayerStore = create<PlayerStore>()(
           permissions: { ...current.permissions, ...(p.permissions ?? {}) },
           bookmark: { ...current.bookmark, ...(p.bookmark ?? {}) },
           practiceDays: p.practiceDays ?? current.practiceDays,
+          rewards: mergeRewards(current.rewards ?? emptyRewards(), p.rewards ?? emptyRewards()),
         }
       },
     },

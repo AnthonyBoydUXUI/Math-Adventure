@@ -66,6 +66,7 @@ function snap(patch: Partial<CloudSnapshot>): CloudSnapshot {
     soundOn: true,
     compliance: { acknowledgedAt: 1, ageBand: '12plus', role: 'parent' },
     permissions: { cameraExplained: true, micExplained: false },
+    rewards: { stages: [], lessons: [], worlds: [] },
     ...patch,
   }
 }
