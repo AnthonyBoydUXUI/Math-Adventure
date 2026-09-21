@@ -228,8 +228,8 @@ Do not overwrite `vehicles.riv`.
 | --- | --- |
 | Asset | World Journey — Harbor |
 | Contract | [`docs/rive/WORLD_JOURNEY.md`](../rive/WORLD_JOURNEY.md) |
-| Status | `NEEDS_DESIGN` |
-| Token | Astra |
+| Status | `DESIGN_READY` |
+| Token | Codex |
 | Vercel preview | none (docs-only PR) |
 | Merge | not requested — board + contract only |
 
